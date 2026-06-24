@@ -1,0 +1,20 @@
+{
+  "name": "@jects/docs-app",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Jects UI docs shell — imports theme + widgets, shows Button with light/dark toggle.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@jects/theme": "workspace:*",
+    "@jects/widgets": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^6.0.5"
+  }
+}

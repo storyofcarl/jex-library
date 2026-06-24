@@ -1,0 +1,33 @@
+{
+  "name": "@jects/icons",
+  "version": "0.0.0",
+  "description": "Jects UI icon set — tree-shakeable inline SVG exports + sprite.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": false,
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/icons.js",
+      "require": "./dist/icons.umd.cjs"
+    },
+    "./sprite.svg": "./dist/sprite.svg"
+  },
+  "types": "./dist/index.d.ts",
+  "module": "./dist/icons.js",
+  "main": "./dist/icons.umd.cjs",
+  "scripts": {
+    "build": "node scripts/build-sprite.mjs && vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "@jects/vite-config": "workspace:*",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.4.0",
+    "vitest": "^2.1.8"
+  }
+}

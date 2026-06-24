@@ -1,0 +1,101 @@
+/* Customizer chrome — uses Jects tokens so it themes along with the preview. */
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: oklch(var(--jects-background));
+  color: oklch(var(--jects-foreground));
+}
+
+.cz-header {
+  padding: var(--jects-space-6);
+  border-bottom: 1px solid oklch(var(--jects-border));
+}
+.cz-header h1 {
+  margin: 0 0 var(--jects-space-2);
+  font-size: var(--jects-font-size-2xl);
+}
+.cz-header p {
+  margin: 0;
+  color: oklch(var(--jects-muted-foreground));
+}
+
+.cz-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--jects-space-6);
+  padding: var(--jects-space-6);
+}
+
+.cz-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jects-space-4);
+  padding: var(--jects-space-4);
+  background: oklch(var(--jects-card));
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-lg);
+  height: fit-content;
+}
+
+.cz-control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jects-space-2);
+}
+.cz-control label {
+  font-size: var(--jects-font-size-sm);
+  font-weight: var(--jects-font-weight-medium);
+}
+.cz-control input[type='color'] {
+  width: 100%;
+  height: 2.25rem;
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-md);
+  background: none;
+  cursor: pointer;
+}
+.cz-control input[type='range'] {
+  width: 100%;
+  accent-color: oklch(var(--jects-primary));
+}
+.cz-control select {
+  height: 2.25rem;
+  border: 1px solid oklch(var(--jects-input));
+  border-radius: var(--jects-radius-md);
+  background: oklch(var(--jects-background));
+  color: oklch(var(--jects-foreground));
+  padding-inline: var(--jects-space-2);
+}
+
+.cz-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jects-space-6);
+}
+.cz-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--jects-space-3);
+  align-items: center;
+}
+
+.cz-card {
+  max-width: 460px;
+  padding: var(--jects-space-5);
+  background: oklch(var(--jects-card));
+  color: oklch(var(--jects-card-foreground));
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-lg);
+  box-shadow: var(--jects-shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--jects-space-3);
+}
+.cz-card h3 {
+  margin: 0;
+}
+.cz-card p {
+  margin: 0;
+  color: oklch(var(--jects-muted-foreground));
+  font-size: var(--jects-font-size-sm);
+}

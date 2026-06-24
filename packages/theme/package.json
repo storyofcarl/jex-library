@@ -1,0 +1,41 @@
+{
+  "name": "@jects/theme",
+  "version": "0.0.0",
+  "description": "Jects UI themes — generated CSS (light/dark/high-contrast/branded) + runtime applyTheme/setTheme. Default: Cool Zinc + Calm CMYK.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": ["**/*.css"],
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/theme.js",
+      "require": "./dist/theme.umd.cjs"
+    },
+    "./style.css": "./dist/css/base.css",
+    "./base.css": "./dist/css/base.css",
+    "./dark.css": "./dist/css/dark.css",
+    "./high-contrast.css": "./dist/css/high-contrast.css",
+    "./stockholm.css": "./dist/css/stockholm.css",
+    "./material.css": "./dist/css/material.css",
+    "./all.css": "./dist/css/all.css"
+  },
+  "types": "./dist/index.d.ts",
+  "module": "./dist/theme.js",
+  "main": "./dist/theme.umd.cjs",
+  "scripts": {
+    "build": "node scripts/build-theme.mjs && vite build",
+    "dev": "node scripts/build-theme.mjs && vite build --watch",
+    "test": "node scripts/build-theme.mjs && node --test test/theme.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@jects/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@jects/vite-config": "workspace:*",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.4.0"
+  }
+}

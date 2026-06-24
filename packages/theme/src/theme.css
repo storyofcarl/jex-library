@@ -1,0 +1,4 @@
+/* Entry stylesheet bundled into dist/style.css.
+   Re-exports the generated base (light) theme so consumers can simply
+   `import '@jects/theme/style.css'`. Dark/branded themes are separate files. */
+@import '../dist/css/base.css';

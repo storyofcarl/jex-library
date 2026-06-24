@@ -1,0 +1,34 @@
+{
+  "name": "@jects/core",
+  "version": "0.0.0",
+  "description": "Jects UI core — signals, Widget base, Store/TreeStore, EventEmitter, DOM utils, virtualization. Zero runtime deps, framework-free.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": false,
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/core.js",
+      "require": "./dist/core.umd.cjs"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "module": "./dist/core.js",
+  "main": "./dist/core.umd.cjs",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "@jects/vite-config": "workspace:*",
+    "jsdom": "^25.0.1",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.4.0",
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@jects/tokens",
+  "version": "0.0.0",
+  "description": "Jects UI design tokens — OKLCH 3-tier source of truth → CSS vars + SCSS maps + TS types. House style: Cool Zinc + Calm CMYK.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": ["**/*.css"],
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.scss": "./dist/tokens.scss",
+    "./tokens.json": "./src/tokens.json"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "node scripts/build-tokens.mjs && tsc -p tsconfig.json",
+    "dev": "node scripts/build-tokens.mjs",
+    "test": "node scripts/build-tokens.mjs && node --test test/tokens.test.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint scripts"
+  }
+}

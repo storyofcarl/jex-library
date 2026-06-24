@@ -1,0 +1,22 @@
+{
+  "name": "@jects/customizer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Jects UI live theme customizer — binds CSS-variable contract to controls; exports theme.css.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@jects/core": "workspace:*",
+    "@jects/icons": "workspace:*",
+    "@jects/theme": "workspace:*",
+    "@jects/widgets": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^6.0.5"
+  }
+}
