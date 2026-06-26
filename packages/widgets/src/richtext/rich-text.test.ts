@@ -583,6 +583,301 @@ describe('RichText — parity features', () => {
   });
 });
 
+describe('RichText — Phase 1/2 enterprise features', () => {
+  beforeEach(() => window.getSelection()?.removeAllRanges());
+
+  function selectContents(node: Node): void {
+    const sel = window.getSelection()!;
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  function placeCaret(node: Node, offset: number): void {
+    const sel = window.getSelection()!;
+    const range = document.createRange();
+    range.setStart(node, offset);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  // ---- horizontal rule ----
+  it('horizontalRule inserts an <hr>', () => {
+    const rt = new RichText(host, { value: '<p>x</p>' });
+    placeCaret(getEditable(host).querySelector('p')!.firstChild!, 1);
+    rt.exec('horizontalRule');
+    expect(getEditable(host).querySelector('hr')).toBeTruthy();
+    expect(rt.getHTML()).toContain('<hr>');
+    rt.destroy();
+  });
+
+  // ---- subscript / superscript / inline code ----
+  it('subscript wraps the selection in <sub> and toggles off', () => {
+    const rt = new RichText(host, { value: '<p>H2O</p>' });
+    const p = getEditable(host).querySelector('p')!;
+    selectContents(p);
+    rt.exec('subscript');
+    expect(getEditable(host).querySelector('sub')).toBeTruthy();
+    expect(rt.getHTML()).toContain('<sub>');
+    // Toggling again unwraps it.
+    selectContents(getEditable(host).querySelector('sub')!);
+    rt.exec('subscript');
+    expect(getEditable(host).querySelector('sub')).toBeNull();
+    rt.destroy();
+  });
+
+  it('superscript wraps the selection in <sup>', () => {
+    const rt = new RichText(host, { value: '<p>x2</p>' });
+    selectContents(getEditable(host).querySelector('p')!);
+    rt.exec('superscript');
+    expect(getEditable(host).querySelector('sup')).toBeTruthy();
+    rt.destroy();
+  });
+
+  it('inlineCode wraps the selection in <code> and reflects aria-pressed', () => {
+    const rt = new RichText(host, { value: '<p>code</p>', toolbar: ['inlineCode'] });
+    selectContents(getEditable(host).querySelector('p')!);
+    rt.exec('inlineCode');
+    const code = getEditable(host).querySelector('code');
+    expect(code).toBeTruthy();
+    // Caret inside the code element => the toggle button reports pressed.
+    placeCaret(code!.firstChild!, 1);
+    rt.exec('inlineCode'); // toggle off triggers a refreshState pass
+    expect(getEditable(host).querySelector('code')).toBeNull();
+    rt.destroy();
+  });
+
+  // ---- justify ----
+  it('justify is a genuine toggle with aria-pressed wired', () => {
+    const rt = new RichText(host, { toolbar: ['justify'] });
+    const btn = host.querySelector('button[data-command="justify"]')!;
+    expect(btn.hasAttribute('aria-pressed')).toBe(true);
+    rt.destroy();
+  });
+
+  // ---- find & replace ----
+  it('findReplace toggles the dialog and highlights matches', () => {
+    const rt = new RichText(host, { value: '<p>the cat sat on the mat</p>' });
+    rt.exec('findReplace');
+    const dlg = host.querySelector('.jects-richtext__find') as HTMLElement;
+    expect(dlg.hidden).toBe(false);
+    const input = dlg.querySelector('.jects-richtext__find-input') as HTMLInputElement;
+    input.value = 'the';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    const marks = getEditable(host).querySelectorAll('mark[data-find]');
+    expect(marks.length).toBe(2);
+    // Highlights are transient: getHTML must not leak them.
+    expect(rt.getHTML()).not.toContain('data-find');
+    expect(rt.getHTML()).not.toContain('<mark');
+    rt.destroy();
+  });
+
+  it('replace all swaps every match and clears highlights', () => {
+    const rt = new RichText(host, { value: '<p>foo foo foo</p>' });
+    rt.exec('findReplace');
+    const dlg = host.querySelector('.jects-richtext__find') as HTMLElement;
+    const find = dlg.querySelector('.jects-richtext__find-input') as HTMLInputElement;
+    const repl = dlg.querySelector('.jects-richtext__replace-input') as HTMLInputElement;
+    find.value = 'foo';
+    find.dispatchEvent(new Event('input', { bubbles: true }));
+    repl.value = 'bar';
+    (dlg.querySelector('button[data-find-action="replaceAll"]') as HTMLButtonElement).click();
+    const html = rt.getHTML();
+    expect(html).toContain('bar bar bar');
+    expect(html).not.toContain('foo');
+    rt.destroy();
+  });
+
+  it('replace (single) swaps only the active match', () => {
+    const rt = new RichText(host, { value: '<p>aa aa</p>' });
+    rt.exec('findReplace');
+    const dlg = host.querySelector('.jects-richtext__find') as HTMLElement;
+    const find = dlg.querySelector('.jects-richtext__find-input') as HTMLInputElement;
+    const repl = dlg.querySelector('.jects-richtext__replace-input') as HTMLInputElement;
+    find.value = 'aa';
+    find.dispatchEvent(new Event('input', { bubbles: true }));
+    repl.value = 'bb';
+    (dlg.querySelector('button[data-find-action="replace"]') as HTMLButtonElement).click();
+    const html = rt.getHTML();
+    expect(html).toContain('bb');
+    expect(html).toContain('aa'); // one occurrence remains
+    rt.destroy();
+  });
+
+  // ---- table cell merge / split / header ----
+  it('tableMergeCells merges two adjacent cells into a colspan', () => {
+    const rt = new RichText(host, { value: '' });
+    rt.exec('insertTable', '1x2');
+    const cells = getEditable(host).querySelectorAll('td');
+    placeCaret(cells[0]!, 0);
+    rt.exec('tableMergeCells');
+    const remaining = getEditable(host).querySelectorAll('td');
+    expect(remaining.length).toBe(1);
+    expect(remaining[0]!.getAttribute('colspan')).toBe('2');
+    rt.destroy();
+  });
+
+  it('tableSplitCell splits a merged cell back into separate cells', () => {
+    const rt = new RichText(host, { value: '' });
+    rt.exec('insertTable', '1x2');
+    placeCaret(getEditable(host).querySelector('td')!, 0);
+    rt.exec('tableMergeCells');
+    expect(getEditable(host).querySelectorAll('td').length).toBe(1);
+    placeCaret(getEditable(host).querySelector('td')!, 0);
+    rt.exec('tableSplitCell');
+    expect(getEditable(host).querySelectorAll('td').length).toBe(2);
+    expect(getEditable(host).querySelector('td')!.hasAttribute('colspan')).toBe(false);
+    rt.destroy();
+  });
+
+  it('tableToggleHeaderRow converts the first row to <th> and back', () => {
+    const rt = new RichText(host, { value: '' });
+    rt.exec('insertTable', '2x2');
+    placeCaret(getEditable(host).querySelector('td')!, 0);
+    rt.exec('tableToggleHeaderRow');
+    const firstRow = getEditable(host).querySelector('tr')!;
+    expect(Array.from(firstRow.children).every((c) => c.tagName === 'TH')).toBe(true);
+    expect(firstRow.querySelector('th')!.getAttribute('scope')).toBe('col');
+    // Toggle back.
+    placeCaret(getEditable(host).querySelector('th')!, 0);
+    rt.exec('tableToggleHeaderRow');
+    expect(getEditable(host).querySelector('tr')!.querySelector('th')).toBeNull();
+    rt.destroy();
+  });
+
+  // ---- link edit dialog ----
+  it('editLink updates the href/text/target of an existing anchor', () => {
+    const rt = new RichText(host, {
+      value: '<p><a href="https://old.example">old</a></p>',
+    });
+    const anchor = getEditable(host).querySelector('a')!;
+    placeCaret(anchor.firstChild!, 1);
+    rt.exec('editLink');
+    const dlg = host.querySelector('.jects-richtext__linkdlg') as HTMLElement;
+    expect(dlg.hidden).toBe(false);
+    const text = dlg.querySelector('.jects-richtext__linkdlg-text') as HTMLInputElement;
+    const href = dlg.querySelector('.jects-richtext__linkdlg-href') as HTMLInputElement;
+    const blank = dlg.querySelector('.jects-richtext__linkdlg-target') as HTMLInputElement;
+    expect(href.value).toBe('https://old.example');
+    text.value = 'new label';
+    href.value = 'https://new.example';
+    blank.checked = true;
+    (dlg.querySelector('button[data-link-action="apply"]') as HTMLButtonElement).click();
+    const out = getEditable(host).querySelector('a')!;
+    expect(out.getAttribute('href')).toBe('https://new.example');
+    expect(out.textContent).toBe('new label');
+    expect(out.getAttribute('target')).toBe('_blank');
+    expect(out.getAttribute('rel')).toContain('noopener');
+    rt.destroy();
+  });
+
+  it('editLink rejects a javascript: href', () => {
+    const rt = new RichText(host, { value: '<p><a href="https://ok.example">x</a></p>' });
+    placeCaret(getEditable(host).querySelector('a')!.firstChild!, 1);
+    rt.exec('editLink');
+    const dlg = host.querySelector('.jects-richtext__linkdlg') as HTMLElement;
+    (dlg.querySelector('.jects-richtext__linkdlg-href') as HTMLInputElement).value =
+      'javascript:alert(1)';
+    (dlg.querySelector('button[data-link-action="apply"]') as HTMLButtonElement).click();
+    // The unsafe value was not committed; the original href is preserved.
+    expect(getEditable(host).querySelector('a')!.getAttribute('href')).toBe('https://ok.example');
+    rt.destroy();
+  });
+
+  // ---- image upload ----
+  it('uploadImage renders a hidden file input and the toolbar button', () => {
+    const rt = new RichText(host, { toolbar: ['uploadImage'] });
+    expect(host.querySelector('button[data-command="uploadImage"]')).toBeTruthy();
+    expect(host.querySelector('input.jects-richtext__file')).toBeTruthy();
+    rt.destroy();
+  });
+
+  // ---- image align / width ----
+  it('imageAlign and imageWidth apply allow-listed inline styles to the image', () => {
+    const rt = new RichText(host, { value: '<p><img src="https://x/y.png" alt=""></p>' });
+    placeCaret(getEditable(host).querySelector('p')!, 0);
+    rt.exec('imageAlignCenter');
+    const img = getEditable(host).querySelector('img')!;
+    expect(img.style.display).toBe('block');
+    expect(img.style.margin).toContain('auto');
+    rt.exec('imageWidthSmall');
+    expect(img.style.width).toBe('25%');
+    // Styles survive serialization (kept on the allow-list).
+    expect(rt.getHTML()).toContain('width: 25%');
+    rt.destroy();
+  });
+
+  // ---- word / char count ----
+  it('getStats returns word and character counts', () => {
+    const rt = new RichText(host, { value: '<p>one two three</p>' });
+    const stats = rt.getStats();
+    expect(stats.words).toBe(3);
+    expect(stats.characters).toBe('one two three'.length);
+    expect(stats.charactersNoSpaces).toBe('onetwothree'.length);
+    rt.destroy();
+  });
+
+  it('renders the status footer and updates it on change', () => {
+    const rt = new RichText(host, { value: '<p>hi there</p>' });
+    const status = host.querySelector('.jects-richtext__status') as HTMLElement;
+    expect(status.hidden).toBe(false);
+    expect(status.textContent).toContain('2 words');
+    rt.setHTML('<p>just one two three four</p>');
+    expect(status.textContent).toContain('5 words');
+    rt.destroy();
+  });
+
+  it('showStatus=false hides the footer', () => {
+    const rt = new RichText(host, { value: '<p>x</p>', showStatus: false });
+    expect((host.querySelector('.jects-richtext__status') as HTMLElement).hidden).toBe(true);
+    rt.destroy();
+  });
+
+  // ---- full screen ----
+  it('fullscreen toggles the modifier class, isFullscreen(), and fires an event', () => {
+    const rt = new RichText(host, { toolbar: ['fullscreen'] });
+    const spy = vi.fn();
+    rt.on('fullscreenChange', spy);
+    expect(rt.isFullscreen()).toBe(false);
+    rt.exec('fullscreen');
+    expect(rt.isFullscreen()).toBe(true);
+    expect(host.querySelector('.jects-richtext--fullscreen')).toBeTruthy();
+    const btn = host.querySelector('button[data-command="fullscreen"]')!;
+    expect(btn.getAttribute('aria-pressed')).toBe('true');
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ fullscreen: true }));
+    rt.exec('fullscreen');
+    expect(rt.isFullscreen()).toBe(false);
+    rt.destroy();
+  });
+
+  // ---- new toggles carry aria-pressed; new actions do not ----
+  it('new toggle commands carry aria-pressed; new action commands omit it', () => {
+    const rt = new RichText(host, {
+      toolbar: [
+        'subscript',
+        'superscript',
+        'inlineCode',
+        'justify',
+        'fullscreen',
+        'findReplace',
+        'horizontalRule',
+        'editLink',
+        'uploadImage',
+      ],
+    });
+    const pressed = (cmd: string) =>
+      host.querySelector(`button[data-command="${cmd}"]`)!.hasAttribute('aria-pressed');
+    for (const cmd of ['subscript', 'superscript', 'inlineCode', 'justify', 'fullscreen', 'findReplace']) {
+      expect(pressed(cmd)).toBe(true);
+    }
+    for (const cmd of ['horizontalRule', 'editLink', 'uploadImage']) {
+      expect(pressed(cmd)).toBe(false);
+    }
+    rt.destroy();
+  });
+});
+
 describe('sanitizeHtml', () => {
   it('strips script tags', () => {
     expect(sanitizeHtml('<p>ok</p><script>alert(1)</script>')).not.toContain('script');
@@ -617,5 +912,46 @@ describe('sanitizeHtml', () => {
     const out = sanitizeHtml('<p style="text-align: center; position: fixed;">x</p>');
     expect(out).toContain('text-align');
     expect(out).not.toContain('position');
+  });
+
+  // ---- new element allow-list (Phase 1/2) ----
+  it('keeps the newly allowed semantic tags (hr/mark/sub/sup/figure)', () => {
+    const out = sanitizeHtml(
+      '<hr><p><mark>m</mark> <sub>2</sub> <sup>3</sup></p><figure><img src="https://x/y.png" alt=""><figcaption>cap</figcaption></figure>',
+    );
+    expect(out).toContain('<hr>');
+    expect(out).toContain('<mark>');
+    expect(out).toContain('<sub>');
+    expect(out).toContain('<sup>');
+    expect(out).toContain('<figure>');
+    expect(out).toContain('<figcaption>');
+  });
+
+  it('keeps merged-cell colspan/rowspan attributes', () => {
+    const out = sanitizeHtml(
+      '<table><tbody><tr><td colspan="2" rowspan="2">a</td></tr></tbody></table>',
+    );
+    expect(out).toContain('colspan="2"');
+    expect(out).toContain('rowspan="2"');
+  });
+
+  it('keeps allow-listed image alignment/width styles but drops dangerous ones', () => {
+    const out = sanitizeHtml(
+      '<img src="https://x/y.png" style="float: left; width: 25%; position: fixed;" alt="">',
+    );
+    expect(out).toContain('float');
+    expect(out).toContain('width');
+    expect(out).not.toContain('position');
+  });
+
+  it('strips an event handler smuggled onto a new tag', () => {
+    const out = sanitizeHtml('<mark onclick="evil()">x</mark>');
+    expect(out).not.toContain('onclick');
+    expect(out).toContain('x');
+  });
+
+  it('rejects a javascript: image src on an uploaded-style figure', () => {
+    const out = sanitizeHtml('<figure><img src="javascript:alert(1)" alt=""></figure>');
+    expect(out).not.toContain('javascript:');
   });
 });

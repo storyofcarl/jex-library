@@ -265,6 +265,148 @@
     border-radius: var(--jects-radius-sm);
   }
 
+  /* ---- horizontal rule ---- */
+  .jects-richtext__editable hr {
+    height: 0;
+    margin: var(--jects-space-3) 0;
+    border: none;
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border));
+  }
+
+  /* ---- embedded figures / sub-sup / inline code ---- */
+  .jects-richtext__editable figure {
+    margin: 0 0 var(--jects-space-2);
+  }
+
+  .jects-richtext__editable sub,
+  .jects-richtext__editable sup {
+    font-size: 0.75em;
+    line-height: 0;
+  }
+
+  /* ---- find & replace highlights ---- */
+  .jects-richtext__editable mark[data-find] {
+    color: inherit;
+    background: oklch(var(--jects-accent));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-richtext__editable mark[data-find][data-find-active] {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+  }
+
+  /* ---- find & replace dialog ---- */
+  .jects-richtext__find,
+  .jects-richtext__linkdlg {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-2);
+    background: oklch(var(--jects-muted));
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border));
+  }
+
+  .jects-richtext__find[hidden],
+  .jects-richtext__linkdlg[hidden] {
+    display: none;
+  }
+
+  .jects-richtext__find-input,
+  .jects-richtext__replace-input,
+  .jects-richtext__linkdlg-text,
+  .jects-richtext__linkdlg-href {
+    height: 2rem;
+    min-width: 8rem;
+    flex: 1 1 8rem;
+    padding-inline: var(--jects-space-2);
+    font-family: inherit;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-richtext__find-input:focus-visible,
+  .jects-richtext__replace-input:focus-visible,
+  .jects-richtext__linkdlg-text:focus-visible,
+  .jects-richtext__linkdlg-href:focus-visible {
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-richtext__find-btn,
+  .jects-richtext__linkdlg-btn {
+    height: 2rem;
+    padding-inline: var(--jects-space-2);
+    font-family: inherit;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+
+  .jects-richtext__find-btn:hover,
+  .jects-richtext__linkdlg-btn:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-richtext__find-btn:focus-visible,
+  .jects-richtext__linkdlg-btn:focus-visible {
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-richtext__find-count {
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+    white-space: nowrap;
+  }
+
+  .jects-richtext__linkdlg-blank {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    white-space: nowrap;
+  }
+
+  /* ---- status footer ---- */
+  .jects-richtext__status {
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+    text-align: right;
+    background: oklch(var(--jects-muted));
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border));
+  }
+
+  .jects-richtext__status[hidden] {
+    display: none;
+  }
+
+  /* ---- full screen ---- */
+  .jects-richtext--fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: var(--jects-z-modal, 1000);
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .jects-richtext--fullscreen .jects-richtext__editable {
+    flex: 1;
+  }
+
   /* ---- states ---- */
   .jects-richtext--readonly .jects-richtext__editable,
   .jects-richtext--disabled .jects-richtext__editable {

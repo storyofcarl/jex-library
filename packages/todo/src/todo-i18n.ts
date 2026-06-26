@@ -93,6 +93,8 @@ export interface TodoMessages {
   changeStatus: string; // uses {status}
   addSubtask: string;
   selectAll: string;
+  resizeColumn: string;
+  rowHeight: string;
   // list-view column headers
   colTask: string;
   colDone: string;
@@ -187,6 +189,8 @@ export const DEFAULT_MESSAGES: TodoMessages = {
   changeStatus: 'Change status (now: {status})',
   addSubtask: 'Add subtask',
   selectAll: 'Select all tasks',
+  resizeColumn: 'Resize column',
+  rowHeight: 'Row height',
   colTask: 'Task',
   colDone: 'Done',
   colStatus: 'Status',

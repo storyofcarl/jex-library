@@ -86,6 +86,12 @@ export interface SpreadsheetConfig extends WidgetConfig {
    * by that column; alt/shift-click applies a quick non-blank filter.
    */
   headerMenu?: boolean;
+  /** Enable interactive column resizing (drag the column-header right edge). Default `true`. */
+  columnResize?: boolean;
+  /** Enable interactive row resizing (drag the row-header bottom edge). Default `true`. */
+  rowResize?: boolean;
+  /** Show the row-header multi-select checkboxes + "select all". Default `true`. */
+  rowSelect?: boolean;
 }
 
 export interface SpreadsheetEvents extends WidgetEvents {
@@ -99,6 +105,12 @@ export interface SpreadsheetEvents extends WidgetEvents {
   import: { format: IoFormat };
   /** An edit was rejected by data validation or sheet/cell protection. */
   editRejected: { address: CellAddress; reason: 'validation' | 'protected'; message?: string };
+  /** A column was resized (drag/keyboard on the column-header edge). */
+  columnResize: { col: number; width: number; oldWidth: number };
+  /** A row was resized (drag/keyboard on the row-header edge). */
+  rowResize: { row: number; height: number; oldHeight: number };
+  /** The set of fully-selected rows (row-header checkboxes) changed. */
+  rowSelectionChange: { rows: number[] };
 }
 
 const TOOLBAR_ITEMS: ToolbarItem[] = [
@@ -193,6 +205,9 @@ export class Spreadsheet extends Widget<SpreadsheetConfig, SpreadsheetEvents> {
       api: this.api,
       getValidation: (addr) => this.getValidation(addr),
       headerMenu: this.config.headerMenu ?? true,
+      columnResize: this.config.columnResize ?? true,
+      rowResize: this.config.rowResize ?? true,
+      rowSelect: this.config.rowSelect ?? true,
       ...(this.config.maxCols !== undefined ? { maxCols: this.config.maxCols } : {}),
       ...(this.config.maxRows !== undefined ? { maxRows: this.config.maxRows } : {}),
     });
@@ -208,6 +223,9 @@ export class Spreadsheet extends Widget<SpreadsheetConfig, SpreadsheetEvents> {
     this.grid.on('fillDrag', ({ source, target }) => this.onFillDrag(source, target));
     this.grid.on('editRejected', (e) => this.emit('editRejected', e));
     this.grid.on('headerAction', ({ col, action }) => this.onHeaderAction(col, action));
+    this.grid.on('columnResize', (e) => this.emit('columnResize', e));
+    this.grid.on('rowResize', (e) => this.emit('rowResize', e));
+    this.grid.on('rowSelectionChange', (e) => this.emit('rowSelectionChange', e));
 
     // clipboard listeners on the grid root
     this.subscriptions.push(
@@ -525,18 +543,29 @@ export class Spreadsheet extends Widget<SpreadsheetConfig, SpreadsheetEvents> {
     this.grid.update({});
   }
 
-  /** Resize a column to `size` px. */
-  resizeColumn(col: number, size: number): void {
-    const sheet = this.api.getActiveSheet();
-    (sheet.cols ??= {})[col] = { ...sheet.cols?.[col], size };
-    this.grid.update({});
+  /** Resize a column to `size` px (clamped). Persists + emits `columnResize`. */
+  resizeColumn(col: number, size: number): number {
+    return this.grid.resizeColumn(col, size);
   }
 
-  /** Resize a row to `size` px. */
-  resizeRow(row: number, size: number): void {
-    const sheet = this.api.getActiveSheet();
-    (sheet.rows ??= {})[row] = { ...sheet.rows?.[row], size };
-    this.grid.update({});
+  /** Resize a row to `size` px (clamped). Persists + emits `rowResize`. */
+  resizeRow(row: number, size: number): number {
+    return this.grid.resizeRow(row, size);
+  }
+
+  /** The fully-selected row indices (row-header multi-select), ascending. */
+  getSelectedRows(): number[] {
+    return this.grid.getSelectedRows();
+  }
+
+  /** Replace the selected-row set (row-header multi-select). */
+  setSelectedRows(rows: number[]): void {
+    this.grid.setSelectedRows(rows);
+  }
+
+  /** Select or clear every row (the row-header "select all" affordance). */
+  selectAllRows(select?: boolean): void {
+    this.grid.toggleAllRows(select);
   }
 
   /** Hide a column. */

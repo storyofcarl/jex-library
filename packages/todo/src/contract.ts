@@ -354,6 +354,11 @@ export interface TodoListConfig extends WidgetConfig {
   wipEnforce?: boolean;
   /** Table-view columns (show/hide/reorder). Defaults to a standard set. */
   tableColumns?: TodoTableColumn[];
+  /**
+   * Uniform row height (px) for the Table view. Default is content-height
+   * (undefined). Set to enforce a fixed line height per row.
+   */
+  tableRowHeight?: number;
   /** Timeline/Gantt zoom granularity. Default `'week'`. */
   timelineZoom?: TodoTimelineZoom;
   /** Calendar sub-view. Default `'month'`. */
@@ -426,6 +431,8 @@ export interface TodoListEvents extends WidgetEvents {
   select: TodoEventBase & { ids: RecordId[] };
   /** A bulk action ran. */
   bulk: TodoEventBase & { action: string; ids: RecordId[] };
+  /** A Table-view column was resized (drag or keyboard). */
+  columnresize: TodoEventBase & { field: string; width: number };
   /** Undo/redo availability changed. */
   history: TodoEventBase & { canUndo: boolean; canRedo: boolean };
   /** A recurring task spawned its next occurrence. */
@@ -480,6 +487,11 @@ export interface TodoListApi {
   getBoardSwimlane(): TodoGroupBy;
   setTableColumns(columns: TodoTableColumn[]): this;
   getTableColumns(): TodoTableColumn[];
+  /** Set the persisted width (px) of one Table-view column by field. */
+  setColumnWidth(field: TodoTableField, width: number): this;
+  /** Set a uniform Table-view row height (px); pass null to clear. */
+  setTableRowHeight(height: number | null): this;
+  getTableRowHeight(): number | null;
   setTimelineZoom(zoom: TodoTimelineZoom): this;
   setCalendarDate(date: Date): this;
   setSort(sortBy: TodoSort | TodoSort[]): this;

@@ -172,11 +172,123 @@ describe('calendar / timeline / table views', () => {
   it('table view renders configurable columns and inline cells', () => {
     const list = mk({ tasks: tasks(), view: 'table' });
     const table = host.querySelector('.jects-todo__table')!;
-    expect(table.querySelectorAll('thead th').length).toBe(8);
+    // 8 data columns (+ 1 leading select column not counted via .jects-todo__tcol).
+    expect(table.querySelectorAll('thead th.jects-todo__tcol').length).toBe(8);
     expect(table.querySelectorAll('tbody tr').length).toBe(3);
     // hide a column
     list.setTableColumns(list.getTableColumns().map((c) => c.field === 'startDate' ? { ...c, hidden: true } : c));
-    expect(host.querySelectorAll('.jects-todo__table thead th').length).toBe(7);
+    expect(host.querySelectorAll('.jects-todo__table thead th.jects-todo__tcol').length).toBe(7);
+    list.destroy();
+  });
+});
+
+/* ── table interactions: multi-select + column resize + row height ──────────── */
+
+describe('table view: multi-select + column resize', () => {
+  // jsdom (25) lacks PointerEvent; synthesize a MouseEvent carrying pointerId.
+  const pointer = (el: Element, type: string, clientX: number): void => {
+    const ev = new MouseEvent(type, { bubbles: true, clientX, button: 0 });
+    Object.defineProperty(ev, 'pointerId', { value: 1, configurable: true });
+    el.dispatchEvent(ev);
+  };
+
+  it('renders a leading select column with a per-row + select-all checkbox', () => {
+    const list = mk({ tasks: tasks(), view: 'table' });
+    const table = host.querySelector('.jects-todo__table')!;
+    expect(table.querySelector('thead th [data-todo-select-all]')).toBeTruthy();
+    expect(table.querySelectorAll('tbody [data-todo-select]').length).toBe(3);
+    list.destroy();
+  });
+
+  it('clicking a table row select box toggles selection (shared SelectionModel)', () => {
+    const list = mk({ tasks: tasks(), view: 'table' });
+    const rowB = host.querySelector('.jects-todo__trow[data-todo-id="b"]')!;
+    click(rowB.querySelector('[data-todo-select]'));
+    expect(list.getSelected()).toEqual(['b']);
+    expect(rowB.classList.contains('jects-todo__trow--selected')).toBe(true);
+    // Toggling off
+    click(rowB.querySelector('[data-todo-select]'));
+    expect(list.getSelected()).toEqual([]);
+    list.destroy();
+  });
+
+  it('select-all in the table header selects every rendered row', () => {
+    const list = mk({ tasks: tasks(), view: 'table' });
+    click(host.querySelector('.jects-todo__table [data-todo-select-all]'));
+    expect(new Set(list.getSelected())).toEqual(new Set(['a', 'b', 'c']));
+    // Header reflects all-selected (aria-checked + class).
+    const selAll = host.querySelector('.jects-todo__table [data-todo-select-all]')!;
+    expect(selAll.getAttribute('aria-checked')).toBe('true');
+    expect(selAll.classList.contains('jects-todo__rowsel--on')).toBe(true);
+    list.destroy();
+  });
+
+  it('shift-clicking a row body extends a range selection in the table', () => {
+    const list = mk({ tasks: tasks(), view: 'table' });
+    list.select('a');
+    const cellC = host.querySelector('.jects-todo__trow[data-todo-id="c"] td')!;
+    cellC.dispatchEvent(new MouseEvent('click', { bubbles: true, shiftKey: true }));
+    expect(new Set(list.getSelected())).toEqual(new Set(['a', 'b', 'c']));
+    list.destroy();
+  });
+
+  it('dragging a column edge handle resizes + persists the column width', () => {
+    const list = mk({ tasks: tasks(), view: 'table' });
+    const events: Array<{ field: string; width: number }> = [];
+    list.on('columnresize', (e) => events.push({ field: e.field, width: e.width }));
+    const handle = host.querySelector<HTMLElement>('[data-table-resize="status"]')!;
+    // jsdom getBoundingClientRect() is 0, so width == the drag delta.
+    pointer(handle, 'pointerdown', 100);
+    pointer(document.documentElement, 'pointermove', 180); // +80px
+    pointer(document.documentElement, 'pointerup', 180);
+    expect(list.getTableColumns().find((c) => c.field === 'status')?.width).toBe(80);
+    expect(events.at(-1)).toEqual({ field: 'status', width: 80 });
+    // The new width is reflected on the rebuilt header cell.
+    const th = host.querySelector<HTMLElement>('th[data-table-col="status"]')!;
+    expect(th.style.inlineSize).toBe('80px');
+    list.destroy();
+  });
+
+  it('clamps a column drag to the minimum width', () => {
+    const list = mk({ tasks: tasks(), view: 'table' });
+    const handle = host.querySelector<HTMLElement>('[data-table-resize="priority"]')!;
+    pointer(handle, 'pointerdown', 200);
+    pointer(document.documentElement, 'pointermove', 100); // -100px → below min
+    pointer(document.documentElement, 'pointerup', 100);
+    expect(list.getTableColumns().find((c) => c.field === 'priority')?.width).toBe(56);
+    list.destroy();
+  });
+
+  it('arrow keys on the resize handle nudge the column width', () => {
+    const list = mk({ tasks: tasks(), view: 'table', tableColumns: [{ field: 'title', width: 200 }] });
+    const handle = host.querySelector<HTMLElement>('[data-table-resize="title"]')!;
+    handle.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowRight', shiftKey: true }));
+    expect(list.getTableColumns().find((c) => c.field === 'title')?.width).toBe(210);
+    const handle2 = host.querySelector<HTMLElement>('[data-table-resize="title"]')!;
+    handle2.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowLeft' }));
+    expect(list.getTableColumns().find((c) => c.field === 'title')?.width).toBe(208);
+    list.destroy();
+  });
+
+  it('setTableRowHeight applies a uniform row height to the table', () => {
+    const list = mk({ tasks: tasks(), view: 'table' });
+    expect(list.getTableRowHeight()).toBeNull();
+    list.setTableRowHeight(40);
+    expect(list.getTableRowHeight()).toBe(40);
+    const table = host.querySelector('.jects-todo__table')!;
+    expect(table.classList.contains('jects-todo__table--fixed-rows')).toBe(true);
+    const row = host.querySelector<HTMLElement>('.jects-todo__trow')!;
+    expect(row.style.getPropertyValue('--_todo-trow-h')).toBe('40px');
+    list.setTableRowHeight(null);
+    expect(list.getTableRowHeight()).toBeNull();
+    expect(host.querySelector('.jects-todo__table--fixed-rows')).toBeNull();
+    list.destroy();
+  });
+
+  it('a non-selectable table omits the select column', () => {
+    const list = mk({ tasks: tasks(), view: 'table', selectable: false });
+    expect(host.querySelector('.jects-todo__table [data-todo-select]')).toBeNull();
+    expect(host.querySelector('.jects-todo__table [data-todo-select-all]')).toBeNull();
     list.destroy();
   });
 });

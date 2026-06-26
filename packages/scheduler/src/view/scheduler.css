@@ -106,6 +106,21 @@
     letter-spacing: 0.03em;
   }
 
+  /* ── resource-row multi-select (locked pane) ── */
+  .jects-scheduler--resource-selectable .jects-scheduler__resource-row {
+    cursor: pointer;
+  }
+  .jects-scheduler__resource-select {
+    flex: none;
+    margin-inline-start: var(--jects-space-2);
+    accent-color: oklch(var(--jects-primary));
+    cursor: pointer;
+  }
+  .jects-scheduler__resource-row--selected {
+    background: oklch(var(--jects-primary) / 0.12);
+    box-shadow: inset 2px 0 0 0 oklch(var(--jects-primary));
+  }
+
   /* ── scrollable time grid ── */
   .jects-scheduler__scroller {
     grid-row: 2;
@@ -256,6 +271,31 @@
     border-style: dashed;
     pointer-events: none;
   }
+  /* Cross-lane reassignment: the bar lifts + tints while hovering a new lane so
+     the pending resource change reads clearly during the drag. */
+  .jects-scheduler__bar--reassigning {
+    box-shadow: var(--jects-shadow-md);
+    outline: var(--jects-border-width) dashed oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  /* Milestone: a zero-duration diamond anchored on the start tick (the bar box is
+     a square rotated 45°, ported from @jects/gantt). No label, no inner padding. */
+  .jects-scheduler__bar--milestone {
+    padding: 0;
+    background: oklch(var(--jects-cmyk-magenta));
+    border-color: oklch(var(--jects-cmyk-magenta) / 0.7);
+    border-radius: var(--jects-radius-sm);
+    transform: rotate(45deg);
+    cursor: grab;
+    overflow: visible;
+  }
+  .jects-scheduler__bar--milestone .jects-scheduler__bar-label {
+    display: none;
+  }
+  /* A completed (100%) event reads with a subtle confirmation accent. */
+  .jects-scheduler__bar--complete {
+    border-color: oklch(var(--jects-success) / 0.8);
+  }
   .jects-scheduler__bar[data-color='cyan'] {
     background: oklch(var(--jects-cmyk-cyan));
     border-color: oklch(var(--jects-cmyk-cyan) / 0.7);
@@ -279,13 +319,35 @@
     white-space: nowrap;
     pointer-events: none;
   }
+  /* Live progress fill: a percentDone-wide band filling the bar from the leading
+     edge, painted BEHIND the label (the label has its own stacking via z-index).
+     A brighter cap strip at the fill's trailing edge keeps the boundary legible. */
   .jects-scheduler__bar-progress {
     position: absolute;
-    inset-block-end: 0;
+    inset-block: 0;
     inset-inline-start: 0;
-    block-size: 3px;
-    background: oklch(var(--jects-primary-foreground) / 0.8);
+    background: oklch(var(--jects-primary-foreground) / 0.28);
+    border-inline-end: 2px solid oklch(var(--jects-primary-foreground) / 0.7);
+    border-start-start-radius: var(--jects-radius-sm);
+    border-end-start-radius: var(--jects-radius-sm);
     pointer-events: none;
+  }
+  .jects-scheduler__bar-label {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── setup/teardown buffer zones (PRO event-buffer geometry in base view) ── */
+  .jects-scheduler__buffers {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  /* Override the PRO stylesheet's `inset-block: 25%` band: in the base-view layer
+     each zone is positioned + sized per row band (top/height set inline by the
+     renderer, already inset within the lane), so reset the block insets. */
+  .jects-scheduler__buffers .jects-scheduler__buffer {
+    inset-block: auto;
   }
 
   /* ── empty state ── */

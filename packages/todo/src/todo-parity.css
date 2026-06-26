@@ -236,11 +236,57 @@
     font-weight: var(--jects-font-weight-medium);
     position: sticky;
     inset-block-start: 0;
-    cursor: grab;
+    position: relative;
   }
   .jects-todo__table th.jects-todo__th--dragover { background: oklch(var(--jects-accent)); }
   .jects-todo__cell { display: inline-block; cursor: default; }
   .jects-todo__cell.jects-todo__inline { cursor: pointer; }
+
+  /* table: leading select column */
+  .jects-todo__table th.jects-todo__tcol-sel,
+  .jects-todo__table td.jects-todo__tcol-sel {
+    inline-size: var(--jects-space-7);
+    text-align: center;
+    padding-inline: var(--jects-space-1);
+  }
+  .jects-todo__table .jects-todo__tcol-label { display: inline-block; }
+
+  /* table: column-resize handle (trailing edge of each header cell) */
+  .jects-todo__tcol-resize {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: calc(var(--jects-space-1) * -1);
+    inline-size: var(--jects-space-2);
+    cursor: col-resize;
+    touch-action: none;
+    z-index: 1;
+  }
+  .jects-todo__tcol-resize::after {
+    content: "";
+    position: absolute;
+    inset-block: var(--jects-space-1);
+    inset-inline-end: 50%;
+    inline-size: var(--jects-border-width);
+    background: oklch(var(--jects-border));
+  }
+  .jects-todo__tcol-resize:hover::after,
+  .jects-todo__tcol-resize:focus-visible::after,
+  .jects-todo__tcol-resize--active::after {
+    background: oklch(var(--jects-primary));
+    inline-size: calc(var(--jects-border-width) * 2);
+  }
+  .jects-todo__tcol-resize:focus-visible {
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: calc(var(--jects-ring-width) * -1);
+  }
+
+  /* table: selected row + optional uniform row height */
+  .jects-todo__trow--selected td { background: oklch(var(--jects-accent)); }
+  .jects-todo__table--fixed-rows td {
+    block-size: var(--_todo-trow-h);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   /* ── detail: timer / deps / comments / activity / attachments ── */
   .jects-todo__timer-bar { block-size: 0.4rem; background: oklch(var(--jects-muted)); border-radius: var(--jects-radius-full); overflow: hidden; margin-block: var(--jects-space-1); }

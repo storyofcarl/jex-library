@@ -50,6 +50,7 @@ import type {
   TodoComment,
   TodoAttachment,
   TodoTableColumn,
+  TodoTableField,
   TodoTimelineZoom,
   TodoImportOptions,
   TodoTag,
@@ -125,6 +126,9 @@ interface VisibleRow {
   depth: number;
 }
 
+/** Smallest a Table-view column may be dragged. */
+const MIN_COLUMN_WIDTH = 56;
+
 export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements TodoListApi {
   private declare model: TodoModel;
   private declare listEl: HTMLElement;
@@ -181,6 +185,8 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
   private declare popoverCleanup: (() => void) | null;
   /** Board card drag tracking: the card being dragged over (for Y-reorder). */
   private declare cardDropTarget: { id: RecordId; before: boolean } | null;
+  /** Cleanup for an in-flight Table-view column-resize pointer drag. */
+  private declare colResizeCleanup: (() => void) | null;
 
   protected override defaults(): Partial<TodoListConfig> {
     return {
@@ -222,6 +228,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     this.dragId = null;
     this.selected = new Set<RecordId>();
     this.selectionAnchor = null;
+    this.colResizeCleanup = null;
     this.boardEl = null;
     this.calendarEl = null;
     this.timelineEl = null;
@@ -261,6 +268,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     root.addEventListener('change', (e) => this.handleChange(e));
     root.addEventListener('input', (e) => this.handleInput(e));
     root.addEventListener('dblclick', (e) => this.handleDblClick(e));
+    root.addEventListener('pointerdown', (e) => this.handlePointerDown(e as PointerEvent));
 
     // Kick off a data-provider load if one is configured (async, after mount).
     if (this.config.dataProvider?.load) {
@@ -1269,6 +1277,15 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
 
   // ── DOM event handlers ─────────────────────────────────────────────────────
 
+  /** Begin a Table-view column-resize drag when a header edge handle is pressed. */
+  private handlePointerDown(event: PointerEvent): void {
+    if (event.button !== 0) return;
+    const handle = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-table-resize]');
+    if (!handle) return;
+    event.preventDefault();
+    this.startColumnResize(handle, event.clientX, event.pointerId);
+  }
+
   private handleClick(event: Event): void {
     const target = event.target as HTMLElement | null;
     if (!target) return;
@@ -1439,6 +1456,46 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
 
   private handleKeydown(event: KeyboardEvent): void {
     const target = event.target as HTMLElement | null;
+
+    // Table-view column-resize handle: arrow keys nudge width, ±10 with Shift.
+    const resizeHandle = target?.closest<HTMLElement>('[data-table-resize]');
+    if (resizeHandle && target === resizeHandle) {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        const field = resizeHandle.dataset.tableResize;
+        const th = resizeHandle.closest<HTMLElement>('th[data-table-col]');
+        if (field && th) {
+          const step = (event.shiftKey ? 10 : 2) * (event.key === 'ArrowRight' ? 1 : -1);
+          // Base the nudge on the stored width (rendered width is unreliable in
+          // headless DOMs); fall back to the measured width when none is stored.
+          const stored = this.getTableColumns().find((c) => c.field === field)?.width;
+          const base = stored ?? Math.round(th.getBoundingClientRect().width);
+          const next = Math.max(MIN_COLUMN_WIDTH, base + step);
+          this.setColumnWidth(field as TodoTableField, next);
+          // Re-focus the (rebuilt) handle so repeated presses keep nudging.
+          // Field values never contain a double-quote, so this attr selector is safe.
+          const sel = `[data-table-resize="${field}"]`;
+          this.tableEl?.querySelector<HTMLElement>(sel)?.focus();
+        }
+      }
+      return;
+    }
+
+    // Select checkbox (list or table): Enter/Space toggles selection.
+    const selBoxKey = target?.closest<HTMLElement>('[data-todo-select], [data-todo-select-all]');
+    if (selBoxKey && target === selBoxKey && (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar')) {
+      event.preventDefault();
+      if (selBoxKey.matches('[data-todo-select-all]')) {
+        const ids = this.renderedIds();
+        const allSelected = ids.length > 0 && ids.every((i) => this.selected.has(i));
+        if (allSelected) this.clearSelection(); else this.selectAll();
+      } else {
+        const row = selBoxKey.closest<HTMLElement>('[data-todo-id]');
+        if (row?.dataset.todoId) this.select(this.resolveId(row.dataset.todoId), { additive: true });
+      }
+      return;
+    }
+
     // Only handle keys when a row itself is focused (not the add box or editors).
     const rowEl = target?.closest<HTMLElement>('[data-todo-id]');
     if (!rowEl || target !== rowEl) return;
@@ -1928,6 +1985,31 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
 
   setTableColumns(columns: TodoTableColumn[]): this {
     this.config.tableColumns = columns.map((c) => ({ ...c }));
+    this.syncBody();
+    return this;
+  }
+
+  /** Persist a column's width (clamped to the minimum) and re-render the table. */
+  setColumnWidth(field: TodoTableField, width: number): this {
+    const w = Math.max(MIN_COLUMN_WIDTH, Math.round(width));
+    const cols = this.getTableColumns();
+    const idx = cols.findIndex((c) => c.field === field);
+    if (idx === -1) return this;
+    cols[idx] = { ...cols[idx], field, width: w };
+    this.config.tableColumns = cols;
+    this.syncBody();
+    this.emit('columnresize', { list: this, field: String(field), width: w });
+    return this;
+  }
+
+  getTableRowHeight(): number | null {
+    const h = this.config.tableRowHeight;
+    return typeof h === 'number' && h > 0 ? Math.round(h) : null;
+  }
+
+  setTableRowHeight(height: number | null): this {
+    if (height == null || height <= 0) delete this.config.tableRowHeight;
+    else this.config.tableRowHeight = Math.round(height);
     this.syncBody();
     return this;
   }
@@ -2568,30 +2650,36 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       const on = this.selected.has(id);
       el.classList.toggle('jects-todo__row--selected', on && el.classList.contains('jects-todo__row'));
       el.classList.toggle('jects-todo__card--selected', on && el.classList.contains('jects-todo__card'));
+      el.classList.toggle('jects-todo__trow--selected', on && el.classList.contains('jects-todo__trow'));
       const box = el.querySelector<HTMLElement>('[data-todo-select]');
       if (box) {
         box.classList.toggle('jects-todo__rowsel--on', on);
         box.innerHTML = on ? renderIcon('check', { size: 13 }) : '';
+        if (box.getAttribute('role') === 'checkbox') box.setAttribute('aria-checked', String(on));
       }
     }
-    // Reflect aggregate selection on the header "select all" checkbox.
-    const selAll = this.headerEl?.querySelector<HTMLElement>('[data-todo-select-all]');
-    if (selAll) {
-      const ids = this.renderedIds();
-      const selCount = ids.filter((i) => this.selected.has(i)).length;
-      const all = ids.length > 0 && selCount === ids.length;
-      const some = selCount > 0 && !all;
+    // Reflect aggregate selection on every "select all" checkbox (list header
+    // and, in the Table view, the table's own leading header cell).
+    const ids = this.renderedIds();
+    const selCount = ids.filter((i) => this.selected.has(i)).length;
+    const all = ids.length > 0 && selCount === ids.length;
+    const some = selCount > 0 && !all;
+    for (const selAll of this.el.querySelectorAll<HTMLElement>('[data-todo-select-all]')) {
       selAll.classList.toggle('jects-todo__rowsel--on', all);
       selAll.classList.toggle('jects-todo__rowsel--some', some);
       selAll.innerHTML = all ? renderIcon('check', { size: 13 }) : some ? renderIcon('minus', { size: 13 }) : '';
+      if (selAll.getAttribute('role') === 'checkbox') {
+        selAll.setAttribute('aria-checked', some ? 'mixed' : String(all));
+      }
     }
     this.syncBulkBar();
   }
 
-  /** Ids in current rendered order (list rows or board cards). */
+  /** Ids in current rendered order (list rows, board cards, or table rows). */
   private renderedIds(): RecordId[] {
     const out: RecordId[] = [];
-    const root = this.getView() === 'board' ? this.boardEl : this.bodyEl;
+    const view = this.getView();
+    const root = view === 'board' ? this.boardEl : view === 'table' ? this.tableEl : this.bodyEl;
     if (!root) return out;
     for (const el of root.querySelectorAll<HTMLElement>('[data-todo-id]')) {
       if (el.dataset.todoId) out.push(this.resolveId(el.dataset.todoId));
@@ -3319,17 +3407,53 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
   private syncTable(): void {
     if (!this.tableEl) return;
     this.teardownRows();
+    this.cancelColumnResize();
     this.tableEl.replaceChildren();
     const cols = this.getTableColumns().filter((c) => !c.hidden);
     const tasks = this.matchingTasks();
+    const selectable = this.config.selectable !== false;
+    const rowHeight = this.getTableRowHeight();
 
     const table = createEl('table', { className: 'jects-todo__table', attrs: { role: 'grid' } });
     const thead = createEl('thead');
     const hr = createEl('tr');
+
+    // Leading select-all column header (mirrors the list-view "select all" box).
+    if (selectable) {
+      const selTh = createEl('th', {
+        className: 'jects-todo__tcol-sel',
+        attrs: { scope: 'col' },
+      });
+      const selAll = createEl('span', {
+        className: 'jects-todo__rowsel jects-todo__selall',
+        attrs: { 'data-todo-select-all': '', role: 'checkbox', tabindex: '0', 'aria-checked': 'false', title: this.t('selectAll'), 'aria-label': this.t('selectAll') },
+      });
+      selTh.append(selAll);
+      hr.append(selTh);
+    }
+
     for (const c of cols) {
-      const th = createEl('th', { attrs: { scope: 'col', 'data-table-col': String(c.field), draggable: 'true' } });
+      const th = createEl('th', {
+        className: 'jects-todo__tcol',
+        attrs: { scope: 'col', 'data-table-col': String(c.field) },
+      });
       if (c.width) th.style.inlineSize = `${c.width}px`;
-      th.textContent = this.tableColLabel(c);
+      const label = createEl('span', { className: 'jects-todo__tcol-label' });
+      label.textContent = this.tableColLabel(c);
+      th.append(label);
+      // Drag-to-resize handle on the column's trailing edge.
+      const handle = createEl('span', {
+        className: 'jects-todo__tcol-resize',
+        attrs: {
+          'data-table-resize': String(c.field),
+          role: 'separator',
+          'aria-orientation': 'vertical',
+          tabindex: '0',
+          title: this.t('resizeColumn'),
+          'aria-label': `${this.t('resizeColumn')}: ${this.tableColLabel(c)}`,
+        },
+      });
+      th.append(handle);
       hr.append(th);
     }
     thead.append(hr);
@@ -3338,6 +3462,16 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     const tbody = createEl('tbody');
     for (const task of tasks) {
       const tr = createEl('tr', { className: 'jects-todo__trow', attrs: { 'data-todo-id': String(this.idOf(task)) } });
+      if (rowHeight != null) tr.style.setProperty('--_todo-trow-h', `${rowHeight}px`);
+      if (selectable) {
+        const selTd = createEl('td', { className: 'jects-todo__tcol-sel' });
+        const selBox = createEl('span', {
+          className: 'jects-todo__rowsel',
+          attrs: { 'data-todo-select': '', role: 'checkbox', tabindex: '0', 'aria-checked': 'false', title: this.t('selectTask'), 'aria-label': this.t('selectTask') },
+        });
+        selTd.append(selBox);
+        tr.append(selTd);
+      }
       for (const c of cols) {
         const td = createEl('td', { attrs: { 'data-table-field': String(c.field) } });
         td.append(this.buildTableCell(task, c.field));
@@ -3346,7 +3480,56 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       tbody.append(tr);
     }
     table.append(tbody);
+    if (rowHeight != null) table.classList.add('jects-todo__table--fixed-rows');
     this.tableEl.append(table);
+    this.syncSelectionDom();
+  }
+
+  /** Begin a pointer drag-resize of a Table-view column from its edge handle. */
+  private startColumnResize(handle: HTMLElement, startX: number, pointerId: number): void {
+    const field = handle.dataset.tableResize;
+    if (!field) return;
+    const th = handle.closest<HTMLElement>('th[data-table-col]');
+    if (!th) return;
+    this.cancelColumnResize();
+    const startWidth = th.getBoundingClientRect().width;
+    handle.classList.add('jects-todo__tcol-resize--active');
+    try { handle.setPointerCapture(pointerId); } catch { /* capture is best-effort */ }
+
+    let width = startWidth;
+    const onMove = (e: PointerEvent): void => {
+      width = Math.max(MIN_COLUMN_WIDTH, Math.round(startWidth + (e.clientX - startX)));
+      th.style.inlineSize = `${width}px`;
+    };
+    const finish = (commit: boolean): void => {
+      this.cancelColumnResize();
+      if (commit && Math.round(width) !== Math.round(startWidth)) {
+        this.setColumnWidth(field as TodoTableField, width);
+      }
+    };
+    const onUp = (): void => finish(true);
+    const onCancel = (): void => finish(false);
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') { th.style.inlineSize = `${startWidth}px`; finish(false); }
+    };
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+    document.addEventListener('pointercancel', onCancel);
+    document.addEventListener('keydown', onKey, true);
+    this.colResizeCleanup = (): void => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      document.removeEventListener('pointercancel', onCancel);
+      document.removeEventListener('keydown', onKey, true);
+      handle.classList.remove('jects-todo__tcol-resize--active');
+      try { handle.releasePointerCapture(pointerId); } catch { /* may already be released */ }
+    };
+  }
+
+  /** Tear down any in-flight column-resize drag listeners. */
+  private cancelColumnResize(): void {
+    this.colResizeCleanup?.();
+    this.colResizeCleanup = null;
   }
 
   private tableColLabel(c: TodoTableColumn): string {
@@ -3904,6 +4087,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     this.closeEditor(false);
     this.closeDetail();
     this.closePopover();
+    this.cancelColumnResize();
     super.destroy();
   }
 }

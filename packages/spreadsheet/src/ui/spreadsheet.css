@@ -138,8 +138,95 @@
     user-select: none;
   }
 
-  .jects-sheet__colhead {
+  .jects-sheet__colhead,
+  .jects-sheet__rowhead,
+  .jects-sheet__corner {
     position: relative;
+  }
+
+  /* ── column resize handle (drag the header's right edge) ─────────────── */
+  .jects-sheet__col-resizer {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: var(--jects-space-1);
+    cursor: col-resize;
+    user-select: none;
+    touch-action: none;
+    z-index: 1;
+  }
+
+  .jects-sheet__col-resizer:hover,
+  .jects-sheet__colhead--resizing .jects-sheet__col-resizer {
+    background: oklch(var(--jects-ring));
+  }
+
+  .jects-sheet__col-resizer:focus-visible {
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: -1px;
+  }
+
+  /* ── row resize handle (drag the row header's bottom edge) ───────────── */
+  .jects-sheet__rowhead {
+    overflow: visible;
+  }
+
+  .jects-sheet__rowhead-label {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .jects-sheet__row-resizer {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    cursor: row-resize;
+    user-select: none;
+    touch-action: none;
+    z-index: 1;
+  }
+
+  .jects-sheet__row-resizer::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    block-size: 2px;
+    background: transparent;
+    transition: background var(--jects-duration-fast, 120ms) ease;
+  }
+
+  .jects-sheet__rowhead:hover .jects-sheet__row-resizer::after,
+  .jects-sheet__row-resizer:hover::after,
+  .jects-sheet__rowhead--resizing .jects-sheet__row-resizer::after {
+    background: oklch(var(--jects-ring));
+  }
+
+  .jects-sheet__row-resizer:focus-visible {
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  /* ── row multi-select (checkboxes in row headers + select-all corner) ── */
+  .jects-sheet__selectall,
+  .jects-sheet__rowselect {
+    flex: 0 0 auto;
+    margin: 0 var(--jects-space-1) 0 0;
+    cursor: pointer;
+    accent-color: oklch(var(--jects-primary));
+  }
+
+  .jects-sheet__selectall {
+    position: absolute;
+    inset-inline-start: var(--jects-space-1);
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+  }
+
+  .jects-sheet__rowhead--selected {
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary) / 0.85);
   }
 
   .jects-sheet__colhead--frozen {

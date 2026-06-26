@@ -80,6 +80,13 @@ import {
   DependencyEditController,
   type DependencyEditHost,
 } from './dependency-edit.js';
+import {
+  bufferMargins,
+  findBufferViolations,
+  bufferZoneBoxes,
+  type BufferConfig,
+  type BufferableEvent,
+} from '../pro/event-buffer.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -126,12 +133,23 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
   private declare elScroller: HTMLElement; // scrollable time-grid viewport
   private declare elContent: HTMLElement; // sized to total content
   private declare elBars: HTMLElement; // event bars layer
+  private declare elBuffers: HTMLElement; // setup/teardown buffer zones layer
   private declare elBackdrop: HTMLElement; // gridlines + shading layer
   private declare elDeps: SVGSVGElement; // dependency lines layer
   private declare elEmpty: HTMLElement;
   private declare elLive: HTMLElement; // polite aria-live announcer
   /** Id of the bar that currently holds the roving tabindex (Tab stop). */
   private focusedBarId: RecordId | null = null;
+  /**
+   * Selected resource-row ids (multi-select in the locked pane). Declared (not
+   * field-initialized) because the Widget base calls render()→paint() from inside
+   * its constructor BEFORE subclass field initializers run — a `= new Set()`
+   * initializer would not exist yet during that first paint. Assigned in
+   * `initEngine()` like the rest of the geometry state.
+   */
+  private declare selectedResourceIds: Set<RecordId>;
+  /** Anchor index for shift-range resource selection. */
+  private resourceSelectAnchor: number | null = null;
 
   /* ── geometry state ───────────────────────────────────────────────────── */
   private declare zoom: number;
@@ -207,13 +225,15 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     const deps = document.createElementNS(SVG_NS, 'svg');
     deps.setAttribute('class', 'jects-scheduler__deps');
     deps.setAttribute('aria-hidden', 'true');
+    const buffers = createEl('div', { className: 'jects-scheduler__buffers' });
+    buffers.setAttribute('aria-hidden', 'true');
     const bars = createEl('div', { className: 'jects-scheduler__bars' });
     // A toolbar-style group of focusable event "buttons" with roving tabindex,
     // navigable by arrow keys. (A `list` cannot contain interactive `button`
     // children, so we use `group` here and `button` on each bar.)
     bars.setAttribute('role', 'group');
     bars.setAttribute('aria-label', 'Scheduled events');
-    content.append(backdrop, deps, bars);
+    content.append(backdrop, buffers, deps, bars);
     scroller.appendChild(content);
 
     const empty = createEl('div', { className: 'jects-scheduler__empty' });
@@ -235,6 +255,7 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     this.elScroller = scroller;
     this.elContent = content;
     this.elBackdrop = backdrop;
+    this.elBuffers = buffers;
     this.elDeps = deps;
     this.elBars = bars;
     this.elEmpty = empty;
@@ -267,6 +288,8 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     this.visibleBars = new Map();
     this.resolvedById = new Map();
     this.rowTops = new Map();
+    this.selectedResourceIds = new Set();
+    this.resourceSelectAnchor = null;
     this.tooltip = null;
     this.ctxMenu = null;
     this.resizeObs = null;
@@ -360,6 +383,17 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
       );
     }
 
+    // Resource-row multi-select (locked pane). A click on a row toggles/extends
+    // the selection; the leading checkbox is the explicit affordance.
+    if (cfg.resourceSelectable) {
+      this.el.classList.add('jects-scheduler--resource-selectable');
+      const onResourceClick = (e: MouseEvent): void => this.onResourceRowClick(e);
+      this.elResourcePanel.addEventListener('click', onResourceClick as EventListener);
+      this.track(() =>
+        this.elResourcePanel.removeEventListener('click', onResourceClick as EventListener),
+      );
+    }
+
     // Keyboard: arrows scroll, +/- zoom.
     this.listen('keydown', (e) => this.onKeyDown(e));
 
@@ -447,6 +481,7 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     this.paintResourceColumns();
     this.paintBackdrop();
     this.paintBars();
+    this.paintBuffers();
     this.paintDependencies();
     // Re-apply terminal handles + selection styling after the layers are rebuilt.
     this.depEdit?.afterPaint();
@@ -541,6 +576,7 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     }
     this.elResourceHeader.replaceChildren(headerFrag);
 
+    const selectable = this.config.resourceSelectable === true;
     const win = this.rowWindow();
     const frag = document.createDocumentFragment();
     this.elResourcePanel.style.height = `${win.totalSize}px`;
@@ -554,6 +590,22 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
       row.style.top = `${i * this.rowHeight}px`;
       row.style.height = `${this.rowHeight}px`;
       row.dataset.resourceId = String(record.id);
+      const isSelected = this.selectedResourceIds.has(record.id);
+      if (selectable) {
+        row.classList.toggle('jects-scheduler__resource-row--selected', isSelected);
+        row.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        row.dataset.rowIndex = String(i);
+        // Leading selection checkbox — the explicit, pointer-precise affordance;
+        // ctrl/⌘-click and shift-click on the row do toggle/range selection too.
+        const box = createEl('input', {
+          className: 'jects-scheduler__resource-select',
+        }) as HTMLInputElement;
+        box.type = 'checkbox';
+        box.checked = isSelected;
+        box.tabIndex = -1;
+        box.setAttribute('aria-label', `Select ${record.name}`);
+        row.appendChild(box);
+      }
       for (const col of columns) {
         const cell = createEl('div', { className: 'jects-scheduler__resource-cell' });
         cell.style.width = `${col.width ?? 140}px`;
@@ -713,12 +765,26 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
 
   private renderBar(bar: EventBar<EventModel>, rowTop: number): HTMLElement {
     const ev = bar.event.record;
-    const el = createEl('div', { className: 'jects-scheduler__bar' });
+    const isMilestone = ev.milestone === true;
+    const el = createEl('div', {
+      className: isMilestone ? 'jects-scheduler__bar jects-scheduler__bar--milestone' : 'jects-scheduler__bar',
+    });
     el.dataset.eventId = String(bar.event.id);
-    el.style.left = `${bar.x}px`;
-    el.style.top = `${rowTop + bar.y}px`;
-    el.style.width = `${bar.width}px`;
-    el.style.height = `${bar.height}px`;
+    if (isMilestone) {
+      // Diamond: a square of side = bar height, centred on the start tick and
+      // rotated 45°. Centre it horizontally on `bar.x` (the start instant) and
+      // vertically within the lane band (ports the @jects/gantt diamond pattern).
+      const side = bar.height;
+      el.style.left = `${bar.x - side / 2}px`;
+      el.style.top = `${rowTop + bar.y}px`;
+      el.style.width = `${side}px`;
+      el.style.height = `${side}px`;
+    } else {
+      el.style.left = `${bar.x}px`;
+      el.style.top = `${rowTop + bar.y}px`;
+      el.style.width = `${bar.width}px`;
+      el.style.height = `${bar.height}px`;
+    }
     // Bars are interactive controls (click selects, dbl-click/Enter edits, drag
     // moves), so expose an interactive role + name rather than a static
     // `listitem`. A roving tabindex (managed by the grid keyboard handler) keeps
@@ -738,16 +804,91 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     if (bar.event.id !== ev.id) el.dataset.occurrence = 'true';
     if (bar.event.styleKey) el.dataset.color = bar.event.styleKey;
 
+    // Live progress fill: a percentDone-wide band INSIDE the bar (painted behind
+    // the label). Milestones have no width to fill, so they are skipped. The fill
+    // is added before the label so the label sits above it in the stacking order.
+    if (!isMilestone && typeof ev.percentDone === 'number' && ev.percentDone > 0) {
+      const pct = Math.max(0, Math.min(100, ev.percentDone * 100));
+      const fill = createEl('div', { className: 'jects-scheduler__bar-progress' });
+      fill.style.width = `${pct}%`;
+      fill.dataset.percent = String(Math.round(pct));
+      fill.setAttribute('aria-hidden', 'true');
+      if (pct >= 100) el.classList.add('jects-scheduler__bar--complete');
+      el.appendChild(fill);
+    }
+
     const inner = createEl('div', { className: 'jects-scheduler__bar-label' });
     inner.textContent = name;
     el.appendChild(inner);
-
-    if (typeof ev.percentDone === 'number' && ev.percentDone > 0) {
-      const fill = createEl('div', { className: 'jects-scheduler__bar-progress' });
-      fill.style.width = `${Math.min(100, ev.percentDone * 100)}%`;
-      el.appendChild(fill);
-    }
     return el;
+  }
+
+  /**
+   * Paint the per-event setup/teardown buffer zones (PRO event-buffer geometry)
+   * behind the bars, when `showBufferTime` is enabled. Reuses the pure
+   * `bufferZoneBoxes` projection + `findBufferViolations` rule so a buffer that is
+   * breached by a neighbour on the same lane is flagged (striped, not colour-only).
+   * Zones are positioned by row band (the same `index * rowHeight` geometry as the
+   * bars) and inset within the lane via CSS. Recurrence occurrences are skipped.
+   */
+  private paintBuffers(): void {
+    if (this.config.showBufferTime !== true) {
+      this.elBuffers.replaceChildren();
+      return;
+    }
+    const bufferConfig: BufferConfig = this.config.bufferDefaults ?? {};
+    const win = this.rowWindow();
+    const visibleSpan = this.visibleSpan();
+    const frag = document.createDocumentFragment();
+
+    for (let i = win.startIndex; i < win.endIndex; i++) {
+      const resource = this.resourceStore.getAt(i);
+      if (!resource) continue;
+      const rowTop = i * this.rowHeight;
+      const laneEvents = this.resolveRowEvents(resource.id, visibleSpan)
+        .filter((e) => !this.isOccurrence(e))
+        .map((e) => e.record as BufferableEvent);
+      if (laneEvents.length === 0) continue;
+
+      // Which events on this lane currently breach the buffer (so their zone is
+      // tagged at-risk). Both sides of every violation are flagged.
+      const violated = new Set<RecordId>();
+      for (const v of findBufferViolations(laneEvents, bufferConfig)) {
+        violated.add(v.before);
+        violated.add(v.after);
+      }
+
+      for (const ev of laneEvents) {
+        if (ev.milestone) continue; // no span → no buffer band
+        const { leading, trailing } = bufferMargins(ev, bufferConfig);
+        if (leading <= 0 && trailing <= 0) continue;
+        const boxes = bufferZoneBoxes(ev, this.axis, bufferConfig);
+        const isViolated = violated.has(ev.id);
+        const make = (
+          box: { x: number; width: number },
+          side: 'leading' | 'trailing',
+        ): HTMLElement => {
+          const zoneEl = createEl('div', {
+            className:
+              `jects-scheduler__buffer jects-scheduler__buffer--${side}` +
+              (isViolated ? ' jects-scheduler__buffer--violated' : ''),
+          });
+          // Inset the zone within the lane band (25% top/bottom) so it flanks the
+          // bar band rather than filling the whole row height.
+          const inset = this.rowHeight * 0.25;
+          zoneEl.style.left = `${box.x}px`;
+          zoneEl.style.width = `${Math.max(0, box.width)}px`;
+          zoneEl.style.top = `${rowTop + inset}px`;
+          zoneEl.style.height = `${Math.max(0, this.rowHeight - inset * 2)}px`;
+          zoneEl.dataset.eventId = String(ev.id);
+          zoneEl.setAttribute('aria-hidden', 'true');
+          return zoneEl;
+        };
+        if (boxes.leading) frag.appendChild(make(boxes.leading, 'leading'));
+        if (boxes.trailing) frag.appendChild(make(boxes.trailing, 'trailing'));
+      }
+    }
+    this.elBuffers.replaceChildren(frag);
   }
 
   /** Format a tick/time using the active pattern (UTC). */
@@ -766,8 +907,15 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
   private barAriaLabel(ev: EventModel, span?: TimeSpan): string {
     const name = ev.name ?? 'Event';
     const start = span?.start ?? ev.startDate;
+    if (ev.milestone) {
+      return `${name}, milestone at ${this.formatTick(start, 'datetime')}`;
+    }
     const end = span?.end ?? ev.endDate;
-    return `${name}, ${this.formatTick(start, 'datetime')} to ${this.formatTick(end, 'datetime')}`;
+    const pct =
+      typeof ev.percentDone === 'number' && ev.percentDone > 0
+        ? `, ${Math.round(Math.min(100, ev.percentDone * 100))}% complete`
+        : '';
+    return `${name}, ${this.formatTick(start, 'datetime')} to ${this.formatTick(end, 'datetime')}${pct}`;
   }
 
   /**
@@ -793,7 +941,11 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     const out: ResolvedEvent[] = [];
     this.eventStore.forEach((record) => {
       if (record.resourceId !== resourceId) return;
-      const masterSpan: TimeSpan = { start: record.startDate, end: record.endDate };
+      // A milestone is a zero-duration marker anchored at startDate: collapse its
+      // span so the bar has no width and the diamond renders at the start tick.
+      const masterSpan: TimeSpan = record.milestone
+        ? { start: record.startDate, end: record.startDate }
+        : { start: record.startDate, end: record.endDate };
       if (record.recurrenceRule) {
         const rule = parseRRule(record.recurrenceRule);
         if (rule) {
@@ -810,8 +962,13 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
           return;
         }
       }
-      // Non-recurring: include if it intersects the window.
-      if (masterSpan.end > window.start && masterSpan.start < window.end) {
+      // Non-recurring: include if it intersects the window. A zero-duration
+      // milestone (`end === start`) is included when its instant falls within the
+      // window (inclusive), since the strict half-open test would drop it.
+      const inWindow = record.milestone
+        ? masterSpan.start >= window.start && masterSpan.start <= window.end
+        : masterSpan.end > window.start && masterSpan.start < window.end;
+      if (inWindow) {
         out.push({ id: record.id, resourceId, span: masterSpan, record });
       }
     });
@@ -962,6 +1119,19 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     return clientY - rect.top;
   }
 
+  /**
+   * Map a content-space Y coordinate to the resource lane it falls in, using the
+   * uniform `rowHeight` band geometry that drives virtualization. Returns the
+   * resource id, or `undefined` when Y is outside the row range. This is the same
+   * Y→resource mapping the locked pane + `rowAt()` use, reused for cross-lane drag.
+   */
+  private resourceIdAtY(contentY: number): RecordId | undefined {
+    if (contentY < 0) return undefined;
+    const index = Math.floor(contentY / this.rowHeight);
+    if (index < 0 || index >= this.resourceStore.count) return undefined;
+    return this.resourceStore.getAt(index)?.id;
+  }
+
   private barElFromEvent(target: EventTarget | null): HTMLElement | null {
     if (!(target instanceof HTMLElement)) return null;
     return target.closest('.jects-scheduler__bar');
@@ -1056,9 +1226,11 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     const bar = this.visibleBars.get(barEl.dataset.eventId!) ?? this.visibleBars.get(Number(barEl.dataset.eventId));
     if (!bar) return;
 
-    // Decide gesture zone (resize edges vs body move).
+    // Decide gesture zone (resize edges vs body move). A milestone has no width
+    // to resize, so it is always a body move.
+    const isMilestone = record.milestone === true;
     const contentX = this.toContentX(down.clientX);
-    const zone = zoneAtX(this.axis, bar, contentX, 6);
+    const zone = isMilestone ? 'body' : zoneAtX(this.axis, bar, contentX, 6);
     let mode: DragMode = 'move';
     if (zone === 'start' && this.config.resizable !== false) mode = 'resize-start';
     else if (zone === 'end' && this.config.resizable !== false) mode = 'resize-end';
@@ -1068,6 +1240,32 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     // for a non-recurring event equals the record span.
     const origin: TimeSpan = { start: bar.event.span.start, end: bar.event.span.end };
     barEl.classList.add('jects-scheduler__bar--dragging');
+
+    // Cross-lane drag: only on a body MOVE, when enabled, and only for plain
+    // single-assignment bars (an assignment-sourced bar carries `data-units` and
+    // is owned by the multi-assignment plugin, which has its own lane semantics).
+    const reassignable =
+      this.config.reassignable === true &&
+      mode === 'move' &&
+      barEl.dataset.units === undefined &&
+      barEl.dataset.occurrence === undefined;
+    const originResourceId = record.resourceId;
+    const barTopOffset = bar.y; // intra-lane offset of the bar within its row band
+    let targetResourceId = originResourceId;
+
+    // Map a pointer's clientY to a candidate target lane during the drag.
+    const laneAtPointer = (clientY: number): RecordId | undefined =>
+      this.resourceIdAtY(this.toContentY(clientY));
+
+    // Distinguish a genuine pointerup (commit) from a pointercancel (abort). A
+    // pure lane-only move leaves the time span unchanged, so timeline-core's
+    // `onCommit` (gated on a span change) never fires for it — we apply such moves
+    // in `onEnd`, but ONLY when the gesture ended via pointerup, not cancel.
+    let endedViaUp = false;
+    const markUp = (): void => {
+      endedViaUp = true;
+    };
+    window.addEventListener('pointerup', markUp, { once: true, capture: true });
 
     this.activeDrag = startBarDrag(down, {
       eventId: record.id,
@@ -1080,15 +1278,38 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
         const box = this.axis.spanToBox(state.span);
         barEl.style.left = `${box.x}px`;
         barEl.style.width = `${Math.max(1, box.width)}px`;
+        if (reassignable) {
+          const lane = laneAtPointer(state.native.clientY);
+          if (lane !== undefined) {
+            targetResourceId = lane;
+            const top = this.resourceStore.indexOf(lane) * this.rowHeight + barTopOffset;
+            barEl.style.top = `${top}px`;
+            barEl.classList.toggle(
+              'jects-scheduler__bar--reassigning',
+              lane !== originResourceId,
+            );
+          }
+        }
       },
-      onCommit: (state) => {
-        if (this.destroyed2) return;
-        this.commitEventChange(record, origin, state.span);
-      },
-      onEnd: () => {
+      // Apply on `onEnd` (not `onCommit`): timeline-core gates `onCommit` on a
+      // SPAN change, but a pure cross-lane move leaves the span untouched, so we
+      // must commit here to capture lane-only reassignments too. `commitEventChange`
+      // is a no-op when neither time nor lane actually changed. Skipped on cancel.
+      onEnd: (state) => {
         this.activeDrag = null;
+        window.removeEventListener('pointerup', markUp, { capture: true } as EventListenerOptions);
         if (this.destroyed2) return;
+        if (endedViaUp) {
+          const laneChanged = reassignable && targetResourceId !== originResourceId;
+          this.commitEventChange(
+            record,
+            origin,
+            state.span,
+            laneChanged ? targetResourceId : undefined,
+          );
+        }
         barEl.classList.remove('jects-scheduler__bar--dragging');
+        barEl.classList.remove('jects-scheduler__bar--reassigning');
         this.paint();
       },
     });
@@ -1129,20 +1350,42 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     });
   }
 
-  /** Apply a moved/resized span with veto + emit, writing back to the store. */
-  private commitEventChange(record: EventModel, from: TimeSpan, to: TimeSpan): void {
+  /**
+   * Apply a moved/resized span (and an optional cross-lane reassignment) with veto
+   * + emit, writing back to the store. When `newResourceId` is supplied and differs
+   * from the record's current lane, the event's `resourceId` is reassigned in the
+   * same atomic store update — honouring the same vetoable `beforeEventChange` /
+   * `eventChange` events as a time move.
+   */
+  private commitEventChange(
+    record: EventModel,
+    from: TimeSpan,
+    to: TimeSpan,
+    newResourceId?: RecordId,
+  ): void {
     if (this.destroyed2) return;
-    if (from.start === to.start && from.end === to.end) return;
+    const laneChanged = newResourceId !== undefined && newResourceId !== record.resourceId;
+    const timeChanged = from.start !== to.start || from.end !== to.end;
+    if (!timeChanged && !laneChanged) return;
     if (this.emit('beforeEventChange', { event: record, from, to }) === false) {
       this.paint();
       return;
     }
-    this.eventStore.update(record.id, { startDate: to.start, endDate: to.end });
+    const patch: Partial<EventModel> = { startDate: to.start, endDate: to.end };
+    if (laneChanged) patch.resourceId = newResourceId;
+    this.eventStore.update(record.id, patch);
     const updated = this.eventStore.getById(record.id) ?? record;
     this.emit('eventChange', { event: updated, from, to });
-    this.announce(
-      `${record.name ?? 'Event'} moved to ${this.formatTick(to.start, 'datetime')}.`,
-    );
+    if (laneChanged) {
+      const lane = this.resourceStore.getById(newResourceId);
+      this.announce(
+        `${record.name ?? 'Event'} moved to ${lane?.name ?? 'another resource'}.`,
+      );
+    } else {
+      this.announce(
+        `${record.name ?? 'Event'} moved to ${this.formatTick(to.start, 'datetime')}.`,
+      );
+    }
   }
 
   private createEvent(resourceId: RecordId, span: TimeSpan): void {
@@ -1232,6 +1475,95 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     if (this.emit('beforeEventDelete', { event: record }) === false) return;
     this.eventStore.remove(record.id);
     this.emit('eventDelete', { event: record });
+  }
+
+  /* ── resource-row multi-select ────────────────────────────────────────── */
+
+  /**
+   * Handle a click in the locked resource pane: toggle/extend the row selection.
+   *   - plain click → select only that row (replace);
+   *   - ctrl/⌘-click (or a checkbox click) → toggle that row in/out of the set;
+   *   - shift-click → select the contiguous range from the anchor to that row.
+   * Emits `resourceSelect` (the clicked row) + `resourceSelectionChange` (the set).
+   */
+  private onResourceRowClick(e: MouseEvent): void {
+    const target = e.target instanceof HTMLElement ? e.target : null;
+    const rowEl = target?.closest<HTMLElement>('.jects-scheduler__resource-row');
+    if (!rowEl || rowEl.dataset.resourceId == null) return;
+    const id = this.resolveResourceId(rowEl.dataset.resourceId);
+    if (id === undefined) return;
+    const index = this.resourceStore.indexOf(id);
+    if (index < 0) return;
+
+    const isCheckbox = target?.classList.contains('jects-scheduler__resource-select') === true;
+    const toggle = e.ctrlKey || e.metaKey || isCheckbox;
+    const range = e.shiftKey && this.resourceSelectAnchor !== null;
+
+    if (range) {
+      const lo = Math.min(this.resourceSelectAnchor!, index);
+      const hi = Math.max(this.resourceSelectAnchor!, index);
+      if (!toggle) this.selectedResourceIds.clear();
+      for (let i = lo; i <= hi; i++) {
+        const r = this.resourceStore.getAt(i);
+        if (r) this.selectedResourceIds.add(r.id);
+      }
+    } else if (toggle) {
+      if (this.selectedResourceIds.has(id)) this.selectedResourceIds.delete(id);
+      else this.selectedResourceIds.add(id);
+      this.resourceSelectAnchor = index;
+    } else {
+      this.selectedResourceIds.clear();
+      this.selectedResourceIds.add(id);
+      this.resourceSelectAnchor = index;
+    }
+
+    const resource = this.resourceStore.getById(id);
+    if (resource) this.emit('resourceSelect', { resource });
+    this.emitResourceSelectionChange();
+    this.paintResourceColumns();
+  }
+
+  /** Resolve a row's `data-resourceId` string back to the store's typed id. */
+  private resolveResourceId(raw: string): RecordId | undefined {
+    if (this.resourceStore.getById(raw)) return raw;
+    const numeric = Number(raw);
+    if (!Number.isNaN(numeric) && this.resourceStore.getById(numeric)) return numeric;
+    return undefined;
+  }
+
+  private emitResourceSelectionChange(): void {
+    const ids = [...this.selectedResourceIds];
+    const selected = ids
+      .map((rid) => this.resourceStore.getById(rid))
+      .filter((r): r is ResourceModel => r !== undefined);
+    this.emit('resourceSelectionChange', { selected, ids });
+  }
+
+  /** The currently selected resource records (multi-select). */
+  getSelectedResources(): ResourceModel[] {
+    return [...this.selectedResourceIds]
+      .map((id) => this.resourceStore.getById(id))
+      .filter((r): r is ResourceModel => r !== undefined);
+  }
+
+  /** Programmatically set the selected resource rows (replaces the current set). */
+  selectResources(ids: RecordId[]): this {
+    this.selectedResourceIds = new Set(ids.filter((id) => this.resourceStore.getById(id) !== undefined));
+    this.resourceSelectAnchor =
+      ids.length > 0 ? this.resourceStore.indexOf(ids[ids.length - 1]!) : null;
+    this.emitResourceSelectionChange();
+    this.paintResourceColumns();
+    return this;
+  }
+
+  /** Clear the resource-row selection. */
+  clearResourceSelection(): this {
+    if (this.selectedResourceIds.size === 0) return this;
+    this.selectedResourceIds.clear();
+    this.resourceSelectAnchor = null;
+    this.emitResourceSelectionChange();
+    this.paintResourceColumns();
+    return this;
   }
 
   /* ── keyboard ─────────────────────────────────────────────────────────── */

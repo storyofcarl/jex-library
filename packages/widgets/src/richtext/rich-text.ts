@@ -56,11 +56,29 @@ export type RichTextCommand =
   | 'foreColor'
   | 'backColor'
   | 'insertImage'
+  | 'uploadImage'
+  | 'imageAlignLeft'
+  | 'imageAlignCenter'
+  | 'imageAlignRight'
+  | 'imageWidthSmall'
+  | 'imageWidthMedium'
+  | 'imageWidthFull'
   | 'insertTable'
   | 'tableAddRow'
   | 'tableAddColumn'
   | 'tableDeleteRow'
   | 'tableDeleteColumn'
+  | 'tableMergeCells'
+  | 'tableSplitCell'
+  | 'tableToggleHeaderRow'
+  | 'horizontalRule'
+  | 'justify'
+  | 'subscript'
+  | 'superscript'
+  | 'inlineCode'
+  | 'editLink'
+  | 'findReplace'
+  | 'fullscreen'
   | 'sourceView'
   | 'undo'
   | 'redo'
@@ -98,6 +116,16 @@ export interface RichTextConfig extends WidgetConfig {
   fontFamilies?: string[];
   /** Options for the font-size select (CSS lengths, e.g. `'14px'`). Falls back to a built-in list. */
   fontSizes?: string[];
+  /**
+   * Show the status footer with live word/character counts. Default `true`.
+   * The counts are also available programmatically via {@link RichText.getStats}.
+   */
+  showStatus?: boolean;
+  /**
+   * Maximum size (bytes) of a file accepted by the image upload control before
+   * it is read into a `data:` URL. Oversized files are ignored. Default 2 MB.
+   */
+  maxImageBytes?: number;
 }
 
 export interface RichTextEvents extends WidgetEvents {
@@ -111,6 +139,18 @@ export interface RichTextEvents extends WidgetEvents {
   focus: { editor: RichText };
   /** Editable region lost focus. */
   blur: { editor: RichText };
+  /** Fired when full-screen mode is toggled. */
+  fullscreenChange: { editor: RichText; fullscreen: boolean };
+}
+
+/** Live document statistics surfaced by the footer and {@link RichText.getStats}. */
+export interface RichTextStats {
+  /** Number of whitespace-delimited words in the rendered text. */
+  words: number;
+  /** Number of characters in the rendered text (including spaces). */
+  characters: number;
+  /** Number of characters excluding all whitespace. */
+  charactersNoSpaces: number;
 }
 
 const DEFAULT_TOOLBAR: RichTextToolbarItem[] = [
@@ -118,6 +158,9 @@ const DEFAULT_TOOLBAR: RichTextToolbarItem[] = [
   'italic',
   'underline',
   'strike',
+  'subscript',
+  'superscript',
+  'inlineCode',
   'separator',
   'h1',
   'h2',
@@ -128,13 +171,16 @@ const DEFAULT_TOOLBAR: RichTextToolbarItem[] = [
   'ol',
   'blockquote',
   'code',
+  'horizontalRule',
   'separator',
   'link',
+  'editLink',
   'unlink',
   'separator',
   'alignLeft',
   'alignCenter',
   'alignRight',
+  'justify',
   'indent',
   'outdent',
   'separator',
@@ -144,8 +190,11 @@ const DEFAULT_TOOLBAR: RichTextToolbarItem[] = [
   'backColor',
   'separator',
   'insertImage',
+  'uploadImage',
   'insertTable',
   'separator',
+  'findReplace',
+  'fullscreen',
   'sourceView',
   'undo',
   'redo',
@@ -198,12 +247,30 @@ const COMMANDS: Record<RichTextCommand, CommandSpec> = {
   fontSize: { label: 'Size', title: 'Font size' },
   foreColor: { label: 'A', title: 'Text color' },
   backColor: { label: 'A', title: 'Highlight color' },
-  insertImage: { label: 'Img', title: 'Insert image' },
+  insertImage: { label: 'Img', title: 'Insert image by URL' },
+  uploadImage: { label: '⤒Img', title: 'Upload image file' },
+  imageAlignLeft: { label: 'Img L', title: 'Align image left' },
+  imageAlignCenter: { label: 'Img C', title: 'Align image center' },
+  imageAlignRight: { label: 'Img R', title: 'Align image right' },
+  imageWidthSmall: { label: 'Img S', title: 'Small image width' },
+  imageWidthMedium: { label: 'Img M', title: 'Medium image width' },
+  imageWidthFull: { label: 'Img F', title: 'Full image width' },
   insertTable: { label: 'Table', title: 'Insert table' },
   tableAddRow: { label: '+Row', title: 'Insert row below' },
   tableAddColumn: { label: '+Col', title: 'Insert column after' },
   tableDeleteRow: { label: '−Row', title: 'Delete row' },
   tableDeleteColumn: { label: '−Col', title: 'Delete column' },
+  tableMergeCells: { label: 'Merge', title: 'Merge selected cells' },
+  tableSplitCell: { label: 'Split', title: 'Split merged cell' },
+  tableToggleHeaderRow: { label: 'Hdr', title: 'Toggle header row' },
+  horizontalRule: { label: '―', title: 'Horizontal rule' },
+  justify: { label: 'J', title: 'Justify' },
+  subscript: { label: 'x₂', title: 'Subscript' },
+  superscript: { label: 'x²', title: 'Superscript' },
+  inlineCode: { label: '`c`', title: 'Inline code' },
+  editLink: { label: 'Edit↗', title: 'Edit link' },
+  findReplace: { label: 'Find', title: 'Find & replace', shortcut: 'Ctrl+F' },
+  fullscreen: { label: '⤢', title: 'Toggle full screen' },
   sourceView: { label: '<>', title: 'Toggle HTML source' },
   undo: { label: '↶', title: 'Undo', shortcut: 'Ctrl+Z' },
   redo: { label: '↷', title: 'Redo', shortcut: 'Ctrl+Shift+Z' },
@@ -221,12 +288,18 @@ const TOGGLE_COMMANDS = new Set<RichTextCommand>([
   'italic',
   'underline',
   'strike',
+  'subscript',
+  'superscript',
+  'inlineCode',
   'ul',
   'ol',
   'alignLeft',
   'alignCenter',
   'alignRight',
+  'justify',
   'sourceView',
+  'findReplace',
+  'fullscreen',
 ]);
 
 /** Commands rendered as a `<select>` rather than a button (value-bearing). */
@@ -256,6 +329,7 @@ const BLOCK_TAGS = new Set([
 const ALLOWED_TAGS = new Set([
   'P',
   'BR',
+  'HR',
   'B',
   'STRONG',
   'I',
@@ -264,6 +338,9 @@ const ALLOWED_TAGS = new Set([
   'S',
   'STRIKE',
   'DEL',
+  'MARK',
+  'SUB',
+  'SUP',
   'A',
   'UL',
   'OL',
@@ -280,6 +357,8 @@ const ALLOWED_TAGS = new Set([
   'SPAN',
   'DIV',
   'IMG',
+  'FIGURE',
+  'FIGCAPTION',
   'TABLE',
   'THEAD',
   'TBODY',
@@ -311,6 +390,14 @@ const ALLOWED_STYLES = new Set([
   'font-size',
   'margin-left',
   'padding-left',
+  // Image alignment / sizing (figure + img).
+  'float',
+  'display',
+  'margin',
+  'margin-right',
+  'width',
+  'max-width',
+  'height',
 ]);
 
 export class RichText extends Widget<RichTextConfig, RichTextEvents> {
@@ -331,6 +418,22 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
   /** The raw-HTML source textarea (created in buildEl, hidden until toggled). */
   private get sourceEl(): HTMLTextAreaElement {
     return this.el.querySelector('.jects-richtext__source') as HTMLTextAreaElement;
+  }
+  /** Hidden file input backing the image-upload command. */
+  private get fileInput(): HTMLInputElement {
+    return this.el.querySelector('.jects-richtext__file') as HTMLInputElement;
+  }
+  /** The status footer (word/char counts), created in buildEl. */
+  private get statusEl(): HTMLElement {
+    return this.el.querySelector('.jects-richtext__status') as HTMLElement;
+  }
+  /** The find & replace dialog container, created in buildEl. */
+  private get findDialog(): HTMLElement {
+    return this.el.querySelector('.jects-richtext__find') as HTMLElement;
+  }
+  /** The link-edit dialog container, created in buildEl. */
+  private get linkDialog(): HTMLElement {
+    return this.el.querySelector('.jects-richtext__linkdlg') as HTMLElement;
   }
 
   /**
@@ -361,6 +464,8 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
       sourceView: false,
       fontFamilies: DEFAULT_FONT_FAMILIES,
       fontSizes: DEFAULT_FONT_SIZES,
+      showStatus: true,
+      maxImageBytes: 2 * 1024 * 1024,
     };
   }
 
@@ -386,6 +491,26 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     });
     source.hidden = true;
 
+    // Hidden file input backing the image-upload command. Kept in the DOM so the
+    // native file picker can be opened programmatically from the toolbar button.
+    const file = createEl('input', {
+      className: 'jects-richtext__file',
+      attrs: { type: 'file', accept: 'image/*', 'aria-hidden': 'true', tabindex: '-1' },
+    }) as HTMLInputElement;
+    file.hidden = true;
+
+    // Find & replace dialog (built once, shown on demand). Lives inside the root
+    // so it is removed on destroy() with the rest of the widget.
+    const find = this.buildFindDialog();
+    // Link-edit dialog (edit href / text / target of an existing anchor).
+    const linkDlg = this.buildLinkDialog();
+
+    // Status footer (live word/char counts).
+    const status = createEl('div', {
+      className: 'jects-richtext__status',
+      attrs: { role: 'status', 'aria-live': 'off' },
+    });
+
     // Wire listeners with bound methods — class-field arrow handlers have NOT
     // initialized yet at buildEl() time, so we must bind methods inline.
     editable.addEventListener('input', () => this.handleInput());
@@ -402,10 +527,115 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     // Roving-tabindex keyboard navigation for the ARIA toolbar pattern.
     toolbar.addEventListener('keydown', (e) => this.handleToolbarKeydown(e));
 
+    // Image upload: read the chosen file into a data: URL and insert it.
+    file.addEventListener('change', () => this.handleFilePicked());
+
     root.appendChild(toolbar);
     root.appendChild(editable);
     root.appendChild(source);
+    root.appendChild(file);
+    root.appendChild(find);
+    root.appendChild(linkDlg);
+    root.appendChild(status);
     return root;
+  }
+
+  /** Build the (initially hidden) Find & Replace dialog. */
+  private buildFindDialog(): HTMLElement {
+    const dlg = createEl('div', {
+      className: 'jects-richtext__find',
+      attrs: { role: 'dialog', 'aria-label': 'Find and replace' },
+    });
+    dlg.hidden = true;
+    const findInput = createEl('input', {
+      className: 'jects-richtext__find-input',
+      attrs: { type: 'text', placeholder: 'Find', 'aria-label': 'Find' },
+    }) as HTMLInputElement;
+    const replaceInput = createEl('input', {
+      className: 'jects-richtext__replace-input',
+      attrs: { type: 'text', placeholder: 'Replace with', 'aria-label': 'Replace with' },
+    }) as HTMLInputElement;
+    const count = createEl('span', { className: 'jects-richtext__find-count' });
+    count.setAttribute('aria-live', 'polite');
+    const mkBtn = (action: string, label: string): HTMLButtonElement => {
+      const b = createEl('button', {
+        className: 'jects-richtext__find-btn',
+        attrs: { type: 'button', 'data-find-action': action },
+      }) as HTMLButtonElement;
+      b.textContent = label;
+      return b;
+    };
+    const prev = mkBtn('prev', 'Prev');
+    const next = mkBtn('next', 'Next');
+    const replace = mkBtn('replace', 'Replace');
+    const replaceAll = mkBtn('replaceAll', 'Replace all');
+    const close = mkBtn('close', '✕');
+    close.setAttribute('aria-label', 'Close find and replace');
+
+    findInput.addEventListener('input', () => this.runFind());
+    findInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.findStep(e.shiftKey ? -1 : 1);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        this.closeFind();
+      }
+    });
+    dlg.addEventListener('click', (e) => this.handleFindAction(e));
+
+    dlg.appendChild(findInput);
+    dlg.appendChild(replaceInput);
+    dlg.appendChild(prev);
+    dlg.appendChild(next);
+    dlg.appendChild(replace);
+    dlg.appendChild(replaceAll);
+    dlg.appendChild(count);
+    dlg.appendChild(close);
+    return dlg;
+  }
+
+  /** Build the (initially hidden) link-edit dialog. */
+  private buildLinkDialog(): HTMLElement {
+    const dlg = createEl('div', {
+      className: 'jects-richtext__linkdlg',
+      attrs: { role: 'dialog', 'aria-label': 'Edit link' },
+    });
+    dlg.hidden = true;
+    const text = createEl('input', {
+      className: 'jects-richtext__linkdlg-text',
+      attrs: { type: 'text', placeholder: 'Text', 'aria-label': 'Link text' },
+    }) as HTMLInputElement;
+    const href = createEl('input', {
+      className: 'jects-richtext__linkdlg-href',
+      attrs: { type: 'text', placeholder: 'https://…', 'aria-label': 'Link URL' },
+    }) as HTMLInputElement;
+    const blank = createEl('label', { className: 'jects-richtext__linkdlg-blank' });
+    const blankCb = createEl('input', {
+      className: 'jects-richtext__linkdlg-target',
+      attrs: { type: 'checkbox', 'aria-label': 'Open in new tab' },
+    }) as HTMLInputElement;
+    const blankText = createEl('span');
+    blankText.textContent = 'New tab';
+    blank.appendChild(blankCb);
+    blank.appendChild(blankText);
+    const mkBtn = (action: string, label: string): HTMLButtonElement => {
+      const b = createEl('button', {
+        className: 'jects-richtext__linkdlg-btn',
+        attrs: { type: 'button', 'data-link-action': action },
+      }) as HTMLButtonElement;
+      b.textContent = label;
+      return b;
+    };
+    const apply = mkBtn('apply', 'Apply');
+    const cancel = mkBtn('cancel', 'Cancel');
+    dlg.addEventListener('click', (e) => this.handleLinkDialogAction(e));
+    dlg.appendChild(text);
+    dlg.appendChild(href);
+    dlg.appendChild(blank);
+    dlg.appendChild(apply);
+    dlg.appendChild(cancel);
+    return dlg;
   }
 
   // ---- listeners (plain methods; bound inline in buildEl) ------------------
@@ -441,6 +671,9 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     } else if (key === 'k') {
       e.preventDefault();
       this.exec('link');
+    } else if (key === 'f') {
+      e.preventDefault();
+      this.exec('findReplace');
     } else if (key === 'z' && !e.shiftKey) {
       e.preventDefault();
       this.exec('undo');
@@ -773,6 +1006,10 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     this.sourceEl.disabled = !editing;
     this.applySourceVisibility();
 
+    // ---- status footer ----
+    this.statusEl.hidden = this.config.showStatus === false;
+    this.updateStatus();
+
     this.refreshState();
   }
 
@@ -902,6 +1139,26 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
       this.refreshState();
       return this;
     }
+    // Chrome-level toggles/launchers operate on the widget, not on the current
+    // selection content — they must not focus the editable or emit a change.
+    if (command === 'fullscreen') {
+      this.toggleFullscreen();
+      this.refreshState();
+      return this;
+    }
+    if (command === 'findReplace') {
+      this.toggleFind();
+      this.refreshState();
+      return this;
+    }
+    if (command === 'uploadImage') {
+      this.openFilePicker();
+      return this;
+    }
+    if (command === 'editLink') {
+      this.openLinkDialog();
+      return this;
+    }
     // Snapshot the selection before focusing: focusing the editable can collapse
     // the live selection (e.g. in jsdom), and the color/font/indent commands
     // must operate on the user's original selection. restoreSelection() (called
@@ -960,6 +1217,21 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
       case 'alignRight':
         this.run('justifyRight');
         break;
+      case 'justify':
+        this.run('justifyFull');
+        break;
+      case 'subscript':
+        this.toggleInline('SUB');
+        break;
+      case 'superscript':
+        this.toggleInline('SUP');
+        break;
+      case 'inlineCode':
+        this.toggleInline('CODE');
+        break;
+      case 'horizontalRule':
+        this.insertHorizontalRule();
+        break;
       case 'indent':
         this.applyBlockIndent(1);
         break;
@@ -981,6 +1253,24 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
       case 'insertImage':
         this.insertImage(value);
         break;
+      case 'imageAlignLeft':
+        this.alignImage('left');
+        break;
+      case 'imageAlignCenter':
+        this.alignImage('center');
+        break;
+      case 'imageAlignRight':
+        this.alignImage('right');
+        break;
+      case 'imageWidthSmall':
+        this.setImageWidth('25%');
+        break;
+      case 'imageWidthMedium':
+        this.setImageWidth('50%');
+        break;
+      case 'imageWidthFull':
+        this.setImageWidth('100%');
+        break;
       case 'insertTable':
         this.insertTable(value);
         break;
@@ -995,6 +1285,15 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
         break;
       case 'tableDeleteColumn':
         this.tableEdit('deleteColumn');
+        break;
+      case 'tableMergeCells':
+        this.tableMergeCells();
+        break;
+      case 'tableSplitCell':
+        this.tableSplitCell();
+        break;
+      case 'tableToggleHeaderRow':
+        this.tableToggleHeaderRow();
         break;
       case 'undo':
         this.run('undo');
@@ -1111,6 +1410,57 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     }
   }
 
+  // ---- inline toggles (sub/sup/inline-code) -------------------------------
+
+  /**
+   * Toggle an inline wrapper tag (`SUB`/`SUP`/`CODE`) around the selection. When
+   * the selection already sits inside that tag, unwrap it; otherwise wrap the
+   * extracted range in a fresh element. Deterministic across browsers/jsdom
+   * (native execCommand has no inline-code and patchy sub/sup support).
+   */
+  private toggleInline(tag: string): void {
+    this.restoreSelection();
+    const sel = this.ownerDoc().getSelection?.();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    if (!this.editable.contains(range.commonAncestorContainer)) return;
+    const existing = this.closestWithin(range.startContainer, tag);
+    if (existing) {
+      // Unwrap: replace the element with its children, then reselect them.
+      const parent = existing.parentNode;
+      if (!parent) return;
+      const first = existing.firstChild;
+      const last = existing.lastChild;
+      while (existing.firstChild) parent.insertBefore(existing.firstChild, existing);
+      parent.removeChild(existing);
+      if (first && last) {
+        const after = this.ownerDoc().createRange();
+        after.setStartBefore(first);
+        after.setEndAfter(last);
+        sel.removeAllRanges();
+        sel.addRange(after);
+      }
+      return;
+    }
+    if (range.collapsed) return;
+    const el = this.ownerDoc().createElement(tag);
+    try {
+      el.appendChild(range.extractContents());
+      range.insertNode(el);
+    } catch {
+      return;
+    }
+    const after = this.ownerDoc().createRange();
+    after.selectNodeContents(el);
+    sel.removeAllRanges();
+    sel.addRange(after);
+  }
+
+  /** Insert a thematic break (`<hr>`) at the caret, followed by a paragraph. */
+  private insertHorizontalRule(): void {
+    this.insertHtml('<hr><p><br></p>');
+  }
+
   // ---- images / tables / inline style / indent ----------------------------
 
   /**
@@ -1122,6 +1472,90 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     const url = (src ?? 'https://placehold.co/160x100?text=Image').trim();
     if (!isSafeImageUrl(url)) return;
     this.insertHtml(`<img src="${escapeAttr(url)}" alt="">`);
+  }
+
+  /** Open the hidden file picker for the image-upload command. */
+  private openFilePicker(): void {
+    this.saveSelection();
+    this.fileInput.value = '';
+    this.fileInput.click();
+  }
+
+  /**
+   * Read the picked image file into a `data:` URL and insert it. Rejects
+   * non-image and oversized files. Insertion routes through the allow-list
+   * sanitizer (which only admits `data:image/*`).
+   */
+  private handleFilePicked(): void {
+    const input = this.fileInput;
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const max = this.config.maxImageBytes ?? 2 * 1024 * 1024;
+    if (!file.type.startsWith('image/') || file.size > max) {
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      input.value = '';
+      if (!result || this.isDestroyed) return;
+      if (this.emit('beforeChange', { editor: this, html: this.getHTML() }) === false) return;
+      this.restoreSelection();
+      this.editable.focus();
+      this.insertImage(result);
+      this.notifyChange('change');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /** Resolve the image to act on: the selected/clicked one, else the last image. */
+  private currentImage(): HTMLImageElement | null {
+    const sel = this.ownerDoc().getSelection?.();
+    if (sel && sel.rangeCount > 0) {
+      const start = sel.getRangeAt(0).startContainer;
+      if (this.editable.contains(start)) {
+        const img = this.closestWithin(start, 'IMG') as HTMLImageElement | null;
+        if (img) return img;
+        // A range that wraps an image (selectNode) reports the parent as start.
+        const within = (start.nodeType === 1 ? (start as HTMLElement) : start.parentElement)
+          ?.querySelector('img');
+        if (within) return within as HTMLImageElement;
+      }
+    }
+    const imgs = this.editable.querySelectorAll('img');
+    return imgs.length ? (imgs[imgs.length - 1] as HTMLImageElement) : null;
+  }
+
+  /**
+   * Align an image left/center/right. Left/right use `float` (text wraps); center
+   * uses a block image with auto side margins. Styles are on the allow-list, so
+   * they survive serialization.
+   */
+  private alignImage(side: 'left' | 'center' | 'right'): void {
+    const img = this.currentImage();
+    if (!img) return;
+    img.style.removeProperty('float');
+    img.style.removeProperty('display');
+    img.style.removeProperty('margin');
+    img.style.removeProperty('margin-right');
+    if (side === 'center') {
+      img.style.display = 'block';
+      img.style.margin = '0 auto';
+    } else {
+      img.style.float = side;
+      if (side === 'left') img.style.marginRight = '1em';
+    }
+  }
+
+  /** Set an image's width (CSS length / percentage) and keep aspect ratio. */
+  private setImageWidth(width: string): void {
+    const img = this.currentImage();
+    if (!img) return;
+    img.removeAttribute('width');
+    img.removeAttribute('height');
+    img.style.width = width;
+    img.style.height = 'auto';
   }
 
   /**
@@ -1181,6 +1615,163 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     }
     const cells = this.editable.querySelectorAll<HTMLTableCellElement>('td, th');
     return cells.length ? cells[cells.length - 1]! : null;
+  }
+
+  /** Cells of the active table that intersect the current selection range. */
+  private selectedCells(): HTMLTableCellElement[] {
+    const anchor = this.currentCell();
+    const table = anchor ? (this.closestWithin(anchor, 'TABLE') as HTMLTableElement | null) : null;
+    if (!table) return [];
+    const all = Array.from(table.querySelectorAll<HTMLTableCellElement>('td, th'));
+    const sel = this.ownerDoc().getSelection?.();
+    if (!sel || sel.rangeCount === 0 || sel.getRangeAt(0).collapsed) {
+      return anchor ? [anchor] : [];
+    }
+    const range = sel.getRangeAt(0);
+    const hit = all.filter((c) => range.intersectsNode(c));
+    return hit.length > 0 ? hit : anchor ? [anchor] : [];
+  }
+
+  /**
+   * Merge the selected cells into the first one (rectangular merge). Sets the
+   * survivor's `colspan`/`rowspan` to cover the selection's bounding box, moves
+   * the other cells' content into it, and removes them. With a single cell and a
+   * right-hand neighbour in the same row, performs a simple colspan merge.
+   */
+  private tableMergeCells(): void {
+    let cells = this.selectedCells();
+    if (cells.length < 2) {
+      // No multi-cell selection: merge the anchor with its next sibling cell.
+      const anchor = this.currentCell();
+      const next = anchor?.nextElementSibling as HTMLTableCellElement | null;
+      if (!anchor || !next) return;
+      cells = [anchor, next];
+    }
+    const grid = this.cellGrid(cells[0]!);
+    if (!grid) return;
+    // Compute the bounding box (in grid coordinates) of the selected cells.
+    let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
+    const inSet = new Set(cells);
+    for (const pos of grid.positions) {
+      if (!inSet.has(pos.cell)) continue;
+      minR = Math.min(minR, pos.r);
+      maxR = Math.max(maxR, pos.r + pos.rowspan - 1);
+      minC = Math.min(minC, pos.c);
+      maxC = Math.max(maxC, pos.c + pos.colspan - 1);
+    }
+    if (!Number.isFinite(minR)) return;
+    // Every cell whose top-left falls inside the box is absorbed.
+    const absorbed = grid.positions.filter(
+      (p) => p.r >= minR && p.r <= maxR && p.c >= minC && p.c <= maxC,
+    );
+    const survivor = absorbed.find((p) => p.r === minR && p.c === minC)?.cell;
+    if (!survivor) return;
+    for (const p of absorbed) {
+      if (p.cell === survivor) continue;
+      const content = (p.cell.innerHTML ?? '').trim();
+      if (content && content !== '&nbsp;' && content !== '') {
+        survivor.insertAdjacentHTML('beforeend', ' ' + p.cell.innerHTML);
+      }
+      p.cell.remove();
+    }
+    const cspan = maxC - minC + 1;
+    const rspan = maxR - minR + 1;
+    if (cspan > 1) survivor.setAttribute('colspan', String(cspan));
+    else survivor.removeAttribute('colspan');
+    if (rspan > 1) survivor.setAttribute('rowspan', String(rspan));
+    else survivor.removeAttribute('rowspan');
+  }
+
+  /**
+   * Split the current merged cell back into 1×1 cells, re-inserting plain cells
+   * to the right (for colspan) and in the rows below (for rowspan).
+   */
+  private tableSplitCell(): void {
+    const cell = this.currentCell();
+    if (!cell) return;
+    const colspan = Math.max(1, Number(cell.getAttribute('colspan')) || 1);
+    const rowspan = Math.max(1, Number(cell.getAttribute('rowspan')) || 1);
+    if (colspan === 1 && rowspan === 1) return;
+    const row = cell.parentElement as HTMLTableRowElement | null;
+    const table = this.closestWithin(cell, 'TABLE') as HTMLTableElement | null;
+    if (!row || !table) return;
+    cell.removeAttribute('colspan');
+    cell.removeAttribute('rowspan');
+    const tag = cell.tagName.toLowerCase();
+    // Re-add the extra columns in the survivor's own row.
+    for (let i = 1; i < colspan; i++) {
+      const fresh = this.ownerDoc().createElement(tag);
+      fresh.innerHTML = ' ';
+      row.insertBefore(fresh, cell.nextSibling);
+    }
+    // Re-add full-width rows-worth of cells in each spanned row below.
+    const rows = Array.from(table.querySelectorAll('tr'));
+    const rowIndex = rows.indexOf(row);
+    for (let dr = 1; dr < rowspan; dr++) {
+      const target = rows[rowIndex + dr];
+      if (!target) continue;
+      for (let i = 0; i < colspan; i++) {
+        const fresh = this.ownerDoc().createElement(tag);
+        fresh.innerHTML = ' ';
+        target.appendChild(fresh);
+      }
+    }
+  }
+
+  /**
+   * Toggle the first row of the active table between a header row (`<th scope>`)
+   * and a body row (`<td>`). Idempotent per invocation.
+   */
+  private tableToggleHeaderRow(): void {
+    const cell = this.currentCell();
+    const table = cell ? (this.closestWithin(cell, 'TABLE') as HTMLTableElement | null) : null;
+    if (!table) return;
+    const firstRow = table.querySelector('tr');
+    if (!firstRow) return;
+    const cells = Array.from(firstRow.children) as HTMLTableCellElement[];
+    const isHeader = cells.every((c) => c.tagName === 'TH');
+    for (const c of cells) {
+      const replacement = this.ownerDoc().createElement(isHeader ? 'td' : 'th');
+      for (const attr of Array.from(c.attributes)) {
+        if (attr.name === 'scope') continue;
+        replacement.setAttribute(attr.name, attr.value);
+      }
+      if (!isHeader) replacement.setAttribute('scope', 'col');
+      replacement.innerHTML = c.innerHTML;
+      c.replaceWith(replacement);
+    }
+  }
+
+  /**
+   * Build a grid model of the table containing `anchor`, resolving the row/column
+   * coordinate of every cell while accounting for existing col/row spans. Used by
+   * the rectangular merge.
+   */
+  private cellGrid(
+    anchor: HTMLTableCellElement,
+  ): { positions: { cell: HTMLTableCellElement; r: number; c: number; colspan: number; rowspan: number }[] } | null {
+    const table = this.closestWithin(anchor, 'TABLE') as HTMLTableElement | null;
+    if (!table) return null;
+    const rows = Array.from(table.querySelectorAll('tr'));
+    const occupied: boolean[][] = [];
+    const positions: { cell: HTMLTableCellElement; r: number; c: number; colspan: number; rowspan: number }[] = [];
+    rows.forEach((row, r) => {
+      occupied[r] ??= [];
+      let c = 0;
+      for (const child of Array.from(row.children)) {
+        const cell = child as HTMLTableCellElement;
+        while (occupied[r]![c]) c++;
+        const colspan = Math.max(1, Number(cell.getAttribute('colspan')) || 1);
+        const rowspan = Math.max(1, Number(cell.getAttribute('rowspan')) || 1);
+        positions.push({ cell, r, c, colspan, rowspan });
+        for (let dr = 0; dr < rowspan; dr++) {
+          occupied[r + dr] ??= [];
+          for (let dc = 0; dc < colspan; dc++) occupied[r + dr]![c + dc] = true;
+        }
+        c += colspan;
+      }
+    });
+    return { positions };
   }
 
   /**
@@ -1286,6 +1877,321 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     }
   }
 
+  // ---- full screen --------------------------------------------------------
+
+  /** Toggle the widget between inline and full-viewport layout. */
+  private toggleFullscreen(): void {
+    const on = !this.isFullscreen();
+    this.el.dataset.fullscreen = String(on);
+    this.el.classList.toggle('jects-richtext--fullscreen', on);
+    const btn = this.toolbarEl.querySelector<HTMLButtonElement>(
+      'button[data-command="fullscreen"]',
+    );
+    if (btn) {
+      btn.setAttribute('aria-pressed', String(on));
+      btn.classList.toggle('jects-richtext__btn--active', on);
+    }
+    this.emit('fullscreenChange', { editor: this, fullscreen: on });
+  }
+
+  /** Whether the editor is currently in full-screen mode. */
+  isFullscreen(): boolean {
+    return this.el.dataset.fullscreen === 'true';
+  }
+
+  // ---- find & replace -----------------------------------------------------
+
+  /** Show/hide the find & replace dialog. */
+  private toggleFind(): void {
+    if (this.findDialog.hidden) this.openFind();
+    else this.closeFind();
+  }
+
+  /** Open the find dialog and focus the search field. */
+  private openFind(): void {
+    this.findDialog.hidden = false;
+    this.el.classList.add('jects-richtext--finding');
+    const input = this.findDialog.querySelector<HTMLInputElement>('.jects-richtext__find-input');
+    input?.focus();
+    input?.select();
+    this.runFind();
+  }
+
+  /** Close the find dialog and clear any match highlights. */
+  private closeFind(): void {
+    this.findDialog.hidden = true;
+    this.el.classList.remove('jects-richtext--finding');
+    this.clearFindHighlights();
+    this.el.dataset.findActive = '';
+    const btn = this.toolbarEl.querySelector<HTMLButtonElement>(
+      'button[data-command="findReplace"]',
+    );
+    if (btn) {
+      btn.setAttribute('aria-pressed', 'false');
+      btn.classList.remove('jects-richtext__btn--active');
+    }
+  }
+
+  /** Delegated handler for the find dialog action buttons. */
+  private handleFindAction(e: MouseEvent): void {
+    const btn = (e.target as HTMLElement | null)?.closest<HTMLButtonElement>(
+      'button[data-find-action]',
+    );
+    if (!btn) return;
+    const action = btn.dataset.findAction;
+    if (action === 'close') this.closeFind();
+    else if (action === 'next') this.findStep(1);
+    else if (action === 'prev') this.findStep(-1);
+    else if (action === 'replace') this.replaceCurrent();
+    else if (action === 'replaceAll') this.replaceAll();
+  }
+
+  /** The current search term (from the find input). */
+  private findTerm(): string {
+    return (
+      this.findDialog.querySelector<HTMLInputElement>('.jects-richtext__find-input')?.value ?? ''
+    );
+  }
+
+  /** The current replacement string (from the replace input). */
+  private replaceTerm(): string {
+    return (
+      this.findDialog.querySelector<HTMLInputElement>('.jects-richtext__replace-input')?.value ?? ''
+    );
+  }
+
+  /** Remove all `<mark data-find>` highlight wrappers, merging text back. */
+  private clearFindHighlights(): void {
+    const marks = this.editable.querySelectorAll('mark[data-find]');
+    for (const mark of Array.from(marks)) {
+      const parent = mark.parentNode;
+      if (!parent) continue;
+      while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+      parent.removeChild(mark);
+      parent.normalize();
+    }
+  }
+
+  /**
+   * Highlight every case-insensitive occurrence of the search term by wrapping
+   * each match in `<mark data-find>`. Returns the number of matches and updates
+   * the dialog's match counter. The active match (index in `findActive`) gets an
+   * extra `data-find-active` flag for distinct styling.
+   */
+  private runFind(): number {
+    this.clearFindHighlights();
+    const term = this.findTerm();
+    const countEl = this.findDialog.querySelector<HTMLElement>('.jects-richtext__find-count');
+    if (!term) {
+      if (countEl) countEl.textContent = '';
+      return 0;
+    }
+    const matches = this.highlightMatches(term);
+    let active = Number(this.el.dataset.findActive);
+    if (!Number.isFinite(active) || active < 0 || active >= matches) active = 0;
+    this.el.dataset.findActive = String(active);
+    this.markActive(active);
+    if (countEl) countEl.textContent = matches > 0 ? `${active + 1} / ${matches}` : '0 results';
+    return matches;
+  }
+
+  /** Wrap each occurrence of `term` (case-insensitive) in a highlight mark. */
+  private highlightMatches(term: string): number {
+    const doc = this.ownerDoc();
+    const lower = term.toLowerCase();
+    const walker = doc.createTreeWalker(this.editable, NodeFilter.SHOW_TEXT);
+    const textNodes: Text[] = [];
+    let n = walker.nextNode();
+    while (n) {
+      // Skip text already inside a highlight (defensive) or inside scripts.
+      textNodes.push(n as Text);
+      n = walker.nextNode();
+    }
+    let count = 0;
+    for (const node of textNodes) {
+      const text = node.nodeValue ?? '';
+      const hay = text.toLowerCase();
+      if (!hay.includes(lower)) continue;
+      const frag = doc.createDocumentFragment();
+      let idx = 0;
+      let pos = hay.indexOf(lower, idx);
+      while (pos !== -1) {
+        if (pos > idx) frag.appendChild(doc.createTextNode(text.slice(idx, pos)));
+        const mark = doc.createElement('mark');
+        mark.setAttribute('data-find', '');
+        mark.textContent = text.slice(pos, pos + term.length);
+        frag.appendChild(mark);
+        count++;
+        idx = pos + term.length;
+        pos = hay.indexOf(lower, idx);
+      }
+      if (idx < text.length) frag.appendChild(doc.createTextNode(text.slice(idx)));
+      node.parentNode?.replaceChild(frag, node);
+    }
+    return count;
+  }
+
+  /** Flag the active match (by index) for distinct styling and scroll it in. */
+  private markActive(index: number): void {
+    const marks = this.editable.querySelectorAll<HTMLElement>('mark[data-find]');
+    marks.forEach((m, i) => {
+      if (i === index) {
+        m.setAttribute('data-find-active', '');
+        m.scrollIntoView?.({ block: 'nearest' });
+      } else {
+        m.removeAttribute('data-find-active');
+      }
+    });
+  }
+
+  /** Advance the active match by `dir` (+1 next / −1 prev), wrapping around. */
+  private findStep(dir: number): void {
+    const marks = this.editable.querySelectorAll('mark[data-find]');
+    const total = marks.length;
+    if (total === 0) {
+      this.runFind();
+      return;
+    }
+    let active = Number(this.el.dataset.findActive) || 0;
+    active = (active + dir + total) % total;
+    this.el.dataset.findActive = String(active);
+    this.markActive(active);
+    const countEl = this.findDialog.querySelector<HTMLElement>('.jects-richtext__find-count');
+    if (countEl) countEl.textContent = `${active + 1} / ${total}`;
+  }
+
+  /** Replace the active match with the replacement text, then re-find. */
+  private replaceCurrent(): void {
+    if (this.config.readOnly || this.config.disabled) return;
+    if (this.emit('beforeChange', { editor: this, html: this.getHTML() }) === false) return;
+    const active = Number(this.el.dataset.findActive) || 0;
+    const marks = this.editable.querySelectorAll<HTMLElement>('mark[data-find]');
+    const mark = marks[active];
+    if (!mark || !mark.parentNode) return;
+    const replacement = this.ownerDoc().createTextNode(this.replaceTerm());
+    mark.parentNode.replaceChild(replacement, mark);
+    replacement.parentNode?.normalize();
+    this.runFind();
+    this.notifyChange('change');
+  }
+
+  /** Replace every match with the replacement text in one pass. */
+  private replaceAll(): void {
+    if (this.config.readOnly || this.config.disabled) return;
+    if (this.emit('beforeChange', { editor: this, html: this.getHTML() }) === false) return;
+    const marks = this.editable.querySelectorAll<HTMLElement>('mark[data-find]');
+    if (marks.length === 0) return;
+    const replacement = this.replaceTerm();
+    for (const mark of Array.from(marks)) {
+      const node = this.ownerDoc().createTextNode(replacement);
+      mark.parentNode?.replaceChild(node, mark);
+    }
+    this.editable.normalize();
+    this.el.dataset.findActive = '0';
+    this.runFind();
+    this.notifyChange('change');
+  }
+
+  // ---- link edit dialog ---------------------------------------------------
+
+  /**
+   * Open the link-edit dialog seeded from the anchor at the caret (or the last
+   * anchor in the document). When there is no anchor, the dialog edits the
+   * selection — Apply will create a new link around it.
+   */
+  private openLinkDialog(): void {
+    this.saveSelection();
+    const anchor = this.currentAnchor();
+    const dlg = this.linkDialog;
+    const text = dlg.querySelector<HTMLInputElement>('.jects-richtext__linkdlg-text')!;
+    const href = dlg.querySelector<HTMLInputElement>('.jects-richtext__linkdlg-href')!;
+    const blank = dlg.querySelector<HTMLInputElement>('.jects-richtext__linkdlg-target')!;
+    if (anchor) {
+      text.value = anchor.textContent ?? '';
+      href.value = anchor.getAttribute('href') ?? '';
+      blank.checked = anchor.getAttribute('target') === '_blank';
+      this.el.dataset.linkEditing = 'true';
+    } else {
+      const sel = this.ownerDoc().getSelection?.();
+      text.value = sel && sel.rangeCount > 0 ? sel.getRangeAt(0).toString() : '';
+      href.value = '';
+      blank.checked = false;
+      this.el.dataset.linkEditing = 'false';
+    }
+    dlg.hidden = false;
+    this.el.classList.add('jects-richtext--linkdlg-open');
+    href.focus();
+  }
+
+  /** The anchor element at the caret, or the last anchor as a fallback. */
+  private currentAnchor(): HTMLAnchorElement | null {
+    const sel = this.ownerDoc().getSelection?.();
+    if (sel && sel.rangeCount > 0) {
+      const start = sel.getRangeAt(0).startContainer;
+      if (this.editable.contains(start)) {
+        const a = this.closestWithin(start, 'A') as HTMLAnchorElement | null;
+        if (a) return a;
+      }
+    }
+    const anchors = this.editable.querySelectorAll('a[href]');
+    return anchors.length ? (anchors[anchors.length - 1] as HTMLAnchorElement) : null;
+  }
+
+  /** Delegated handler for the link dialog's Apply / Cancel buttons. */
+  private handleLinkDialogAction(e: MouseEvent): void {
+    const btn = (e.target as HTMLElement | null)?.closest<HTMLButtonElement>(
+      'button[data-link-action]',
+    );
+    if (!btn) return;
+    if (btn.dataset.linkAction === 'apply') this.applyLinkDialog();
+    else this.closeLinkDialog();
+  }
+
+  /** Commit the link dialog: update the existing anchor or wrap the selection. */
+  private applyLinkDialog(): void {
+    if (this.config.readOnly || this.config.disabled) return;
+    const dlg = this.linkDialog;
+    const text = dlg.querySelector<HTMLInputElement>('.jects-richtext__linkdlg-text')!.value;
+    const rawHref = dlg.querySelector<HTMLInputElement>('.jects-richtext__linkdlg-href')!.value.trim();
+    const blank = dlg.querySelector<HTMLInputElement>('.jects-richtext__linkdlg-target')!.checked;
+    if (!isSafeUrl(rawHref) || rawHref === '') {
+      this.closeLinkDialog();
+      return;
+    }
+    if (this.emit('beforeChange', { editor: this, html: this.getHTML() }) === false) {
+      this.closeLinkDialog();
+      return;
+    }
+    const editing = this.el.dataset.linkEditing === 'true';
+    const anchor = editing ? this.currentAnchor() : null;
+    if (anchor) {
+      anchor.setAttribute('href', rawHref);
+      anchor.textContent = text || rawHref;
+      if (blank) {
+        anchor.setAttribute('target', '_blank');
+        anchor.setAttribute('rel', 'noopener noreferrer');
+      } else {
+        anchor.removeAttribute('target');
+        anchor.removeAttribute('rel');
+      }
+    } else {
+      // No existing anchor: build one and insert it at the saved selection.
+      this.restoreSelection();
+      this.editable.focus();
+      const label = text || rawHref;
+      const targetAttr = blank ? ' target="_blank" rel="noopener noreferrer"' : '';
+      this.insertHtml(`<a href="${escapeAttr(rawHref)}"${targetAttr}>${escapeHtml(label)}</a>`);
+    }
+    this.closeLinkDialog();
+    this.notifyChange('change');
+  }
+
+  /** Hide the link dialog without committing. */
+  private closeLinkDialog(): void {
+    this.linkDialog.hidden = true;
+    this.el.classList.remove('jects-richtext--linkdlg-open');
+  }
+
   // ---- selection save / restore -------------------------------------------
 
   /** Snapshot the current editable selection (before focus moves to a control). */
@@ -1368,22 +2274,35 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
       alignCenter: 'justifyCenter',
       alignRight: 'justifyRight',
     };
+    // Inline toggles whose state is derived from the selection's ancestry rather
+    // than from execCommand (sub/sup have patchy native query support; inline
+    // code has none).
+    const inlineTag: Partial<Record<RichTextCommand, string>> = {
+      subscript: 'SUB',
+      superscript: 'SUP',
+      inlineCode: 'CODE',
+    };
     for (const btn of this.toolbarEl.querySelectorAll<HTMLButtonElement>(
       'button[data-command]',
     )) {
       const cmd = btn.dataset.command as RichTextCommand | undefined;
       // Only genuine toggles carry aria-pressed; action buttons never do.
       if (!cmd || !TOGGLE_COMMANDS.has(cmd)) continue;
-      // sourceView's pressed state is owned by applySourceVisibility (mode flag),
-      // not by a native queryCommandState — leave it alone here.
-      if (cmd === 'sourceView') continue;
-      const native = map[cmd];
+      // sourceView / fullscreen / findReplace own their pressed state via their
+      // own mode flags (set by their toggles) — never clobber it here.
+      if (cmd === 'sourceView' || cmd === 'fullscreen' || cmd === 'findReplace') continue;
       let active = false;
-      if (native && typeof queryState === 'function') {
-        try {
-          active = queryState.call(doc, native);
-        } catch {
-          active = false;
+      const tag = inlineTag[cmd];
+      if (tag) {
+        active = this.selectionInTag(tag);
+      } else {
+        const native = map[cmd];
+        if (native && typeof queryState === 'function') {
+          try {
+            active = queryState.call(doc, native);
+          } catch {
+            active = false;
+          }
         }
       }
       btn.setAttribute('aria-pressed', String(active));
@@ -1391,9 +2310,19 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     }
   }
 
+  /** True when the caret/selection start sits inside an element of `tag`. */
+  private selectionInTag(tag: string): boolean {
+    const sel = this.ownerDoc().getSelection?.();
+    if (!sel || sel.rangeCount === 0) return false;
+    const node = sel.getRangeAt(0).startContainer;
+    if (!this.editable.contains(node)) return false;
+    return this.closestWithin(node, tag) !== null;
+  }
+
   /** Emit change/input after content mutated, gated by `beforeChange` veto. */
   private notifyChange(kind: 'input' | 'change'): void {
     const html = this.getHTML();
+    this.updateStatus();
     if (kind === 'input') {
       this.emit('input', { editor: this, html });
     }
@@ -1413,9 +2342,49 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
 
   // ---- public API ---------------------------------------------------------
 
-  /** Current editor HTML (sanitized). */
+  /** Current editor HTML (sanitized; transient find highlights removed). */
   getHTML(): string {
-    return sanitizeHtml(this.editable.innerHTML);
+    return sanitizeHtml(this.serializeBody());
+  }
+
+  /**
+   * Snapshot the editable's innerHTML with the transient find-highlight wrappers
+   * (`<mark data-find>`) unwrapped, so the search UI never leaks into the saved
+   * document. The live DOM is left untouched (it is cloned first).
+   */
+  private serializeBody(): string {
+    if (!this.editable.querySelector('mark[data-find]')) return this.editable.innerHTML;
+    const clone = this.editable.cloneNode(true) as HTMLElement;
+    for (const mark of Array.from(clone.querySelectorAll('mark[data-find]'))) {
+      const parent = mark.parentNode;
+      if (!parent) continue;
+      while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+      parent.removeChild(mark);
+    }
+    return clone.innerHTML;
+  }
+
+  /**
+   * Live document statistics (words, characters, characters-without-spaces).
+   * Mirrors the footer counts and excludes the transient find highlights.
+   */
+  getStats(): RichTextStats {
+    const text = (this.editable.textContent ?? '').replace(/ /g, ' ');
+    const trimmed = text.trim();
+    const words = trimmed === '' ? 0 : trimmed.split(/\s+/).length;
+    return {
+      words,
+      characters: text.length,
+      charactersNoSpaces: text.replace(/\s/g, '').length,
+    };
+  }
+
+  /** Update the footer's word/character readout from {@link getStats}. */
+  private updateStatus(): void {
+    const el = this.statusEl;
+    if (!el || el.hidden) return;
+    const { words, characters } = this.getStats();
+    el.textContent = `${words} word${words === 1 ? '' : 's'} · ${characters} character${characters === 1 ? '' : 's'}`;
   }
 
   /** Replace the editor content with sanitized HTML. Fires `change`. */

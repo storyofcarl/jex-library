@@ -36,7 +36,7 @@ let Grid, summaryFeature, editingFeature, columnStateFeature, columnPickerFeatur
 // charts / pivot / spreadsheet
 let Chart, PivotTable, AggregatorRegistry, Spreadsheet;
 // scheduling
-let Scheduler, Gantt, GanttProgressLineFeature, GanttIndicatorsFeature,
+let Scheduler, SchedulerStm, Gantt, GanttProgressLineFeature, GanttIndicatorsFeature,
   MultiBaselineCompare, ProjectLines, GanttExportMenu, GanttUndoRedo,
   GanttRollupFeature, GanttSegmentedTasksFeature, ResourceHistogram,
   ResourceUtilizationView, PertView, DEFAULT_GANTT_COLUMNS_WITH_SUCCESSORS,
@@ -100,7 +100,7 @@ function loadTimeline() {
   return (_pTimeline ||= importOnce('@jects/timeline-core').then((m) => { ({ HOUR_AND_DAY, WEEK_AND_DAY } = m); }));
 }
 function loadScheduler() {
-  return (_pScheduler ||= importOnce('@jects/scheduler').then((m) => { ({ Scheduler } = m); }));
+  return (_pScheduler ||= importOnce('@jects/scheduler').then((m) => { ({ Scheduler, SchedulerStm } = m); }));
 }
 function loadGantt() {
   return (_pGantt ||= importOnce('@jects/gantt').then((m) => {
@@ -2501,20 +2501,25 @@ main.appendChild(
   section(
     'scheduler',
     'Scheduler',
-    'A resource scheduler on a shared timeline engine — global & per-resource time ranges, drag-to-pan, infinite time-axis scroll, RRULE recurrence, visual dependencies and travel time.',
+    'A resource scheduler on a shared timeline engine — non-working-time shading, multi-assignment, visual + editable dependencies, global & per-resource time ranges, RRULE recurrence, travel time, the event editor, undo/redo and orientation + zoom controls.',
     (grid) => {
       /* — Scheduler: resources × events across a time range —
-         Enterprise feature tail on show: global TimeRanges (a shaded
-         "Sprint review" band), per-resource ResourceTimeRanges (Bob's PTO),
-         drag-to-pan + infinite time-axis scroll, recurring events (RRULE),
-         visual dependencies, and pre/post travel time flanking an event. */
-      grid.appendChild(card('Scheduler — resources × time (time-ranges · pan · infinite-scroll · travel)', (h) => {
+         Enterprise feature tail on show: a working-time CALENDAR (weekends +
+         off-hours shaded), MULTI-ASSIGNMENT (one event spanning two resources
+         via the assignments store; a resource carrying several events), global
+         TimeRanges (a shaded "Sprint review" band), per-resource
+         ResourceTimeRanges (Bob's PTO), drag-to-pan + infinite time-axis
+         scroll, recurring events (RRULE), EDITABLE visual dependencies, pre/post
+         travel time, the double-click event editor, an UNDO/REDO stack (real
+         SchedulerStm), and orientation + zoom toolbar controls. */
+      grid.appendChild(card('Scheduler — non-working shading · multi-assignment · editable deps · editor · undo/redo · orientation + zoom', (h) => {
         const bar = el('div', { class: 'g-host-toolbar', style: 'display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem' });
         h.appendChild(bar);
+        const status = el('span', { class: 'g-note', style: 'margin-left:.5rem;align-self:center' });
         const host = el('div', { style: 'height:var(--g-page-host);width:100%' });
         h.appendChild(host);
         const base = Date.UTC(2026, 5, 22); // Monday
-        new Scheduler(host, {
+        const sched = new Scheduler(host, {
           // A realistic field crew (6 people) rather than three placeholders.
           resources: [
             { id: 'r1', name: 'Alice Nguyen', role: 'Lead', capacity: 1 },
@@ -2534,10 +2539,26 @@ main.appendChild(
             { id: 'e6', resourceId: 'r5', name: 'Site survey', startDate: base + DAY + HOUR * 9, endDate: base + DAY + HOUR * 12 },
             { id: 'e7', resourceId: 'r6', name: 'Customer call-out', startDate: base + HOUR * 14, endDate: base + HOUR * 16, eventColor: 'cyan' },
             { id: 'e8', resourceId: 'r4', name: 'Handover', startDate: base + DAY * 2 + HOUR * 11, endDate: base + DAY * 2 + HOUR * 13 },
+            // Multi-assignment anchor: a joint install with NO resourceId — it is
+            // placed onto two resources via the assignments store below.
+            { id: 'e9', name: 'Joint rollout (2 crew)', startDate: base + DAY * 2 + HOUR * 9, endDate: base + DAY * 2 + HOUR * 12, eventColor: 'magenta' },
+          ],
+          // Many-to-many assignments: e9 is shared by Alice + Carol; Carol also
+          // carries the recurring standup (a resource with several events).
+          assignments: [
+            { id: 'a1', eventId: 'e9', resourceId: 'r1' },
+            { id: 'a2', eventId: 'e9', resourceId: 'r3' },
+            { id: 'a3', eventId: 'e4', resourceId: 'r3' },
           ],
           dependencies: [
             { id: 'd1', fromId: 'e1', toId: 'e2', type: 'FS' },
+            { id: 'd2', fromId: 'e2', toId: 'e9', type: 'FS' },
           ],
+          // Editable dependencies: hover a bar edge to draw a new link.
+          dependenciesEditable: true,
+          // Working-time calendar → weekends + before-9 / after-17 shading.
+          calendar: { weekendDays: [0, 6], dayStartHour: 9, dayEndHour: 17 },
+          showNonWorkingTime: true,
           // Global time range shaded across every resource row.
           timeRanges: [
             { id: 'tr1', startDate: base + HOUR * 12, endDate: base + HOUR * 13, name: 'Lunch' },
@@ -2548,12 +2569,59 @@ main.appendChild(
             { id: 'rtr1', resourceId: 'r2', startDate: base + HOUR * 9, endDate: base + HOUR * 18, name: 'PTO' },
           ],
           preset: HOUR_AND_DAY,
-          range: { start: base, end: base + DAY * 3 },
+          // 7-day window (Mon→Sun) so the weekend paints as non-working shading.
+          range: { start: base, end: base + DAY * 7 },
           creatable: true,
+          editable: true,
           panEnabled: true,
           infiniteScroll: true,
           eventTooltip: (e) => e.name ?? null,
         });
+
+        // ── Host toolbar driving the real public API ──────────────────────
+        const tb = (text, onClick, variant = 'secondary') => {
+          const b = new Button(bar, { text, variant, size: 'sm' });
+          b.el.addEventListener('click', onClick);
+          return b;
+        };
+        const warn = (label, e) => console.warn('SCHED-DEMO feature failed:', label, e && e.message);
+
+        // Zoom in / out (real ViewPreset ladder).
+        tb('Zoom in', () => { try { sched.zoomIn(); status.textContent = 'Zoomed in.'; } catch (e) { warn('zoomIn', e); } }, 'outline');
+        tb('Zoom out', () => { try { sched.zoomOut(); status.textContent = 'Zoomed out.'; } catch (e) { warn('zoomOut', e); } }, 'outline');
+
+        // Orientation toggle (horizontal rows ⇄ vertical columns).
+        let vertical = false;
+        const orientBtn = tb('Orientation: horizontal', () => {
+          vertical = !vertical;
+          try {
+            sched.update({ orientation: vertical ? 'vertical' : 'horizontal' });
+            orientBtn.el.textContent = 'Orientation: ' + (vertical ? 'vertical' : 'horizontal');
+          } catch (e) { warn('orientation', e); }
+        }, 'outline');
+
+        // Open the built-in event editor popup on a representative event.
+        tb('Edit event', () => {
+          try { sched.editEvent(sched.getEventStore().getById('e2')); status.textContent = 'Opened the event editor.'; }
+          catch (e) { warn('editEvent', e); }
+        }, 'ghost');
+
+        // Undo / redo via a real SchedulerStm tracking the event + dependency
+        // stores. Drag/resize/create/delete + link edits all land on the stack.
+        let stm = null;
+        const undoBtn = tb('Undo', () => { try { stm && stm.undo(); } catch (e) { warn('undo', e); } }, 'ghost');
+        const redoBtn = tb('Redo', () => { try { stm && stm.redo(); } catch (e) { warn('redo', e); } }, 'ghost');
+        try {
+          stm = new SchedulerStm({
+            stores: [
+              { name: 'events', store: sched.getEventStore() },
+              { name: 'dependencies', store: sched.getDependencyStore() },
+            ],
+          });
+          const syncStm = () => { undoBtn.el.disabled = !stm.canUndo; redoBtn.el.disabled = !stm.canRedo; };
+          stm.on('change', syncStm); syncStm();
+        } catch (e) { warn('stm', e); undoBtn.el.disabled = true; redoBtn.el.disabled = true; }
+        bar.appendChild(status);
 
         // ── Enterprise scale: 100 resources × ~2,000 events across 4 weeks. ──
         enterpriseSwap(bar, host, {
@@ -3830,22 +3898,40 @@ main.appendChild(
   section(
     'chatbot',
     'Chatbot',
-    'An LLM-agnostic chat UI — seeded conversation with mock streaming responses.',
+    'An LLM-agnostic chat UI — avatars, names, timestamps, copy + clear actions, suggested replies, and mock streaming Markdown (headings · bold · fenced code · lists).',
     (grid) => {
       grid.appendChild(card('Chatbot (chat UI, mock provider)', (h) => {
         const host = el('div', { style: 'height:var(--g-page-host);width:100%' });
         h.appendChild(host);
+        // Inline SVG avatars so the avatars column renders with no network fetch.
+        const avatar = (bg, ch) =>
+          'data:image/svg+xml;utf8,' +
+          encodeURIComponent(
+            `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">` +
+              `<rect width="40" height="40" rx="20" fill="${bg}"/>` +
+              `<text x="20" y="26" font-family="system-ui" font-size="17" fill="white" text-anchor="middle">${ch}</text></svg>`,
+          );
         async function* mockStream(text) {
-          const reply = `You said: **${text}**. This is a mock, LLM-agnostic reply — wire \`onSend\` to any provider. Here is a list:\n\n- streams token by token\n- renders \`markdown\`\n- supports suggestions`;
+          // A richer Markdown reply: heading + bold + fenced code block + list.
+          const reply = `You said: **${text}**.\n\n### What I can do\n\n- stream token by token\n- render \`markdown\`, including fenced code:\n\n\`\`\`js\nchat.onSend = (t) => provider.stream(t);\n\`\`\`\n\n- show suggested replies`;
           for (const word of reply.split(/(\s+)/)) {
-            await new Promise((r) => setTimeout(r, 25));
+            await new Promise((r) => setTimeout(r, 20));
             yield word;
           }
         }
         new Chatbot(host, {
           title: 'Assistant',
           placeholder: 'Ask me anything…',
-          suggestions: ['What can you do?', 'Summarize this page'],
+          // Names + avatars + timestamps + copy/clear actions all surfaced.
+          userName: 'You',
+          assistantName: 'Jects Bot',
+          userAvatar: avatar('oklch(0.55 0.13 250)', 'Y'),
+          assistantAvatar: avatar('oklch(0.6 0.15 200)', 'J'),
+          showAvatars: true,
+          showTimestamps: true,
+          copyable: true,
+          clearable: true,
+          suggestions: ['What can you do?', 'Show me a code block', 'Summarize this page'],
           messages: [
             { role: 'assistant', text: 'Hi! I am a demo bot. How can I help you today?' },
             { role: 'user', text: 'What is this gallery?' },
@@ -3853,7 +3939,7 @@ main.appendChild(
           ],
           onSend: (text) => mockStream(text),
         });
-        h.appendChild(el('div', { class: 'g-note', text: 'Type and press Enter (Shift+Enter for a newline) — the mock provider streams a Markdown reply token by token. Swap onSend for OpenAI / Anthropic / a local model.' }));
+        h.appendChild(el('div', { class: 'g-note', text: 'Avatars + names + timestamps on every turn; hover a message for the copy action, or Clear the transcript from the toolbar. Type and press Enter (Shift+Enter for a newline) — the mock provider streams a Markdown reply (heading, bold, a fenced code block, and a list) token by token. Swap onSend for OpenAI / Anthropic / a local model.' }));
       }, { block: true }));
     },
     { wide: true },

@@ -37,6 +37,15 @@ const DEFAULT_COL_WIDTH = 96;
 const DEFAULT_ROW_HEIGHT = 24;
 const ROW_HEADER_WIDTH = 48;
 
+/** Min/max clamps for the column-resize drag (Excel-like guard rails). */
+const MIN_COL_WIDTH = 24;
+const MAX_COL_WIDTH = 2000;
+/** Min/max clamps for the row-resize drag. */
+const MIN_ROW_HEIGHT = 16;
+const MAX_ROW_HEIGHT = 800;
+/** Thickness (px) of the row-resize hit-area at the row header's bottom edge. */
+const ROW_RESIZER_SIZE = 6;
+
 export interface CellGridConfig extends WidgetConfig {
   /** The driving API (engine seam). Required. */
   api: SpreadsheetApi;
@@ -61,6 +70,24 @@ export interface CellGridConfig extends WidgetConfig {
    * `Spreadsheet` opts in.
    */
   headerMenu?: boolean;
+  /**
+   * Enable interactive column resizing: a drag handle on each column header's
+   * right edge. Default `true`. Resizing emits `columnResize` and persists the
+   * width onto the sheet's `cols[c].size`.
+   */
+  columnResize?: boolean;
+  /**
+   * Enable interactive row resizing: a drag handle on each row header's bottom
+   * edge. Default `true`. Resizing emits `rowResize` and persists the height
+   * onto the sheet's `rows[r].size`.
+   */
+  rowResize?: boolean;
+  /**
+   * Show the row-header multi-select affordance: a checkbox in each row header
+   * (and a "select all" checkbox in the corner) with ctrl/shift range support.
+   * Default `true`. Toggling emits `rowSelectionChange`.
+   */
+  rowSelect?: boolean;
 }
 
 export interface CellGridEvents extends WidgetEvents {
@@ -81,6 +108,12 @@ export interface CellGridEvents extends WidgetEvents {
   editRejected: { address: CellAddress; reason: 'validation' | 'protected'; message?: string };
   /** A column-header sort/filter affordance was activated. */
   headerAction: { col: number; action: 'sortAsc' | 'sortDesc' | 'filter' };
+  /** A column finished resizing (drag or keyboard). `width` is the committed px. */
+  columnResize: { col: number; width: number; oldWidth: number };
+  /** A row finished resizing (drag or keyboard). `height` is the committed px. */
+  rowResize: { row: number; height: number; oldHeight: number };
+  /** The set of fully-selected rows (via the row-header checkboxes) changed. */
+  rowSelectionChange: { rows: number[] };
 }
 
 export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
@@ -102,9 +135,41 @@ export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
    * (keeping the widget + its closures alive) if the grid is destroyed mid-drag.
    */
   private declare listeners: AbortController;
+  /**
+   * Live header drag-resize session (column or row), or `null` when idle. The
+   * preview is applied to the live header/cell DOM on pointer-move; the model is
+   * persisted + the event emitted on pointer-up. Registered listeners are torn
+   * down via `dragSizeCleanup` (also aborted by `listeners` on destroy).
+   */
+  private declare sizeDrag:
+    | {
+        axis: 'col' | 'row';
+        index: number;
+        start: number;
+        startSize: number;
+        oldSize: number;
+        pointerId: number;
+      }
+    | null;
+  private declare sizeDragCleanup: (() => void) | null;
+  /**
+   * Fully-selected rows (via the row-header checkboxes), plus the anchor row for
+   * shift-range extension. Distinct from the cell-range selection so a user can
+   * select whole rows independently.
+   */
+  private declare rowSelection: Set<number>;
+  private declare rowSelectAnchor: number | null;
 
   protected override defaults(): Partial<CellGridConfig> {
-    return { colWidth: DEFAULT_COL_WIDTH, rowHeight: DEFAULT_ROW_HEIGHT, maxCols: 26, maxRows: 100 };
+    return {
+      colWidth: DEFAULT_COL_WIDTH,
+      rowHeight: DEFAULT_ROW_HEIGHT,
+      maxCols: 26,
+      maxRows: 100,
+      columnResize: true,
+      rowResize: true,
+      rowSelect: true,
+    };
   }
 
   protected buildEl(): HTMLElement {
@@ -112,6 +177,10 @@ export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
     this.editing = null;
     this.dragging = false;
     this.filling = null;
+    this.sizeDrag = null;
+    this.sizeDragCleanup = null;
+    this.rowSelection = new Set();
+    this.rowSelectAnchor = null;
     this.listeners = new AbortController();
     const root = createEl('div', {
       className: 'jects-sheet',
@@ -138,6 +207,9 @@ export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
     // Remove every manual listener (root keydown, per-cell handlers, and any
     // in-flight window 'mouseup' from an interrupted drag) before teardown.
     this.listeners.abort();
+    this.sizeDragCleanup?.();
+    this.sizeDragCleanup = null;
+    this.sizeDrag = null;
     this.dragging = false;
     this.editing = null;
     super.destroy();
@@ -168,6 +240,72 @@ export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
     if (!extend) this.selection.anchor = { ...clamped };
     this.render();
     this.emitSelection();
+  }
+
+  /* ── column / row sizing (public surface) ──────────────────────────────── */
+
+  /**
+   * Resize column `col` to `width` px (clamped), persisting it onto the sheet's
+   * `cols[col].size`, repainting, and emitting `columnResize`. The programmatic
+   * entry point the drag handler and external callers share.
+   */
+  resizeColumn(col: number, width: number): number {
+    const sheet = this.config.api.getActiveSheet();
+    const oldWidth = sheet.cols?.[col]?.size ?? this.config.colWidth ?? DEFAULT_COL_WIDTH;
+    const w = clampSize(width, MIN_COL_WIDTH, MAX_COL_WIDTH);
+    (sheet.cols ??= {})[col] = { ...sheet.cols?.[col], size: w };
+    this.render();
+    this.emit('columnResize', { col, width: w, oldWidth });
+    return w;
+  }
+
+  /**
+   * Resize row `row` to `height` px (clamped, uniform per-row), persisting it
+   * onto the sheet's `rows[row].size`, repainting, and emitting `rowResize`.
+   */
+  resizeRow(row: number, height: number): number {
+    const sheet = this.config.api.getActiveSheet();
+    const oldHeight = sheet.rows?.[row]?.size ?? this.config.rowHeight ?? DEFAULT_ROW_HEIGHT;
+    const h = clampSize(height, MIN_ROW_HEIGHT, MAX_ROW_HEIGHT);
+    (sheet.rows ??= {})[row] = { ...sheet.rows?.[row], size: h };
+    this.render();
+    this.emit('rowResize', { row, height: h, oldHeight });
+    return h;
+  }
+
+  /* ── row multi-selection (public surface) ──────────────────────────────── */
+
+  /** The fully-selected row indices, ascending. */
+  getSelectedRows(): number[] {
+    return [...this.rowSelection].sort((a, b) => a - b);
+  }
+
+  /** Replace the selected-row set (clears the anchor), repaint, and emit. */
+  setSelectedRows(rows: number[]): void {
+    this.rowSelection = new Set(rows);
+    this.rowSelectAnchor = rows.length > 0 ? rows[rows.length - 1]! : null;
+    this.render();
+    this.emitRowSelection();
+  }
+
+  /** Whether every addressable row is currently selected. */
+  isAllRowsSelected(): boolean {
+    const { rowCount } = this.dims();
+    if (rowCount === 0) return false;
+    if (this.rowSelection.size < rowCount) return false;
+    for (let r = 0; r < rowCount; r++) if (!this.rowSelection.has(r)) return false;
+    return true;
+  }
+
+  /** Select (or clear) every addressable row — the "select all" affordance. */
+  toggleAllRows(select?: boolean): void {
+    const { rowCount } = this.dims();
+    const want = select ?? !this.isAllRowsSelected();
+    this.rowSelection = new Set();
+    if (want) for (let r = 0; r < rowCount; r++) this.rowSelection.add(r);
+    this.rowSelectAnchor = want && rowCount > 0 ? rowCount - 1 : null;
+    this.render();
+    this.emitRowSelection();
   }
 
   /** Begin editing the active cell, optionally seeding the input. */
@@ -315,6 +453,7 @@ export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
     this.headerRowEl.textContent = '';
     const corner = createEl('div', { className: 'jects-sheet__corner', attrs: { role: 'columnheader' } });
     corner.style.width = `${ROW_HEADER_WIDTH}px`;
+    if (this.config.rowSelect) this.appendSelectAll(corner);
     this.headerRowEl.appendChild(corner);
     for (let c = 0; c < colCount; c++) {
       const w = sheet.cols?.[c]?.size ?? colW;
@@ -331,6 +470,7 @@ export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
       th.style.width = `${hidden ? 0 : w}px`;
       if (hidden) th.style.display = 'none';
       if (this.config.headerMenu && !hidden) this.appendHeaderMenu(th, c);
+      if (this.config.columnResize && !hidden) this.appendColResizer(th, c);
       this.headerRowEl.appendChild(th);
     }
 
@@ -348,15 +488,24 @@ export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
       rowEl.style.height = `${hiddenRow ? 0 : h}px`;
       if (hiddenRow) rowEl.style.display = 'none';
 
+      const rowSelected = this.rowSelection.has(r);
       const rowHead = createEl('div', {
         className: [
           'jects-sheet__rowhead',
           range.top <= r && r <= range.bottom ? 'jects-sheet__rowhead--active' : '',
+          rowSelected ? 'jects-sheet__rowhead--selected' : '',
         ],
-        text: String(r + 1),
         attrs: { role: 'rowheader', 'data-row': String(r) },
       });
       rowHead.style.width = `${ROW_HEADER_WIDTH}px`;
+      if (this.config.rowSelect) this.appendRowSelect(rowHead, r, rowSelected);
+      const rowLabel = createEl('span', {
+        className: 'jects-sheet__rowhead-label',
+        text: String(r + 1),
+        attrs: { 'aria-hidden': 'true' },
+      });
+      rowHead.appendChild(rowLabel);
+      if (this.config.rowResize && !hiddenRow) this.appendRowResizer(rowHead, r);
       rowEl.appendChild(rowHead);
 
       for (let c = 0; c < colCount; c++) {
@@ -595,6 +744,298 @@ export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
     th.appendChild(btn);
   }
 
+  /* ── column resize affordance ──────────────────────────────────────────── */
+
+  /**
+   * Append a thin drag handle pinned to the column header's right edge. Pointer
+   * drag live-previews the width on the header (the body re-flows on commit) and
+   * commits to the model on pointer-up. ArrowLeft/Right nudge by 8px (×4 with
+   * Shift) for keyboard operability. The handle carries `role="separator"`.
+   */
+  private appendColResizer(th: HTMLElement, col: number): void {
+    const handle = createEl('div', {
+      className: 'jects-sheet__col-resizer',
+      attrs: {
+        role: 'separator',
+        'aria-orientation': 'vertical',
+        'aria-label': `Resize column ${columnIndexToLabel(col)}`,
+        tabindex: '0',
+        'data-col-resizer': String(col),
+      },
+    });
+    const sheet = this.config.api.getActiveSheet();
+    const w = sheet.cols?.[col]?.size ?? this.config.colWidth ?? DEFAULT_COL_WIDTH;
+    handle.setAttribute('aria-valuenow', String(Math.round(w)));
+    handle.setAttribute('aria-valuemin', String(MIN_COL_WIDTH));
+    handle.setAttribute('aria-valuemax', String(MAX_COL_WIDTH));
+    handle.addEventListener(
+      'pointerdown',
+      (e) => this.beginSizeDrag(e, 'col', col, th),
+      { signal: this.sig },
+    );
+    handle.addEventListener(
+      'keydown',
+      (e) => this.onResizerKey(e, 'col', col),
+      { signal: this.sig },
+    );
+    // Don't let a click on the resizer also trigger a header sort/selection.
+    handle.addEventListener('click', (e) => e.stopPropagation(), { signal: this.sig });
+    handle.addEventListener('dblclick', (e) => e.stopPropagation(), { signal: this.sig });
+    th.appendChild(handle);
+  }
+
+  /* ── row resize affordance ─────────────────────────────────────────────── */
+
+  /**
+   * Append a thin drag handle pinned to the row header's bottom edge. Pointer
+   * drag live-previews the height on the whole row and commits on pointer-up.
+   * ArrowUp/Down nudge by 4px (×4 with Shift). `role="separator"`.
+   */
+  private appendRowResizer(rowHead: HTMLElement, row: number): void {
+    const handle = createEl('div', {
+      className: 'jects-sheet__row-resizer',
+      attrs: {
+        role: 'separator',
+        'aria-orientation': 'horizontal',
+        'aria-label': `Resize row ${row + 1}`,
+        tabindex: '0',
+        'data-row-resizer': String(row),
+      },
+    });
+    handle.style.height = `${ROW_RESIZER_SIZE}px`;
+    const sheet = this.config.api.getActiveSheet();
+    const h = sheet.rows?.[row]?.size ?? this.config.rowHeight ?? DEFAULT_ROW_HEIGHT;
+    handle.setAttribute('aria-valuenow', String(Math.round(h)));
+    handle.setAttribute('aria-valuemin', String(MIN_ROW_HEIGHT));
+    handle.setAttribute('aria-valuemax', String(MAX_ROW_HEIGHT));
+    handle.addEventListener(
+      'pointerdown',
+      (e) => this.beginSizeDrag(e, 'row', row, rowHead),
+      { signal: this.sig },
+    );
+    handle.addEventListener(
+      'keydown',
+      (e) => this.onResizerKey(e, 'row', row),
+      { signal: this.sig },
+    );
+    rowHead.appendChild(handle);
+  }
+
+  /**
+   * Begin a header drag-resize session for a column or row. Captures the start
+   * pointer position + current size, live-previews on pointer-move, and commits
+   * on pointer-up. Window listeners are torn down via `sizeDragCleanup` (also
+   * aborted by the widget's AbortController on destroy mid-drag).
+   */
+  private beginSizeDrag(
+    e: PointerEvent,
+    axis: 'col' | 'row',
+    index: number,
+    headerEl: HTMLElement,
+  ): void {
+    e.preventDefault();
+    e.stopPropagation();
+    if (this.editing) this.commitEdit();
+    const sheet = this.config.api.getActiveSheet();
+    const startSize =
+      axis === 'col'
+        ? sheet.cols?.[index]?.size ?? this.config.colWidth ?? DEFAULT_COL_WIDTH
+        : sheet.rows?.[index]?.size ?? this.config.rowHeight ?? DEFAULT_ROW_HEIGHT;
+    this.sizeDrag = {
+      axis,
+      index,
+      start: axis === 'col' ? e.clientX : e.clientY,
+      startSize,
+      oldSize: startSize,
+      pointerId: e.pointerId,
+    };
+    headerEl.classList.add(
+      axis === 'col' ? 'jects-sheet__colhead--resizing' : 'jects-sheet__rowhead--resizing',
+    );
+    const target = e.target as HTMLElement;
+    try {
+      target.setPointerCapture(e.pointerId);
+    } catch {
+      /* setPointerCapture unsupported (jsdom) — window listeners cover it */
+    }
+    const onMove = (ev: Event): void => this.onSizeDragMove(ev as PointerEvent);
+    const onUp = (ev: Event): void => this.onSizeDragEnd(ev as PointerEvent);
+    window.addEventListener('pointermove', onMove, { signal: this.sig });
+    window.addEventListener('pointerup', onUp, { signal: this.sig });
+    window.addEventListener('pointercancel', onUp, { signal: this.sig });
+    this.sizeDragCleanup = (): void => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+  }
+
+  /** Live-preview the dragged column width / row height on the painted DOM. */
+  private onSizeDragMove(e: PointerEvent): void {
+    const drag = this.sizeDrag;
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    if (drag.axis === 'col') {
+      const next = clampSize(
+        drag.startSize + (e.clientX - drag.start),
+        MIN_COL_WIDTH,
+        MAX_COL_WIDTH,
+      );
+      this.previewColWidth(drag.index, next);
+    } else {
+      const next = clampSize(
+        drag.startSize + (e.clientY - drag.start),
+        MIN_ROW_HEIGHT,
+        MAX_ROW_HEIGHT,
+      );
+      this.previewRowHeight(drag.index, next);
+    }
+  }
+
+  /** Commit the drag-resize to the model (persist + emit), then repaint. */
+  private onSizeDragEnd(e: PointerEvent): void {
+    const drag = this.sizeDrag;
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    this.sizeDragCleanup?.();
+    this.sizeDragCleanup = null;
+    this.sizeDrag = null;
+    const delta = (drag.axis === 'col' ? e.clientX : e.clientY) - drag.start;
+    if (drag.axis === 'col') this.resizeColumn(drag.index, drag.startSize + delta);
+    else this.resizeRow(drag.index, drag.startSize + delta);
+  }
+
+  /** Apply a live width preview to a column's header + every painted cell in it. */
+  private previewColWidth(col: number, width: number): void {
+    const th = this.headerRowEl.querySelector<HTMLElement>(
+      `.jects-sheet__colhead[data-col="${col}"]`,
+    );
+    if (th) th.style.width = `${width}px`;
+    const cells = this.bodyEl.querySelectorAll<HTMLElement>(
+      `.jects-sheet__cell[data-col="${col}"]:not(.jects-sheet__cell--merged)`,
+    );
+    cells.forEach((cell) => (cell.style.width = `${width}px`));
+  }
+
+  /** Apply a live height preview to a row's element. */
+  private previewRowHeight(row: number, height: number): void {
+    const rowEl = this.bodyEl.querySelectorAll<HTMLElement>('.jects-sheet__row')[row];
+    if (rowEl) rowEl.style.height = `${height}px`;
+  }
+
+  /** Keyboard resize on a focused resizer handle (Arrow keys; Shift ×4). */
+  private onResizerKey(e: KeyboardEvent, axis: 'col' | 'row', index: number): void {
+    e.stopPropagation();
+    const sheet = this.config.api.getActiveSheet();
+    const factor = e.shiftKey ? 4 : 1;
+    if (axis === 'col') {
+      const cur = sheet.cols?.[index]?.size ?? this.config.colWidth ?? DEFAULT_COL_WIDTH;
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        this.resizeColumn(index, cur + 8 * factor);
+        this.refocusResizer('col', index);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.resizeColumn(index, cur - 8 * factor);
+        this.refocusResizer('col', index);
+      }
+    } else {
+      const cur = sheet.rows?.[index]?.size ?? this.config.rowHeight ?? DEFAULT_ROW_HEIGHT;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        this.resizeRow(index, cur + 4 * factor);
+        this.refocusResizer('row', index);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        this.resizeRow(index, cur - 4 * factor);
+        this.refocusResizer('row', index);
+      }
+    }
+  }
+
+  /** Return keyboard focus to a resizer after a render-replacing keyboard nudge. */
+  private refocusResizer(axis: 'col' | 'row', index: number): void {
+    const sel = axis === 'col'
+      ? `[data-col-resizer="${index}"]`
+      : `[data-row-resizer="${index}"]`;
+    (this.el as HTMLElement).querySelector<HTMLElement>(sel)?.focus();
+  }
+
+  /* ── row multi-selection affordance ────────────────────────────────────── */
+
+  /** Append the "select all rows" checkbox to the grid corner. */
+  private appendSelectAll(corner: HTMLElement): void {
+    const cb = createEl('input', {
+      className: 'jects-sheet__selectall',
+      attrs: { type: 'checkbox', 'aria-label': 'Select all rows' },
+    }) as HTMLInputElement;
+    const all = this.isAllRowsSelected();
+    cb.checked = all;
+    cb.indeterminate = !all && this.rowSelection.size > 0;
+    cb.addEventListener(
+      'change',
+      () => this.toggleAllRows(cb.checked),
+      { signal: this.sig },
+    );
+    cb.addEventListener('mousedown', (e) => e.stopPropagation(), { signal: this.sig });
+    corner.appendChild(cb);
+  }
+
+  /**
+   * Append a per-row select checkbox to a row header. Plain toggle flips that one
+   * row; Shift extends a contiguous range from the anchor; Ctrl/Cmd toggles a
+   * single row while keeping the rest. Updates `rowSelection` + emits.
+   */
+  private appendRowSelect(rowHead: HTMLElement, row: number, selected: boolean): void {
+    const cb = createEl('input', {
+      className: 'jects-sheet__rowselect',
+      attrs: { type: 'checkbox', 'aria-label': `Select row ${row + 1}`, 'data-row-select': String(row) },
+    }) as HTMLInputElement;
+    cb.checked = selected;
+    // Use click (not change) so we can read the modifier keys for range/toggle.
+    cb.addEventListener(
+      'click',
+      (e) => {
+        e.stopPropagation();
+        this.onRowSelectClick(row, e);
+      },
+      { signal: this.sig },
+    );
+    cb.addEventListener('mousedown', (e) => e.stopPropagation(), { signal: this.sig });
+    rowHead.appendChild(cb);
+  }
+
+  /** Resolve a row-header checkbox click into the new selection (with modifiers). */
+  private onRowSelectClick(row: number, e: MouseEvent): void {
+    if (e.shiftKey && this.rowSelectAnchor !== null) {
+      // Shift-range: select the contiguous block anchor..row (replacing prior set
+      // unless Ctrl/Cmd is also held, which unions the range in).
+      const lo = Math.min(this.rowSelectAnchor, row);
+      const hi = Math.max(this.rowSelectAnchor, row);
+      if (!(e.ctrlKey || e.metaKey)) this.rowSelection = new Set();
+      for (let r = lo; r <= hi; r++) this.rowSelection.add(r);
+    } else if (e.ctrlKey || e.metaKey) {
+      // Ctrl/Cmd-toggle a single row, keeping the rest.
+      if (this.rowSelection.has(row)) this.rowSelection.delete(row);
+      else this.rowSelection.add(row);
+      this.rowSelectAnchor = row;
+    } else {
+      // Plain toggle of this one row.
+      if (this.rowSelection.has(row) && this.rowSelection.size === 1) {
+        this.rowSelection.delete(row);
+        this.rowSelectAnchor = null;
+      } else {
+        this.rowSelection = new Set([row]);
+        this.rowSelectAnchor = row;
+      }
+    }
+    if (e.shiftKey && this.rowSelectAnchor === null) this.rowSelectAnchor = row;
+    this.render();
+    this.emitRowSelection();
+  }
+
+  private emitRowSelection(): void {
+    this.emit('rowSelectionChange', { rows: this.getSelectedRows() });
+  }
+
   /**
    * Resolve the conditional-formatting decoration for a cell. Reads computed
    * values through the engine; `expression` rules evaluate against the engine
@@ -789,4 +1230,9 @@ function parseForValidation(input: string): CellValue {
   if (t === '') return null;
   if (/^-?\d+(\.\d+)?$/.test(t.replace(/,/g, ''))) return parseFloat(t.replace(/,/g, ''));
   return input;
+}
+
+/** Clamp + round a header drag size into `[min, max]` (integral px). */
+function clampSize(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, Math.round(value)));
 }

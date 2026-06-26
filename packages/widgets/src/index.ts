@@ -390,6 +390,7 @@ export {
   type RichTextEvents,
   type RichTextCommand,
   type RichTextToolbarItem,
+  type RichTextStats,
   sanitizeHtml,
 } from './richtext/rich-text.js';
 

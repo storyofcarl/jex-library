@@ -78,6 +78,16 @@ export interface EventModel extends Model {
   preTravelTime?: DurationMs;
   /** Post-travel margin (ms) after `endDate` — time to leave the event (PRO). */
   postTravelTime?: DurationMs;
+  /**
+   * When true, this event is a MILESTONE — a zero-duration marker rendered as a
+   * diamond anchored at `startDate` (rather than a span bar). `endDate` is ignored
+   * for geometry (a milestone has no width); dependencies anchor to the marker.
+   */
+  milestone?: boolean;
+  /** Setup/lead time (ms) reserved immediately before the event (buffer viz). */
+  setupTime?: DurationMs;
+  /** Teardown/trail time (ms) reserved immediately after the event (buffer viz). */
+  teardownTime?: DurationMs;
 }
 
 /** A many-to-many assignment of an event to a resource (multi-assignment mode). */
@@ -218,6 +228,28 @@ export interface SchedulerConfig extends WidgetConfig {
   editable?: boolean;
   /** Allow drawing dependencies between events. Default false. */
   dependenciesEditable?: boolean;
+  /**
+   * Allow drag-move of an event between resource lanes (vertical lane offset is
+   * tracked during a body drag and, on commit, the event's `resourceId` is
+   * reassigned to the lane the pointer ended over). Honours `beforeEventChange` /
+   * `eventChange` (vetoable). Default false. Ignored for recurrence occurrences
+   * and multi-assignment-sourced bars.
+   */
+  reassignable?: boolean;
+  /**
+   * Visualize per-event buffer (setup/teardown) zones flanking each event bar.
+   * Reads each event's `setupTime` / `teardownTime` (or the config defaults in
+   * `bufferDefaults`) and paints `[start-setup, start)` / `[end, end+teardown)`
+   * shaded zones behind the bars. Default false.
+   */
+  showBufferTime?: boolean;
+  /** Config-level buffer defaults applied to every event when `showBufferTime`. */
+  bufferDefaults?: { setup?: DurationMs; teardown?: DurationMs; gap?: DurationMs };
+  /**
+   * Make resource rows in the locked pane selectable (a leading checkbox plus
+   * ctrl/⌘-toggle and shift-range selection). Default false.
+   */
+  resourceSelectable?: boolean;
   /** Snap drags to the tick grid. Default true. */
   snap?: boolean;
   /** Overscan rows for virtualization. Default 5. */
@@ -269,6 +301,8 @@ export interface SchedulerEvents extends WidgetEvents, EventMap {
   scroll: { scrollTop: number; scrollLeft: number; visibleSpan: TimeSpan };
   /** A resource lane was selected. */
   resourceSelect: { resource: ResourceModel };
+  /** The set of selected resource rows changed (multi-select). */
+  resourceSelectionChange: { selected: ResourceModel[]; ids: RecordId[] };
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
