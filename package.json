@@ -20,7 +20,8 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "turbo run build && changeset publish",
-    "matrix": "node scripts/gen-matrix.mjs"
+    "matrix": "node scripts/gen-matrix.mjs",
+    "bench": "node scripts/bench/run.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.10",

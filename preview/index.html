@@ -20,25 +20,13 @@
          (Serving from inside preview/ will 404 the ../packages/* assets.) -->
 
     <!-- Theme + token contract (light + dark + light-hc + dark-hc, plus the
-         CMYK / data ramps). all.css @imports base/dark/high-contrast/etc. -->
+         CMYK / data ramps). all.css @imports base/dark/high-contrast/etc.
+         The theme tokens + the gallery shell stay EAGER so the chrome is never
+         unstyled. Every per-component stylesheet (widgets/grid/charts/pivot/…)
+         is now lazy-loaded PER ROUTE via ensureCss() in gallery.js — injected
+         into <head> the first time a route that needs it is visited, so the
+         initial page load no longer downloads ~13 component stylesheets. -->
     <link rel="stylesheet" href="../packages/theme/dist/css/all.css" />
-    <!-- Component stylesheets (side-effect CSS the widgets/grid/charts expect). -->
-    <link rel="stylesheet" href="../packages/widgets/dist/style.css" />
-    <link rel="stylesheet" href="../packages/grid/dist/style.css" />
-    <link rel="stylesheet" href="../packages/charts/dist/style.css" />
-    <link rel="stylesheet" href="../packages/pivot/dist/style.css" />
-    <link rel="stylesheet" href="../packages/spreadsheet/dist/style.css" />
-    <!-- Wave 4 scheduling components (+ shared timeline-core). -->
-    <link rel="stylesheet" href="../packages/timeline-core/dist/style.css" />
-    <link rel="stylesheet" href="../packages/scheduler/dist/style.css" />
-    <link rel="stylesheet" href="../packages/gantt/dist/style.css" />
-    <link rel="stylesheet" href="../packages/calendar/dist/style.css" />
-    <link rel="stylesheet" href="../packages/kanban/dist/style.css" />
-    <!-- Wave 5 components. -->
-    <link rel="stylesheet" href="../packages/diagram/dist/style.css" />
-    <link rel="stylesheet" href="../packages/todo/dist/style.css" />
-    <link rel="stylesheet" href="../packages/booking/dist/style.css" />
-    <link rel="stylesheet" href="../packages/chatbot/dist/style.css" />
     <!-- Gallery chrome (uses house tokens itself). -->
     <link rel="stylesheet" href="./gallery.css" />
 

@@ -60,12 +60,38 @@ function importOnce(spec) {
   return p;
 }
 
+/* ───────────────────────── per-route CSS lazy-load ─────────────────────────
+   The component stylesheets used to be eagerly <link>ed in index.html's <head>
+   (~13 of them). They're now injected ON DEMAND: each package loader calls
+   `ensureCss(pkg)` BEFORE its module resolves, so a route's CSS lands in <head>
+   right before that route's demo builds (no flash of unstyled content), and a
+   first page load no longer downloads stylesheets for routes never visited.
+   Only the theme tokens (theme/dist/css/all.css) + gallery.css stay eager in
+   the HTML so the shell chrome is always styled. Memoized per pkg — the <link>
+   is appended at most once no matter how many loaders ask for it. Instrumented
+   on window.__JECTS_CSS__ for the lazy-load harness. */
+const _cssInjected = new Set();
+function ensureCss(pkg) {
+  if (_cssInjected.has(pkg)) return;
+  _cssInjected.add(pkg);
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = '../packages/' + pkg + '/dist/style.css';
+  document.head.appendChild(link);
+  if (typeof window !== 'undefined') {
+    (window.__JECTS_CSS__ || (window.__JECTS_CSS__ = [])).push(pkg);
+  }
+}
+
 // Per-package loaders. Each memoizes its own binding-assignment promise so the
-// destructuring runs once; subsequent calls return the cached promise.
+// destructuring runs once; subsequent calls return the cached promise. Each
+// loader also injects its package's CSS (and any shared-dep CSS) via ensureCss
+// so the stylesheet is present before the demo builds.
 let _pWidgets, _pGrid, _pCore, _pCharts, _pPivot, _pSpreadsheet, _pScheduler,
   _pGantt, _pCalendar, _pKanban, _pTimeline, _pDiagram, _pTodo, _pBooking, _pChatbot;
 
 function loadWidgets() {
+  ensureCss('widgets');
   return (_pWidgets ||= importOnce('@jects/widgets').then((m) => {
     ({ Button, TextField, NumberField, TextArea, DisplayField, Label, Link,
        Select, ComboBox, Checkbox, CheckboxGroup, Radio, RadioGroup, Switch,
@@ -77,6 +103,7 @@ function loadWidgets() {
   }));
 }
 function loadGrid() {
+  ensureCss('grid');
   return (_pGrid ||= importOnce('@jects/grid').then((m) => {
     ({ Grid, summaryFeature, editingFeature, columnStateFeature, columnPickerFeature,
        filterBarFeature, filterMenuFeature, filterFacetFeature, undoRedoFeature,
@@ -88,21 +115,27 @@ function loadCore() {
   return (_pCore ||= importOnce('@jects/core').then((m) => { ({ TreeStore } = m); }));
 }
 function loadCharts() {
+  ensureCss('charts');
   return (_pCharts ||= importOnce('@jects/charts').then((m) => { ({ Chart } = m); }));
 }
 function loadPivot() {
+  ensureCss('pivot');
   return (_pPivot ||= importOnce('@jects/pivot').then((m) => { ({ PivotTable, AggregatorRegistry } = m); }));
 }
 function loadSpreadsheet() {
+  ensureCss('spreadsheet');
   return (_pSpreadsheet ||= importOnce('@jects/spreadsheet').then((m) => { ({ Spreadsheet } = m); }));
 }
 function loadTimeline() {
+  ensureCss('timeline-core');
   return (_pTimeline ||= importOnce('@jects/timeline-core').then((m) => { ({ HOUR_AND_DAY, WEEK_AND_DAY } = m); }));
 }
 function loadScheduler() {
+  ensureCss('scheduler');
   return (_pScheduler ||= importOnce('@jects/scheduler').then((m) => { ({ Scheduler, SchedulerStm } = m); }));
 }
 function loadGantt() {
+  ensureCss('gantt');
   return (_pGantt ||= importOnce('@jects/gantt').then((m) => {
     ({ Gantt, GanttProgressLineFeature, GanttIndicatorsFeature, MultiBaselineCompare,
        ProjectLines, GanttExportMenu, GanttUndoRedo, GanttRollupFeature,
@@ -111,21 +144,27 @@ function loadGantt() {
   }));
 }
 function loadCalendar() {
+  ensureCss('calendar');
   return (_pCalendar ||= importOnce('@jects/calendar').then((m) => { ({ Calendar } = m); }));
 }
 function loadKanban() {
+  ensureCss('kanban');
   return (_pKanban ||= importOnce('@jects/kanban').then((m) => { ({ TaskBoard } = m); }));
 }
 function loadDiagram() {
+  ensureCss('diagram');
   return (_pDiagram ||= importOnce('@jects/diagram').then((m) => { ({ Diagram, documentToJson, downloadBlob } = m); }));
 }
 function loadTodo() {
+  ensureCss('todo');
   return (_pTodo ||= importOnce('@jects/todo').then((m) => { ({ TodoList } = m); }));
 }
 function loadBooking() {
+  ensureCss('booking');
   return (_pBooking ||= importOnce('@jects/booking').then((m) => { ({ Booking } = m); }));
 }
 function loadChatbot() {
+  ensureCss('chatbot');
   return (_pChatbot ||= importOnce('@jects/chatbot').then((m) => { ({ Chatbot } = m); }));
 }
 
@@ -163,6 +202,12 @@ const SECTION_LOADERS = {
   'flow-data': () => Promise.all([loadWidgets(), loadGrid(), loadCharts()]),
   // Live — a real-time collaboration board driven by a simulated remote provider.
   realtime: () => Promise.all([loadWidgets(), loadKanban()]),
+  // Proof pages.
+  performance: () => Promise.all([
+    loadWidgets(), loadGrid(), loadCore(), loadPivot(),
+    loadScheduler(), loadGantt(), loadTimeline(),
+  ]),
+  'server-data': () => Promise.all([loadWidgets(), loadGrid(), loadCore()]),
 };
 
 /* ───────────────────────── small DOM helpers ─────────────────────────── */
@@ -4398,6 +4443,433 @@ main.appendChild(
   ),
 );
 
+/* ── Performance: live, measured benchmarks ──────────────────────────────────
+   A dedicated proof page. On activation it BUILDS the heavy modules against
+   large generated datasets, measures build+render wall time with
+   performance.now(), then drives a short scroll/update loop and samples per-
+   frame durations via requestAnimationFrame to derive an avg frame ms + ~FPS.
+   The numbers are real measurements of THIS device — not a synthetic claim.
+
+   Stable harness contract (also driven by visiting the page):
+     window.__JECTS_PERF__ = {
+       runAt: <number ms>,            // Date.now() of the last completed run
+       results: [ { module, rows, buildMs, frameMs, fps } ]
+     }
+     window.__runJectsBench()         // async; (re)runs all benchmarks, fills
+                                      // window.__JECTS_PERF__, resolves with the
+                                      // results array. */
+main.appendChild(
+  section(
+    'performance',
+    'Performance',
+    'Live, measured benchmarks — not synthetic claims. On open this page builds each heavy module against a large dataset, times the build+render with performance.now(), then samples ~30 animation frames while scrolling to derive average frame time and FPS. Numbers reflect THIS browser and CPU right now; press “Re-run benchmarks” to measure again.',
+    (grid) => {
+      grid.appendChild(card('Live benchmark results', (h) => {
+        const wrap = el('div', { style: 'display:flex;flex-direction:column;gap:.75rem;width:100%' });
+        const bar = el('div', { class: 'g-host-toolbar', style: 'display:flex;gap:.5rem;flex-wrap:wrap;align-items:center' });
+        const statusEl = el('div', { class: 'g-note', style: 'min-height:1.2em' });
+        // Sized, on-page-but-clipped sandbox so each module actually lays out +
+        // virtualizes (offscreen with zero size would skip virtualization work
+        // and give dishonest numbers). overflow:hidden keeps the page tidy.
+        const sandbox = el('div', {
+          style: 'position:relative;height:420px;width:100%;overflow:hidden;border:1px solid var(--jects-border,#3a3a42);border-radius:var(--jects-radius,8px)',
+        });
+        const tableWrap = el('div', { style: 'width:100%;overflow:auto' });
+
+        wrap.appendChild(bar);
+        wrap.appendChild(statusEl);
+        wrap.appendChild(tableWrap);
+        wrap.appendChild(el('div', { class: 'g-note', style: 'margin-top:.25rem',
+          text: 'Methodology: Measured live in your browser just now — numbers depend on your device/CPU; this is not a synthetic claim. Build+render is wall time around the component constructor (performance.now()). Avg frame is the mean of ~30 requestAnimationFrame deltas captured while driving a scroll/update loop; ~FPS = 1000 / avg-frame-ms, capped at 60 (the display refresh ceiling).' }));
+        wrap.appendChild(sandbox);
+        h.appendChild(wrap);
+
+        const setStatus = (m) => { statusEl.textContent = m; };
+
+        // Render (or re-render) the results table from an array of measurements.
+        function renderTable(results) {
+          const thead = el('thead', {}, [
+            el('tr', {}, [
+              el('th', { text: 'Module' }),
+              el('th', { text: 'Dataset' }),
+              el('th', { style: 'text-align:right', text: 'Build+render (ms)' }),
+              el('th', { style: 'text-align:right', text: 'Avg frame (ms)' }),
+              el('th', { style: 'text-align:right', text: '~FPS' }),
+            ]),
+          ]);
+          const tbody = el('tbody', {}, results.map((r) => el('tr', {}, [
+            el('td', { text: r.module }),
+            el('td', { text: r.dataset }),
+            el('td', { style: 'text-align:right;font-variant-numeric:tabular-nums', text: String(r.buildMs) }),
+            el('td', { style: 'text-align:right;font-variant-numeric:tabular-nums', text: r.frameMs.toFixed(1) }),
+            el('td', { style: 'text-align:right;font-variant-numeric:tabular-nums', text: String(r.fps) }),
+          ])));
+          const table = el('table', { class: 'g-perf-table', style: 'width:100%;border-collapse:collapse' }, [thead, tbody]);
+          tableWrap.replaceChildren(table);
+        }
+
+        // Sample ~`frames` rAF deltas while running `tick(i)` each frame (the
+        // interaction driver — e.g. a scroll). Resolves to the mean delta in ms.
+        function sampleFrames(tick, frames = 30) {
+          return new Promise((resolve) => {
+            const deltas = [];
+            let last = performance.now();
+            let i = 0;
+            function step(now) {
+              deltas.push(now - last);
+              last = now;
+              try { tick(i); } catch (_) {}
+              i++;
+              if (i < frames) requestAnimationFrame(step);
+              else {
+                // Drop the first delta (warm-up / scheduling jitter), then mean.
+                const use = deltas.length > 1 ? deltas.slice(1) : deltas;
+                const avg = use.reduce((a, b) => a + b, 0) / use.length;
+                resolve(avg);
+              }
+            }
+            requestAnimationFrame((t) => { last = t; requestAnimationFrame(step); });
+          });
+        }
+
+        // Find the inner scrollable viewport a module created (so the scroll
+        // loop actually moves rows through the virtualizer). Falls back to host.
+        function scrollerIn(host) {
+          const cands = host.querySelectorAll('*');
+          for (const node of cands) {
+            if (node.scrollHeight - node.clientHeight > 40) return node;
+          }
+          return host;
+        }
+
+        // Run ONE module benchmark: mount a fresh host in the sandbox, time the
+        // build, then sample frames while scrolling. Returns a result record.
+        async function benchOne({ module, dataset, rows, mount }) {
+          setStatus('Benchmarking ' + module + ' (' + dataset + ')…');
+          sandbox.replaceChildren();
+          const host = el('div', { style: 'position:absolute;inset:0;width:100%;height:100%;overflow:auto' });
+          sandbox.appendChild(host);
+          // Let the empty host paint before the (blocking) build so the timer
+          // captures build+render, not layout of unrelated chrome.
+          await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+          const t0 = performance.now();
+          mount(host);
+          const buildMs = Math.round(performance.now() - t0);
+          // Let the first painted frame settle, then drive a scroll loop.
+          await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+          const sc = scrollerIn(host);
+          const max = Math.max(0, sc.scrollHeight - sc.clientHeight);
+          const frameMs = await sampleFrames((i) => {
+            // Saw-tooth scroll across the full extent over the sample window.
+            if (max > 0) sc.scrollTop = Math.round((i % 30) / 29 * max);
+          }, 30);
+          const fps = Math.min(60, Math.round(1000 / Math.max(frameMs, 0.001)));
+          return { module, dataset, rows, buildMs, frameMs, fps };
+        }
+
+        // The benchmark suite. Each entry builds a real component with the same
+        // config style as its own gallery route, against a large generated set.
+        function suite() {
+          return [
+            {
+              module: 'Grid', dataset: '100,000 rows', rows: 100_000,
+              mount: (host) => {
+                new Grid(host, {
+                  data: genGridRows(100_000),
+                  selection: 'multi',
+                  features: { sort: { multi: true }, filter: true, columnResize: true },
+                  columns: [
+                    { field: 'id', header: 'ID', type: 'number', width: 80, sortable: true, frozen: 'left' },
+                    { field: 'name', header: 'Name', flex: 1, minWidth: 160, sortable: true, filterable: true },
+                    { field: 'dept', header: 'Department', width: 150, sortable: true, filterable: true },
+                    { field: 'status', header: 'Status', width: 120, sortable: true, filterable: true },
+                    { field: 'salary', header: 'Salary ($)', type: 'number', width: 120, align: 'end', sortable: true },
+                    { field: 'hired', header: 'Hired', type: 'date', width: 130, sortable: true },
+                    { field: 'progress', header: 'Progress %', type: 'number', width: 120, align: 'end', sortable: true },
+                  ],
+                });
+              },
+            },
+            {
+              module: 'Pivot', dataset: '50,000 source records', rows: 50_000,
+              mount: (host) => {
+                new PivotTable(host, {
+                  data: genPivotRecords(50_000),
+                  fields: [
+                    { field: 'region', label: 'Region' },
+                    { field: 'product', label: 'Product' },
+                    { field: 'channel', label: 'Channel' },
+                    { field: 'quarter', label: 'Quarter' },
+                    { field: 'amount', label: 'Amount', aggregator: 'sum' },
+                    { field: 'units', label: 'Units', aggregator: 'sum' },
+                  ],
+                  rows: ['region', 'product'],
+                  columns: ['quarter'],
+                  values: [{ field: 'amount', aggregator: 'sum', label: 'Revenue' }],
+                  mode: 'tree',
+                  totals: { grand: true, rows: true, columns: true },
+                });
+              },
+            },
+            {
+              module: 'Scheduler', dataset: '100 resources × ~2,000 events', rows: 2_000,
+              mount: (host) => {
+                host.style.height = '100%';
+                const data = genSchedulerData(100, 20);
+                new Scheduler(host, {
+                  resources: data.resources,
+                  events: data.events,
+                  preset: HOUR_AND_DAY,
+                  range: { start: data.base, end: data.base + DAY * 20 },
+                  panEnabled: true,
+                  infiniteScroll: true,
+                });
+              },
+            },
+            {
+              module: 'Gantt', dataset: '1,000 tasks · ~2,000 deps', rows: 1_000,
+              mount: (host) => {
+                host.style.height = '100%';
+                const proj = genGanttProject(1000);
+                new Gantt(host, {
+                  projectStart: proj.T0,
+                  preset: { ...WEEK_AND_DAY, pxPerUnit: 12 },
+                  columns: DEFAULT_GANTT_COLUMNS_WITH_SUCCESSORS,
+                  tasks: proj.tasks,
+                  dependencies: proj.dependencies,
+                });
+              },
+            },
+          ];
+        }
+
+        // Run (or re-run) every benchmark, publish the harness contract, and
+        // repaint the table. Resolves with the results array.
+        let running = false;
+        async function runAll() {
+          if (running) return (window.__JECTS_PERF__ && window.__JECTS_PERF__.results) || [];
+          running = true;
+          rerunBtn.el.setAttribute('disabled', 'disabled');
+          const results = [];
+          try {
+            for (const spec of suite()) {
+              const r = await benchOne(spec);
+              results.push(r);
+              renderTable(results); // progressive — each row appears as it lands
+            }
+            sandbox.replaceChildren(); // free the last (heavy) component
+            window.__JECTS_PERF__ = { runAt: Date.now(), results: results.map((r) => ({
+              module: r.module, rows: r.rows, buildMs: r.buildMs, frameMs: r.frameMs, fps: r.fps,
+            })) };
+            setStatus('Done — measured ' + results.length + ' modules live on this device at '
+              + new Date(window.__JECTS_PERF__.runAt).toLocaleTimeString() + '.');
+          } catch (e) {
+            setStatus('Benchmark error: ' + (e && e.message ? e.message : String(e)));
+            console.error('[gallery] performance bench failed:', e);
+          } finally {
+            running = false;
+            rerunBtn.el.removeAttribute('disabled');
+          }
+          return (window.__JECTS_PERF__ && window.__JECTS_PERF__.results) || [];
+        }
+
+        // Expose the global harness entry point (returns the results array).
+        window.__runJectsBench = () => runAll();
+
+        const rerunBtn = new Button(bar, { text: 'Re-run benchmarks', variant: 'primary', size: 'sm', icon: 'arrow-down' });
+        rerunBtn.el.addEventListener('click', () => { window.__runJectsBench(); });
+
+        // Auto-run once on first activation so visiting produces numbers without
+        // a click. Two RAFs so the page chrome paints before the blocking work.
+        renderTable([]);
+        setStatus('Running benchmarks on this device…');
+        requestAnimationFrame(() => requestAnimationFrame(() => { window.__runJectsBench(); }));
+      }, { block: true }));
+    },
+    { wide: true },
+  ),
+);
+
+/* ── Server-side data: a Grid bound to a simulated async backend ──────────────
+   Proves remote data integration. A large in-memory dataset acts as the mock
+   server; the client only ever holds ONE page in the DOM at a time. Sort +
+   filter + pagination are applied SERVER-SIDE inside queryServer() (which adds
+   ~150ms artificial latency), and every call is logged to a Request-log panel
+   as the proof artifact. The grid is driven manually: sort/filter/page events
+   call queryServer and grid.update({ data }). (The grid also ships an
+   infiniteLoadFeature whose loadRange(request) → { rows, totalCount } hook is
+   the same server seam wired to scroll instead of a pager.) */
+main.appendChild(
+  section(
+    'server-data',
+    'Server-side data',
+    'A Grid over a simulated REST/GraphQL backend. The mock server holds 100,000 rows; sorting, filtering and pagination all happen server-side and the client receives exactly one page per request (~150 ms latency). Only one page is ever in the DOM. Every server call is recorded in the Request log on the right — the proof that the grid fetches a page at a time, never the whole set.',
+    (grid) => {
+      grid.appendChild(card('Grid ↔ simulated server (server-side sort · filter · paging)', (h) => {
+        const PAGE_SIZE = 50;
+        const TOTAL = 100_000;
+        // The mock backend: the full dataset lives here and NEVER reaches the
+        // client whole — queryServer slices a single page out of it.
+        const BACKEND = genGridRows(TOTAL);
+
+        // Server-side query: apply filter → sort → paginate, with latency. The
+        // client only ever receives `rows` (one page) + `total`.
+        async function queryServer({ page, pageSize, sort, filter }) {
+          await new Promise((r) => setTimeout(r, 150)); // artificial latency
+          let working = BACKEND;
+          if (filter && filter.value) {
+            const needle = String(filter.value).toLowerCase();
+            working = working.filter((row) => String(row[filter.field] ?? '').toLowerCase().includes(needle));
+          }
+          if (sort && sort.field) {
+            const dir = sort.dir === 'desc' ? -1 : 1;
+            // Copy before sort so the backing store stays in its canonical order.
+            working = working.slice().sort((a, b) => {
+              const av = a[sort.field], bv = b[sort.field];
+              if (av < bv) return -1 * dir;
+              if (av > bv) return 1 * dir;
+              return 0;
+            });
+          }
+          const total = working.length;
+          const start = page * pageSize;
+          const rows = working.slice(start, start + pageSize);
+          return { rows, total };
+        }
+
+        // Layout: grid on the left, request-log panel on the right.
+        const layout = el('div', { style: 'display:flex;gap:.75rem;width:100%;flex-wrap:wrap' });
+        const left = el('div', { style: 'flex:1 1 520px;min-width:320px;display:flex;flex-direction:column;gap:.5rem' });
+        const right = el('div', { style: 'flex:1 1 300px;min-width:280px;display:flex;flex-direction:column;gap:.4rem' });
+        layout.appendChild(left);
+        layout.appendChild(right);
+        h.appendChild(layout);
+
+        // Controls: filter field + value, page nav.
+        const controls = el('div', { style: 'display:flex;gap:.5rem;flex-wrap:wrap;align-items:center' });
+        const pager = el('div', { style: 'display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-top:.25rem' });
+        const gridHost = el('div', { class: 'g-host-grid' });
+        left.appendChild(controls);
+        left.appendChild(gridHost);
+        left.appendChild(pager);
+
+        right.appendChild(el('div', { class: 'g-card__hd', style: 'padding:0', text: 'Request log' }));
+        const logEl = el('div', {
+          style: 'flex:1 1 auto;min-height:260px;max-height:380px;overflow:auto;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--jects-muted,#1b1b1f);border:1px solid var(--jects-border,#3a3a42);border-radius:var(--jects-radius,8px);padding:.5rem',
+        });
+        right.appendChild(logEl);
+
+        // Live query state.
+        let state = { page: 0, pageSize: PAGE_SIZE, sort: { field: 'id', dir: 'asc' }, filter: { field: 'name', value: '' } };
+        let total = TOTAL;
+        let callNo = 0;
+
+        function logCall(req, latency, rowsReturned, totalCount) {
+          callNo++;
+          const line = el('div', { style: 'padding:.2rem 0;border-bottom:1px solid var(--jects-border,#33333a)' });
+          line.appendChild(el('div', { style: 'font-weight:600',
+            text: '#' + callNo + ' page=' + req.page + ' size=' + req.pageSize }));
+          line.appendChild(el('div', {
+            text: 'sort=' + (req.sort && req.sort.field ? req.sort.field + ' ' + req.sort.dir : '—')
+              + ' · filter=' + (req.filter && req.filter.value ? req.filter.field + '~"' + req.filter.value + '"' : '—') }));
+          line.appendChild(el('div', {
+            text: 'latency=' + latency + 'ms · rows=' + rowsReturned + ' · total=' + totalCount.toLocaleString() }));
+          logEl.insertBefore(line, logEl.firstChild);
+        }
+
+        // The grid — starts empty; the client only ever holds one page of data.
+        const dataGrid = new Grid(gridHost, {
+          data: [],
+          columns: [
+            { field: 'id', header: 'ID', type: 'number', width: 90, align: 'end' },
+            { field: 'name', header: 'Name', flex: 1, minWidth: 160 },
+            { field: 'dept', header: 'Department', width: 150 },
+            { field: 'status', header: 'Status', width: 120 },
+            { field: 'salary', header: 'Salary ($)', type: 'number', width: 130, align: 'end' },
+            { field: 'hired', header: 'Hired', type: 'date', width: 130 },
+          ],
+        });
+
+        const pageInfo = el('span', { class: 'g-note' });
+        let busy = false;
+
+        async function refresh() {
+          if (busy) return;
+          busy = true;
+          const req = { page: state.page, pageSize: state.pageSize, sort: state.sort, filter: state.filter };
+          const t0 = performance.now();
+          const { rows, total: t } = await queryServer(req);
+          const latency = Math.round(performance.now() - t0);
+          total = t;
+          dataGrid.update({ data: rows }); // only this page enters the DOM
+          logCall(req, latency, rows.length, total);
+          const pages = Math.max(1, Math.ceil(total / state.pageSize));
+          const from = total === 0 ? 0 : state.page * state.pageSize + 1;
+          const to = Math.min(total, (state.page + 1) * state.pageSize);
+          pageInfo.textContent = total === 0
+            ? 'No matching rows.'
+            : 'Showing ' + from.toLocaleString() + '–' + to.toLocaleString() + ' of ' + total.toLocaleString()
+              + ' (page ' + (state.page + 1) + ' / ' + pages.toLocaleString() + ')';
+          prevBtn.el[state.page <= 0 ? 'setAttribute' : 'removeAttribute']('disabled', 'disabled');
+          nextBtn.el[state.page >= pages - 1 ? 'setAttribute' : 'removeAttribute']('disabled', 'disabled');
+          busy = false;
+        }
+
+        // — Filter controls —
+        controls.appendChild(el('label', { class: 'g-note', text: 'Filter' }));
+        const filterField = el('select', { class: 'jects-select__control', style: 'min-width:120px' });
+        [['name', 'Name'], ['dept', 'Department'], ['status', 'Status']].forEach(([v, l]) => {
+          filterField.appendChild(el('option', { value: v, text: l }));
+        });
+        const filterValue = el('input', { class: 'jects-textfield__input', type: 'search', placeholder: 'contains…', style: 'min-width:160px' });
+        controls.appendChild(filterField);
+        controls.appendChild(filterValue);
+        let filterTimer = null;
+        const applyFilter = () => {
+          state.filter = { field: filterField.value, value: filterValue.value.trim() };
+          state.page = 0;
+          refresh();
+        };
+        filterField.addEventListener('change', applyFilter);
+        filterValue.addEventListener('input', () => { clearTimeout(filterTimer); filterTimer = setTimeout(applyFilter, 250); });
+
+        // — Sort controls (server-side) —
+        controls.appendChild(el('label', { class: 'g-note', style: 'margin-left:.5rem', text: 'Sort' }));
+        const sortField = el('select', { class: 'jects-select__control', style: 'min-width:120px' });
+        [['id', 'ID'], ['name', 'Name'], ['salary', 'Salary'], ['hired', 'Hired']].forEach(([v, l]) => {
+          sortField.appendChild(el('option', { value: v, text: l }));
+        });
+        controls.appendChild(sortField);
+        const sortDirBtn = new Button(controls, { text: 'Asc ↑', variant: 'secondary', size: 'sm' });
+        sortField.addEventListener('change', () => { state.sort = { field: sortField.value, dir: state.sort.dir }; state.page = 0; refresh(); });
+        sortDirBtn.el.addEventListener('click', () => {
+          state.sort = { field: state.sort.field, dir: state.sort.dir === 'asc' ? 'desc' : 'asc' };
+          sortDirBtn.el.textContent = state.sort.dir === 'asc' ? 'Asc ↑' : 'Desc ↓';
+          state.page = 0; refresh();
+        });
+
+        // — Pager —
+        const prevBtn = new Button(pager, { text: '‹ Prev', variant: 'secondary', size: 'sm' });
+        const nextBtn = new Button(pager, { text: 'Next ›', variant: 'secondary', size: 'sm' });
+        prevBtn.el.addEventListener('click', () => { if (state.page > 0) { state.page--; refresh(); } });
+        nextBtn.el.addEventListener('click', () => {
+          const pages = Math.max(1, Math.ceil(total / state.pageSize));
+          if (state.page < pages - 1) { state.page++; refresh(); }
+        });
+        pager.appendChild(pageInfo);
+
+        h.appendChild(el('div', { class: 'g-note', style: 'margin-top:.5rem',
+          text: 'This models a real backend (REST/GraphQL): queryServer({ page, pageSize, sort, filter }) applies sort + filter + pagination server-side against a 100,000-row store and returns one page (~150 ms latency). The grid only ever holds that one page in the DOM — paging, sorting and filtering each issue a fresh server call (see the Request log). The grid package also exposes infiniteLoadFeature, whose loadRange(request) → { rows, totalCount } callback is this same server seam wired to scroll-driven prefetch instead of an explicit pager.' }));
+
+        // Expose for harness/debugging + initial load.
+        window.__JECTS_SERVER_DATA__ = { grid: dataGrid, queryServer, getState: () => state, getLog: () => logEl };
+        refresh();
+      }, { block: true }));
+    },
+    { wide: true },
+  ),
+);
+
 /* ════════════════════════ docs site: nav + tabs + markdown ════════════════
    The gallery is presented as a small product/docs site: a grouped, searchable
    sidebar; each route is a tabbed page (Demo + Docs); the Docs tab fetches the
@@ -4444,6 +4916,9 @@ const ROUTE_META = {
   'flow-data': { title: 'Grid → Chart', doc: 'grid', desc: 'Selecting rows in the Grid drives a Chart that plots exactly the selected rows.' },
   // Live — real-time / multi-user collaboration.
   realtime: { title: 'Live collaboration', doc: 'kanban', desc: 'Real-time board driven by a simulated multi-user data provider — cards move, arrive and change live via the board’s dataProvider.subscribe() surface, with a Live indicator, Start/Pause and an activity feed.' },
+  // Proof — measured performance + server-side data integration.
+  performance: { title: 'Performance', doc: 'grid', desc: 'Live, measured benchmarks of the heavy modules (Grid 100k rows, Pivot 50k records, Scheduler, Gantt) — build+render time and sampled frame rate, measured in your browser on this device, not synthetic claims.' },
+  'server-data': { title: 'Server-side data', doc: 'grid', desc: 'A Grid bound to a simulated async backend — server-side sort, filter and pagination over a 100,000-row store, fetching one page at a time with a live request log proving only one page is in the DOM.' },
 };
 
 /* ── sidebar grouping (the product taxonomy) ──────────────────────────── */
@@ -4456,6 +4931,7 @@ const SIDEBAR_GROUPS = [
   { label: 'Widgets & Chat', items: ['widgets', 'buttons', 'inputs', 'forms', 'layout', 'navigation', 'overlays', 'richtext', 'chatbot'] },
   { label: 'Integrated workflows', items: ['flow-analytics', 'flow-planning', 'flow-data'] },
   { label: 'Live', items: ['realtime'] },
+  { label: 'Proof', items: ['performance', 'server-data'] },
 ];
 
 /* ── tiny markdown → HTML (sanitized by @jects/core before it touches DOM) ── */
