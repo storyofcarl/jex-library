@@ -208,6 +208,95 @@ function triggerBtn(text, onClick, variant = 'secondary') {
 }
 
 /**
+ * A single, reusable "Export ▾" split-format dropdown. Collapses N separate
+ * export/print toolbar buttons into one accessible menu (used by the Gantt
+ * built-in export menu as the UX reference). Token-only chrome.
+ *
+ *   bar    — toolbar element the trigger mounts into (appended for you)
+ *   items  — [{ label, onClick }, …]; each item calls the SAME export method
+ *            the original button called. Behaviour is unchanged — only the
+ *            trigger UI is consolidated.
+ *   opts   — { label = 'Export', variant = 'secondary', size = 'sm' }
+ *
+ * Accessibility: the trigger carries aria-haspopup="menu" + aria-expanded;
+ * the panel is role="menu" with role="menuitem" children. Opens on click,
+ * closes on outside-click, on Escape, and after an item runs. Full keyboard
+ * nav: ↑/↓/Home/End move focus, Enter/Space activate, Esc closes & restores
+ * focus to the trigger; opening with ↓/Enter focuses the first item.
+ */
+function exportMenu(bar, items, opts = {}) {
+  const { label = 'Export', variant = 'secondary', size = 'sm' } = opts;
+  const wrap = el('div', { class: 'g-exportmenu' });
+  // Plain <button> styled with the house btn classes so this works in every
+  // section regardless of whether the lazy Button class has loaded yet.
+  const btn = el('button', {
+    type: 'button',
+    class: 'jects-btn jects-btn--' + variant + (size ? ' jects-btn--' + size : ''),
+    'aria-haspopup': 'menu',
+    'aria-expanded': 'false',
+    text: label + ' ▾',
+  });
+  wrap.appendChild(btn);
+
+  const menu = el('div', { class: 'g-exportmenu__panel', role: 'menu', hidden: 'hidden' });
+  const itemEls = items.map((it, i) => {
+    const mi = el('button', {
+      class: 'g-exportmenu__item', type: 'button', role: 'menuitem', tabindex: '-1', text: it.label,
+    });
+    mi.addEventListener('click', () => {
+      close(true);
+      try { it.onClick(); } catch (e) { console.warn('exportMenu item "' + it.label + '" failed:', e && e.message); }
+    });
+    menu.appendChild(mi);
+    return mi;
+  });
+  wrap.appendChild(menu);
+  if (bar) bar.appendChild(wrap);
+
+  let open = false;
+  const focusItem = (i) => {
+    if (!itemEls.length) return;
+    const n = (i + itemEls.length) % itemEls.length;
+    itemEls[n].focus();
+  };
+  const onDocPointer = (e) => { if (!wrap.contains(e.target)) close(false); };
+  function openMenu(focusFirst) {
+    if (open) return;
+    open = true;
+    menu.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+    document.addEventListener('pointerdown', onDocPointer, true);
+    if (focusFirst) focusItem(0);
+  }
+  function close(restoreFocus) {
+    if (!open) return;
+    open = false;
+    menu.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+    document.removeEventListener('pointerdown', onDocPointer, true);
+    if (restoreFocus) btn.focus();
+  }
+
+  btn.addEventListener('click', () => { open ? close(false) : openMenu(false); });
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMenu(true); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); openMenu(true); focusItem(itemEls.length - 1); }
+    else if (e.key === 'Escape' && open) { e.preventDefault(); close(false); }
+  });
+  menu.addEventListener('keydown', (e) => {
+    const idx = itemEls.indexOf(document.activeElement);
+    if (e.key === 'Escape') { e.preventDefault(); close(true); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); focusItem(idx + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); focusItem(idx - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); focusItem(0); }
+    else if (e.key === 'End') { e.preventDefault(); focusItem(itemEls.length - 1); }
+    else if (e.key === 'Tab') { close(false); }
+  });
+
+  return { wrap, trigger: btn, close: () => close(false) };
+}
+
+/**
  * Enterprise-scale affordance for the heavy modules. Adds a PRIMARY toolbar
  * button that swaps the demo to a large, realistic dataset — built LAZILY by
  * `build(bigHost)` on first click (never at module load). The original small
@@ -1947,9 +2036,12 @@ main.appendChild(
         setStatus(allExpanded ? 'Expanded all detail rows.' : 'Collapsed all detail rows.');
       }, 'outline');
 
-      tb('CSV', () => { if (exporter && exporter.downloadCsv) exporter.downloadCsv(); setStatus('Exported CSV.'); });
-      tb('Excel', () => { if (exporter && exporter.downloadExcel) exporter.downloadExcel(); setStatus('Exported Excel (.xls).'); });
-      tb('PDF', () => { if (pdf && pdf.downloadPdf) pdf.downloadPdf(); setStatus('Exported PDF.'); });
+      // Export formats collapsed into one accessible "Export ▾" menu.
+      exportMenu(bar, [
+        { label: 'CSV', onClick: () => { if (exporter && exporter.downloadCsv) exporter.downloadCsv(); setStatus('Exported CSV.'); } },
+        { label: 'Excel', onClick: () => { if (exporter && exporter.downloadExcel) exporter.downloadExcel(); setStatus('Exported Excel (.xls).'); } },
+        { label: 'PDF', onClick: () => { if (pdf && pdf.downloadPdf) pdf.downloadPdf(); setStatus('Exported PDF.'); } },
+      ]);
 
       tb('Save state', () => { if (state && state.persistNow) state.persistNow(); setStatus('Saved column/sort/filter/group state.'); });
       tb('Restore state', () => {
@@ -2234,15 +2326,18 @@ main.appendChild(
           catch (e) { warn('mode toggle', e); }
         }, 'outline', 'menu');
 
-        // Real OOXML .xlsx download (zipped workbook) + legacy .xls fallback.
-        tb('Export .xlsx', () => {
-          try { pivot.exportXlsx('pivot.xlsx'); setStatus('Exported pivot.xlsx (OOXML).'); }
-          catch (e) { warn('exportXlsx', e); }
-        }, 'outline');
-        tb('Export .xls', () => {
-          try { pivot.exportXls('pivot.xls'); setStatus('Exported pivot.xls (legacy).'); }
-          catch (e) { warn('exportXls', e); }
-        }, 'outline');
+        // Real OOXML .xlsx download (zipped workbook) + legacy .xls fallback,
+        // collapsed into one accessible "Export ▾" menu.
+        exportMenu(bar, [
+          { label: '.xlsx (OOXML)', onClick: () => {
+            try { pivot.exportXlsx('pivot.xlsx'); setStatus('Exported pivot.xlsx (OOXML).'); }
+            catch (e) { warn('exportXlsx', e); }
+          } },
+          { label: '.xls (legacy)', onClick: () => {
+            try { pivot.exportXls('pivot.xls'); setStatus('Exported pivot.xls (legacy).'); }
+            catch (e) { warn('exportXls', e); }
+          } },
+        ], { variant: 'outline' });
 
         // ── Enterprise scale: pivot 100,000 flat source records into a cross-tab. ──
         enterpriseSwap(bar, host, {
@@ -3004,30 +3099,34 @@ main.appendChild(
         // Utilization drill-down expand-all.
         tb('Expand utilization', () => { try { util?.expandAll(); } catch (_) {} }, 'ghost');
 
-        // Direct export buttons (each calls a real grafted method).
-        tb('CSV', () => { try { gantt.exportCsvDownload?.('project-plan.csv'); } catch (_) {} });
-        tb('Excel', () => { try { gantt.exportXlsxDownload?.('project-plan.xlsx'); } catch (_) {} });
-        tb('PNG', () => { try { gantt.exportPng?.({ download: 'project-plan.png' }); } catch (_) {} });
-        tb('PDF', () => { try { gantt.exportPdf?.({ page: 'A4', orientation: 'landscape', fitToWidth: true, download: 'project-plan.pdf' }); } catch (_) {} });
-        tb('ICS', () => { try { gantt.exportIcs?.({ download: true, fileName: 'project-plan' }); } catch (_) {} });
-        tb('MS-Project', () => {
-          try {
-            const xml = ganttToMsProjectXml(gantt, { baselines: [] });
-            const blob = new Blob([xml], { type: 'application/xml' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'project-plan.xml';
-            a.click();
-            setTimeout(() => URL.revokeObjectURL(a.href), 0);
-          } catch (_) {}
-        });
-        tb('Print', () => {
-          try {
-            const menu = gantt.features?.get?.('gantt-export-menu');
-            if (menu?.exportFormat) menu.exportFormat('print');
-            else window.print();
-          } catch (_) { try { window.print(); } catch (__) {} }
-        }, 'ghost');
+        // Direct export formats (each calls a real grafted method), collapsed
+        // into one accessible "Export ▾" menu — mirroring the component's own
+        // built-in floating GanttExportMenu.
+        exportMenu(bar, [
+          { label: 'CSV', onClick: () => { try { gantt.exportCsvDownload?.('project-plan.csv'); } catch (_) {} } },
+          { label: 'Excel', onClick: () => { try { gantt.exportXlsxDownload?.('project-plan.xlsx'); } catch (_) {} } },
+          { label: 'PNG', onClick: () => { try { gantt.exportPng?.({ download: 'project-plan.png' }); } catch (_) {} } },
+          { label: 'PDF', onClick: () => { try { gantt.exportPdf?.({ page: 'A4', orientation: 'landscape', fitToWidth: true, download: 'project-plan.pdf' }); } catch (_) {} } },
+          { label: 'ICS', onClick: () => { try { gantt.exportIcs?.({ download: true, fileName: 'project-plan' }); } catch (_) {} } },
+          { label: 'MS-Project', onClick: () => {
+            try {
+              const xml = ganttToMsProjectXml(gantt, { baselines: [] });
+              const blob = new Blob([xml], { type: 'application/xml' });
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(blob);
+              a.download = 'project-plan.xml';
+              a.click();
+              setTimeout(() => URL.revokeObjectURL(a.href), 0);
+            } catch (_) {}
+          } },
+          { label: 'Print', onClick: () => {
+            try {
+              const menu = gantt.features?.get?.('gantt-export-menu');
+              if (menu?.exportFormat) menu.exportFormat('print');
+              else window.print();
+            } catch (_) { try { window.print(); } catch (__) {} }
+          } },
+        ]);
 
         // ── Enterprise scale: a multi-phase WBS of 1,000 tasks + ~2,000 deps. ──
         enterpriseSwap(bar, host, {
@@ -3126,9 +3225,12 @@ main.appendChild(
         const redo = btn('Redo', () => { cal.redo(); sync(); });
         const sync = () => { undo.disabled = !cal.canUndo(); redo.disabled = !cal.canRedo(); };
         sync();
-        btn('Export ICS', () => cal.exportICS('calendar.ics'));
-        btn('Export Excel', () => cal.exportExcel('calendar.xls'));
-        btn('Print', () => cal.print());
+        // ICS / Excel / Print collapsed into one accessible "Export ▾" menu.
+        exportMenu(bar, [
+          { label: 'ICS', onClick: () => cal.exportICS('calendar.ics') },
+          { label: 'Excel', onClick: () => cal.exportExcel('calendar.xls') },
+          { label: 'Print', onClick: () => cal.print() },
+        ]);
         wrap.appendChild(el('div', { class: 'g-note', text: 'Switch views (incl. the new timeline), undo/redo edits, and export to ICS/Excel/print. The standup uses an RRULE string (FREQ=WEEKLY;BYDAY=MO,WE,FR); events render in the America/New_York timezone.' }));
       }, { block: true }));
 
@@ -3298,16 +3400,18 @@ main.appendChild(
         syncHistory();
 
         // Export — board.export({ format }) returns a string (json / csv).
-        const exportBtn = (fmt) =>
-          tb('Export ' + fmt.toUpperCase(), () => {
+        // JSON / CSV collapsed into one accessible "Export ▾" menu.
+        const exportItem = (fmt) => ({
+          label: fmt.toUpperCase(),
+          onClick: () => {
             try {
               const out = board.export({ format: fmt });
               status.textContent = fmt.toUpperCase() + ' export: ' + out.length + ' chars';
               console.log('[KANBAN-DEMO] export ' + fmt + ':', out.slice(0, 120));
             } catch (e) { console.warn('KANBAN-DEMO feature failed:', e && e.message); }
-          });
-        exportBtn('json');
-        exportBtn('csv');
+          },
+        });
+        exportMenu(bar, [exportItem('json'), exportItem('csv')]);
 
         // ── Enterprise scale: a 500-card backlog across columns × swimlanes. ──
         enterpriseSwap(bar, host, {

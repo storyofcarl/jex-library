@@ -1009,3 +1009,50 @@ pre.g-code code {
   outline: 2px solid oklch(var(--jects-ring));
   outline-offset: 1px;
 }
+
+/* ───────────── Reusable "Export ▾" toolbar dropdown (exportMenu) ─────────────
+   One trigger collapsing N export/print formats into an accessible menu.
+   Token-only chrome; the trigger itself is a real Jects Button. */
+.g-exportmenu { position: relative; display: inline-flex; }
+.g-exportmenu__panel {
+  position: absolute;
+  inset-block-start: calc(100% + var(--jects-space-1));
+  inset-inline-start: 0;
+  z-index: 40;
+  min-inline-size: 9rem;
+  display: flex;
+  flex-direction: column;
+  padding: var(--jects-space-1);
+  background: oklch(var(--jects-popover, var(--jects-card)));
+  color: oklch(var(--jects-popover-foreground, var(--jects-foreground)));
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-md);
+  box-shadow: var(--jects-shadow-lg, 0 10px 24px -6px oklch(0 0 0 / 0.25));
+}
+.g-exportmenu__panel[hidden] { display: none; }
+.g-exportmenu__item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  gap: var(--jects-space-2);
+  padding: var(--jects-space-1) var(--jects-space-2);
+  font: inherit;
+  font-size: var(--jects-font-size-sm);
+  text-align: start;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: var(--jects-radius-sm);
+  cursor: pointer;
+}
+.g-exportmenu__item:hover,
+.g-exportmenu__item:focus-visible {
+  background: oklch(var(--jects-accent));
+  color: oklch(var(--jects-accent-foreground, var(--jects-foreground)));
+  outline: none;
+}
+.g-exportmenu__item:focus-visible {
+  outline: 2px solid oklch(var(--jects-ring));
+  outline-offset: -2px;
+}
