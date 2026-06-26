@@ -355,10 +355,12 @@ export class ComboBox extends Widget<ComboBoxConfig, ComboBoxEvents> {
     this.listbox.id = this.listboxId;
     this.input.setAttribute('aria-controls', this.listboxId);
     if (this.filtered.length === 0) {
+      // jects-safe-html: static literal markup, no interpolation
       this.listbox.innerHTML = `<div class="jects-combobox__empty">No matches</div>`;
       this.input.removeAttribute('aria-activedescendant');
       return;
     }
+    // jects-safe-html: option label escaped via escapeHtml, value via escapeAttr in builder; rest static/ids
     this.listbox.innerHTML = this.filtered
       .map((o, i) => {
         const disabled = !!o.disabled;

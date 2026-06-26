@@ -226,8 +226,45 @@ function walk(source: Node, dest: Node, cfg: ResolvedConfig): void {
 export function sanitizeHtml(html: string, opts?: SanitizeOptions): string {
   const cfg = resolveConfig(opts);
   const template = document.createElement('template');
+  // jects-safe-html: sanitizer's own inert <template> parse (no DOM is live here)
   template.innerHTML = html;
   const out = document.createElement('div');
   walk(template.content, out, cfg);
   return out.innerHTML;
+}
+
+/**
+ * A string that has been proven safe to assign to `innerHTML` — either because it
+ * was run through {@link sanitizeHtml} (see {@link safeHtml}) or because it is a
+ * trusted, value-free internal template (see {@link staticHtml}).
+ *
+ * The `__jectsSafeHtml` brand is a phantom field: it exists only in the type
+ * system, so a plain `string` cannot be passed where a `SafeHtml` is expected
+ * without going through one of the helpers. This is purely additive — existing
+ * `createEl`/`html` options keep accepting `string`; the brand is opt-in for new
+ * code, with CI enforcement provided by `scripts/check-html-safety.mjs`.
+ */
+export type SafeHtml = string & { readonly __jectsSafeHtml: unique symbol };
+
+/**
+ * Sanitize `input` through {@link sanitizeHtml}, then brand the result as
+ * {@link SafeHtml}. Use for any HTML derived from user/config/data values that
+ * still needs to be assigned to `innerHTML`.
+ */
+export function safeHtml(input: string): SafeHtml {
+  return sanitizeHtml(input) as SafeHtml;
+}
+
+/**
+ * Tagged-template helper for trusted, value-free internal markup. The `values`
+ * parameter is typed `never[]`, so the template literal must contain **no**
+ * interpolations — any `${...}` is a compile error. This guarantees the produced
+ * {@link SafeHtml} carries no caller/user-supplied data.
+ *
+ * @example
+ *   el.innerHTML = staticHtml`<span class="icon" aria-hidden="true"></span>`;
+ */
+export function staticHtml(strings: TemplateStringsArray, ...values: never[]): SafeHtml {
+  void values;
+  return strings.join('') as SafeHtml;
 }

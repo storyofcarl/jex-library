@@ -79,7 +79,7 @@ function ganttTasks() {
     return {
       id: t.id, name: t.name, parentId: t.parentId,
       start: taskStart(t), end: taskEnd(t), duration: t.dur * DAY,
-      percentDone: t.percent, effort: t.dur * 8 * HOUR,
+      percentDone: t.percent / 100, effort: t.dur * 8 * HOUR,
     };
   });
 }

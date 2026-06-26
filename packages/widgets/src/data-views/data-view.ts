@@ -154,6 +154,7 @@ export class DataView<T extends Model = Model> extends Widget<DataViewConfig<T>,
         ` tabindex="${isActive ? 0 : -1}">${inner}</div>`
       );
     });
+    // jects-safe-html: title escaped via escapeHtml, ids via escapeAttr; cardTemplate output sanitizeHtml'd unless trusted opt-out
     this.grid.innerHTML = cards.join('');
   }
 

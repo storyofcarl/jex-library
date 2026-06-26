@@ -30,6 +30,7 @@ import {
   createEl,
   register,
   escapeHtml,
+  sanitizeHtml,
   type WidgetConfig,
   type WidgetEvents,
   type RecordId,
@@ -376,9 +377,11 @@ export class Chatbot extends Widget<ChatbotConfig, ChatbotEvents> {
     const show = list.length > 0 && !this.s.suggestionsDismissed && !this.s.busy;
     wrap.hidden = !show;
     if (!show) {
+      // jects-safe-html: static empty string clears container
       wrap.innerHTML = '';
       return;
     }
+    // jects-safe-html: static button markup; suggestion text escaped via escapeAttr/escapeHtml
     wrap.innerHTML = list
       .map(
         (s) =>
@@ -401,6 +404,7 @@ export class Chatbot extends Widget<ChatbotConfig, ChatbotEvents> {
     for (const av of this.s.avatars.values()) av.destroy();
     this.s.avatars.clear();
     this.store.parse([]);
+    // jects-safe-html: static empty string clears container
     this.listEl.innerHTML = '';
     this.statusEl.textContent = '';
     this.s.suggestionsDismissed = false;
@@ -588,9 +592,10 @@ export class Chatbot extends Widget<ChatbotConfig, ChatbotEvents> {
   private fillBubble(bubble: HTMLElement, m: ChatMessage): void {
     if (m.role === 'assistant') {
       const render = this.config.renderMarkdown ?? defaultRenderMarkdown;
-      bubble.innerHTML = render(m.text) || (m.streaming ? '' : '');
+      bubble.innerHTML = sanitizeHtml(render(m.text)) || (m.streaming ? '' : '');
       bubble.classList.toggle('jects-chatbot__bubble--streaming', !!m.streaming);
       if (m.streaming && !m.text) {
+        // jects-safe-html: static template, no interpolation
         bubble.innerHTML = typingIndicatorHtml();
       }
       // While streaming, mark the bubble busy and hide its partial/growing text

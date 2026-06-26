@@ -89,10 +89,13 @@ export {
   type WindowResult,
 } from './virtualization.js';
 
-// HTML security (escape + allow-list sanitizer)
+// HTML security (escape + allow-list sanitizer + branded SafeHtml)
 export {
   escape,
   escapeHtml,
   sanitizeHtml,
+  safeHtml,
+  staticHtml,
+  type SafeHtml,
   type SanitizeOptions,
 } from './sanitize.js';

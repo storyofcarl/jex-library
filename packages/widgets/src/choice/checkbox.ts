@@ -121,6 +121,7 @@ export class Checkbox extends Widget<CheckboxConfig, CheckboxEvents> {
     else input.removeAttribute('aria-label');
 
     const box = el.querySelector('.jects-checkbox__box')!;
+    // jects-safe-html: assigns only renderIcon SVG (minus/check) or empty string; no untrusted data
     box.innerHTML = indeterminate
       ? renderIcon('minus', { size: 14 })
       : checked

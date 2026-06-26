@@ -95,6 +95,7 @@ export class Dialog extends Window {
       footer.className = 'jects-dialog__footer';
       body.insertAdjacentElement('afterend', footer);
     } else {
+      // jects-safe-html: empty clear; action buttons built below as Button widgets
       footer.innerHTML = '';
     }
 

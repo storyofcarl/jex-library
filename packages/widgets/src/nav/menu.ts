@@ -123,6 +123,7 @@ export class Menu extends Widget<MenuConfig, MenuEvents> {
       this.activeId = focusables[0]?.id ?? null;
     }
 
+    // jects-safe-html: renderItem escapes item.text/shortcut via escapeHtml and ids/submenu label via escapeAttr; icons via renderIcon
     this.el.innerHTML = items.map((item, i) => this.renderItem(item, [i], 0)).join('');
   }
 

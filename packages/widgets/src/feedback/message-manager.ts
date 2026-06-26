@@ -180,6 +180,7 @@ export class MessageManager extends Widget<MessageManagerConfig, MessageManagerE
       dataset: { toastId: id },
     });
 
+    // jects-safe-html: title/message escaped via escapeHtml below; icons via renderIcon; rest static
     el.innerHTML =
       `<span class="jects-toast__icon" aria-hidden="true">${renderIcon(VARIANT_ICON[variant], { size: 18 })}</span>` +
       `<div class="jects-toast__body">` +
@@ -422,6 +423,7 @@ function openDialog<R>(
     const showCancel = kind === 'confirm' || kind === 'prompt';
     const showInput = kind === 'prompt';
 
+    // jects-safe-html: title/message escaped via escapeHtml, placeholder/defaultValue via escapeAttr below; icons via renderIcon; rest static
     panel.innerHTML =
       `<span class="jects-dialog__icon" aria-hidden="true">${renderIcon(VARIANT_ICON[variant], { size: 22 })}</span>` +
       `<div class="jects-dialog__content">` +

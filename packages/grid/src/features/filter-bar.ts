@@ -99,6 +99,7 @@ export class FilterBarFeature<Row extends Model = Model> implements GridFeature<
       .filter((c) => !c.hidden)
       .map((c) => this.renderCell(c))
       .join('');
+    // jects-safe-html: cells built by renderCell with all column data (id/header/placeholder) escaped via escapeHtml; widths are numeric
     this.root.innerHTML = cells;
     for (const c of this.api.columns) {
       if (c.hidden) continue;

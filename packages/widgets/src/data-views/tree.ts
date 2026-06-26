@@ -130,6 +130,7 @@ export class Tree<T extends TreeNode = TreeNode> extends Widget<TreeConfig<T>, T
     this.el.className = ['jects-tree', this.config.cls ?? ''].filter(Boolean).join(' ');
     this.el.setAttribute('aria-multiselectable', String(this.config.selectionMode === 'multi'));
     this.el.setAttribute('aria-label', this.config.label ?? 'Tree');
+    // jects-safe-html: node label escaped via escapeHtml, label/id via escapeAttr in builder; rest static/twisty
     this.el.innerHTML = rows.join('');
   }
 

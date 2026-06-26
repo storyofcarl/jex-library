@@ -19,6 +19,7 @@ import {
   createEl,
   register,
   computeWindow,
+  sanitizeHtml,
   type RecordId,
 } from '@jects/core';
 import {
@@ -609,7 +610,7 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
       for (const col of columns) {
         const cell = createEl('div', { className: 'jects-scheduler__resource-cell' });
         cell.style.width = `${col.width ?? 140}px`;
-        if (col.renderer) cell.innerHTML = col.renderer(record);
+        if (col.renderer) cell.innerHTML = sanitizeHtml(col.renderer(record));
         else cell.textContent = String(record[col.field] ?? '');
         row.appendChild(cell);
       }

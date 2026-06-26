@@ -37,3 +37,6 @@ pnpm-debug.log*
 jexLibrary.zip
 __qc_harness.html
 *.zip
+
+# Visual-smoke screenshots (CI artifacts, not committed)
+artifacts/

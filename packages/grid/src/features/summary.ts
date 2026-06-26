@@ -143,6 +143,7 @@ export class SummaryFeature<Row extends Model = Model> implements GridFeature<Ro
       );
       first = false;
     }
+    // jects-safe-html: cell text escaped via escapeHtml; widths/align are numeric/internal
     this.root.innerHTML = cells.join('');
   }
 

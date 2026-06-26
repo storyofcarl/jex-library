@@ -1387,10 +1387,12 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     const block = (node as HTMLElement | null) ?? this.editable;
     if (block === this.editable) {
       const wrapper = this.ownerDoc().createElement(tagName);
+      // jects-safe-html: re-parents the editable's own already-sanitized content
       wrapper.innerHTML = this.editable.innerHTML || '<br>';
       this.editable.replaceChildren(wrapper);
     } else {
       const replacement = this.ownerDoc().createElement(tagName);
+      // jects-safe-html: re-parents an existing in-DOM block's sanitized content
       replacement.innerHTML = block.innerHTML;
       block.replaceWith(replacement);
     }
@@ -1583,12 +1585,14 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
 
     if (op === 'addRow') {
       const fresh = row.cloneNode(true) as HTMLTableRowElement;
+      // jects-safe-html: literal single nbsp, no interpolation
       for (const c of Array.from(fresh.children)) c.innerHTML = ' ';
       row.parentNode?.insertBefore(fresh, row.nextSibling);
     } else if (op === 'addColumn') {
       for (const r of rows) {
         const ref = r.children[colIndex] ?? null;
         const td = this.ownerDoc().createElement('td');
+        // jects-safe-html: literal single nbsp, no interpolation
         td.innerHTML = ' ';
         r.insertBefore(td, ref ? ref.nextSibling : null);
       }
@@ -1670,6 +1674,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
       if (p.cell === survivor) continue;
       const content = (p.cell.innerHTML ?? '').trim();
       if (content && content !== '&nbsp;' && content !== '') {
+        // jects-safe-html: appends another in-DOM cell's already-sanitized content
         survivor.insertAdjacentHTML('beforeend', ' ' + p.cell.innerHTML);
       }
       p.cell.remove();
@@ -1701,6 +1706,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     // Re-add the extra columns in the survivor's own row.
     for (let i = 1; i < colspan; i++) {
       const fresh = this.ownerDoc().createElement(tag);
+      // jects-safe-html: literal single space, no interpolation
       fresh.innerHTML = ' ';
       row.insertBefore(fresh, cell.nextSibling);
     }
@@ -1712,6 +1718,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
       if (!target) continue;
       for (let i = 0; i < colspan; i++) {
         const fresh = this.ownerDoc().createElement(tag);
+        // jects-safe-html: literal single space, no interpolation
         fresh.innerHTML = ' ';
         target.appendChild(fresh);
       }
@@ -1737,6 +1744,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
         replacement.setAttribute(attr.name, attr.value);
       }
       if (!isHeader) replacement.setAttribute('scope', 'col');
+      // jects-safe-html: re-parents an existing cell's already-sanitized content
       replacement.innerHTML = c.innerHTML;
       c.replaceWith(replacement);
     }
@@ -2447,6 +2455,7 @@ export function sanitizeHtml(html: string): string {
   const secured = coreSanitizeHtml(html);
   const doc = document.implementation.createHTMLDocument('');
   const tpl = doc.createElement('template');
+  // jects-safe-html: `secured` is coreSanitizeHtml output, parsed into an inert template
   tpl.innerHTML = secured;
   sanitizeNode(tpl.content);
   return tpl.innerHTML;
@@ -2463,6 +2472,7 @@ export function cleanPastedHtml(html: string): string {
   if (!html) return '';
   const doc = document.implementation.createHTMLDocument('');
   const tpl = doc.createElement('template');
+  // jects-safe-html: inert detached template parse; caller runs result through sanitizeHtml
   tpl.innerHTML = html;
   cleanPasteNode(tpl.content);
   return tpl.innerHTML;

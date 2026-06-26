@@ -196,6 +196,7 @@ export class List<T extends Model = Model> extends Widget<ListConfig<T>, ListEve
           ` style="height:${itemSize}px" tabindex="-1">${inner}</div>`,
       );
     }
+    // jects-safe-html: default label escaped via escapeHtml, ids via escapeAttr; itemTemplate is trusted library-controlled renderer (see config doc)
     this.content.innerHTML = rows.join('');
     this.syncActiveDescendant();
   }

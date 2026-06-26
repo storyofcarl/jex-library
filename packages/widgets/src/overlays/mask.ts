@@ -86,6 +86,7 @@ export class Mask extends Widget<MaskConfig, MaskEvents> {
       parts.push(`<span class="jects-mask__message">${escapeHtml(message)}</span>`);
     }
     parts.push('</div>');
+    // jects-safe-html: message escaped via escapeHtml above; spinner/box markup static
     el.innerHTML = parts.join('');
   }
 

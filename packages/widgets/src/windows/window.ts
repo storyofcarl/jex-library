@@ -286,6 +286,7 @@ export class Window extends Widget<WindowConfig, WindowEvents> {
         ).join('')
       : '';
 
+    // jects-safe-html: title and text escaped via escapeHtml (bodyHtml above), ids internal; html config is trusted authored body by contract
     el.innerHTML = [
       `<header class="jects-window__header" data-window-drag${draggable && !maximized ? '' : ' data-disabled="true"'}>`,
       `<span class="jects-window__title" id="${titleId}">${title ? escapeHtml(title) : ''}</span>`,

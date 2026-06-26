@@ -422,6 +422,7 @@ export class GanttIndicatorsFeature<T extends Model = Model> implements GanttFea
     span.setAttribute('aria-label', ind.tooltip);
     span.title = ind.tooltip;
     const icon = ind.icon ?? ICON_FOR[ind.kind];
+    // jects-safe-html: internal indicator icon SVG (ICON_BODY lookup by typed name, no user data)
     span.innerHTML = renderIndicatorIcon(icon);
     // Stash the task id so delegated activation can resolve back to the model.
     span.dataset.taskId = String(task.id);

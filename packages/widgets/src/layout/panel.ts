@@ -216,8 +216,10 @@ export class Panel extends Widget<PanelConfig, PanelEvents> {
           : sanitizeHtml(tools)
         : '';
       const toolsHtml = safeTools ? `<div class="jects-panel__tools">${safeTools}</div>` : '';
+      // jects-safe-html: title escaped via escapeHtml in toggle; tools sanitizeHtml'd unless trusted opt-out
       header.innerHTML = toggle + toolsHtml;
     } else {
+      // jects-safe-html: empty clear
       header.innerHTML = '';
     }
 
@@ -235,6 +237,7 @@ export class Panel extends Widget<PanelConfig, PanelEvents> {
       footerEl.innerHTML = this.config.trusted ? footer : sanitizeHtml(footer);
     } else {
       footerEl.hidden = true;
+      // jects-safe-html: empty clear
       footerEl.innerHTML = '';
     }
   }

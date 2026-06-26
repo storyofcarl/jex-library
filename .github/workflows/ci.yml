@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: '0 6 * * *' # nightly broad browser + bench + visual smoke
 
 env:
   NODE_OPTIONS: --max-old-space-size=4096
@@ -32,6 +34,8 @@ jobs:
             exit 1
           fi
           echo "OK: no derivative framing."
+      - name: HTML-safety guard (no unguarded innerHTML)
+        run: pnpm security:html
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test
@@ -44,6 +48,7 @@ jobs:
 
   browser-a11y:
     name: browser + a11y (Chromium)
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,5 +62,35 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
-      # Representative data-heavy packages; expand as the suite stabilizes.
-      - run: pnpm --filter @jects/widgets --filter @jects/grid --filter @jects/gantt test:browser
+      # Representative data-heavy packages on every PR (incl. a11y specs).
+      - run: pnpm --filter @jects/widgets --filter @jects/grid --filter @jects/gantt --filter @jects/scheduler --filter @jects/calendar test:browser
+
+  nightly:
+    name: nightly — all browser/a11y + bench + visual smoke
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.17.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+      # Every package that ships browser/a11y specs.
+      - run: pnpm -r --if-present test:browser
+      - name: Performance benchmark
+        run: pnpm bench
+      - name: Visual smoke (routes × viewports × themes)
+        run: pnpm visual
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-smoke
+          path: |
+            artifacts/visual/**
+            docs/PERFORMANCE.md

@@ -156,6 +156,7 @@ export class Rating extends Widget<RatingConfig, RatingEvents> {
           `</span>`,
       );
     }
+    // jects-safe-html: parts interpolate only numeric index and static state class names + literal star glyphs
     this.starsEl.innerHTML = parts.join('');
 
     this.el.setAttribute('aria-valuemin', '0');

@@ -105,6 +105,7 @@ export class MiniCalendar extends Widget<MiniCalendarConfig, MiniCalendarEvents>
     this.el.className = ['jects-minical', this.config.cls ?? ''].filter(Boolean).join(' ');
     this.el.removeAttribute('role');
     this.el.removeAttribute('aria-label');
+    // jects-safe-html: monthLabel from MONTH_NAMES constants + numeric year; headers/rows from weekday constants + numeric cells; ids internal
     this.el.innerHTML = `
       <div class="jects-minical__header">
         <button type="button" class="jects-minical__nav jects-minical__nav--prev" data-nav="-1" aria-label="Previous month">&#8249;</button>

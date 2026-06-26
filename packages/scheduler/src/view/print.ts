@@ -752,6 +752,7 @@ function collectStyleLinks(): string {
 function stripHtml(html: string): string {
   if (typeof document === 'undefined') return html;
   const tmp = document.createElement('div');
+  // jects-safe-html: detached node never inserted into the DOM; only .textContent is read back (HTML-to-text extraction, no script/handler execution)
   tmp.innerHTML = html;
   return tmp.textContent ?? '';
 }

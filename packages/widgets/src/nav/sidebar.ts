@@ -115,6 +115,7 @@ export class Sidebar extends Widget<SidebarConfig, SidebarEvents> {
       .map((item) => this.renderItem(item, 1))
       .join('')}</ul>`;
 
+    // jects-safe-html: header title escaped via escapeHtml; renderItem escapes item.text/badge via escapeHtml; toggle uses renderIcon
     this.el.innerHTML = `${header}${list}<div class="jects-sidebar__footer">${toggle}</div>`;
   }
 

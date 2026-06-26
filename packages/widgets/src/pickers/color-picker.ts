@@ -607,6 +607,7 @@ export class ColorPicker extends Widget<ColorPickerConfig, ColorPickerEvents> {
 
   private renderSwatches(): void {
     const wrap = this.popover.querySelector('.jects-colorpicker__swatches')!;
+    // jects-safe-html: empty clear; swatches built below as DOM nodes
     wrap.innerHTML = '';
     const swatches = this.config.swatches ?? CMYK_SWATCHES;
     for (const hex of swatches) {

@@ -284,7 +284,7 @@ async function buildApp(grid) {
         tasks: items.map((it) => ({
           id: it.id, name: ganttName(it),
           start: it.start, end: it.end, duration: it.durDays * DAY,
-          percentDone: STATUS_PCT[it.status], effort: it.estimate * HOUR,
+          percentDone: STATUS_PCT[it.status] / 100, effort: it.estimate * HOUR,
         })),
         dependencies: items.flatMap((it) =>
           it.deps.map((from, i) => ({ id: it.id + '-' + from, fromId: from, toId: it.id, type: 'FS' }))),
@@ -347,7 +347,7 @@ async function buildApp(grid) {
             const it = byId.get(c.id);
             if (!it) continue;
             it.status = col;
-            if (gantt) { try { gantt.updateTask(it.id, { name: ganttName(it), percentDone: STATUS_PCT[col] }); } catch (_) {} }
+            if (gantt) { try { gantt.updateTask(it.id, { name: ganttName(it), percentDone: STATUS_PCT[col] / 100 }); } catch (_) {} }
           }
         } finally { applying = false; }
         renderKpis();

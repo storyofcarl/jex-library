@@ -326,6 +326,7 @@ export class Pagination extends Widget<PaginationConfig, PaginationEvents> {
       parts.push(this.navBtn('last', 'Last page', 'chevrons-up-down', atEnd || disabled, true));
     }
 
+    // jects-safe-html: page items interpolate only numeric page numbers; labels static; icons via renderIcon
     nav.innerHTML = parts.join('');
 
     this.renderSizeSelect(pageSizeOptions, disabled);

@@ -184,6 +184,7 @@ export class RadioGroup extends Widget<RadioGroupConfig, RadioGroupEvents> {
     const firstEnabled = options.find((o) => !disabled && !o.disabled)?.value;
     const tabbable = value ?? firstEnabled;
 
+    // jects-safe-html: option label escaped via escapeHtml, value via escapeAttr in builder; rest static
     el.innerHTML = options
       .map((o) => {
         const checked = o.value === value;

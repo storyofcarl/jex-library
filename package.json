@@ -21,7 +21,9 @@
     "version-packages": "changeset version",
     "release": "turbo run build && changeset publish",
     "matrix": "node scripts/gen-matrix.mjs",
-    "bench": "node scripts/bench/run.mjs"
+    "bench": "node scripts/bench/run.mjs",
+    "security:html": "node scripts/check-html-safety.mjs",
+    "visual": "node scripts/visual-smoke.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.10",

@@ -78,7 +78,7 @@ export function register() {
             { field: 'percentDone', header: '% Done', width: 72 },
           ],
           tasks: model.map((m) => ({ id: m.id, name: ganttName(m),
-            start: m.start, end: m.end, duration: m.duration, percentDone: PCT[m.status] })),
+            start: m.start, end: m.end, duration: m.duration, percentDone: PCT[m.status] / 100 })),
           dependencies: deps,
         });
 
@@ -99,7 +99,7 @@ export function register() {
               const m = byId.get(c.id);
               if (!m) continue;
               m.status = col;
-              gantt.updateTask(c.id, { name: ganttName(m), percentDone: PCT[col] });
+              gantt.updateTask(c.id, { name: ganttName(m), percentDone: PCT[col] / 100 });
             }
           } finally { applying = false; }
           updateCap(`Moved “${(e.cards[0] || {}).title}” → ${LABEL[col] || col}; Gantt repainted.`);

@@ -14,6 +14,7 @@
  * so it can never leak.
  */
 
+import { sanitizeHtml } from '@jects/core';
 import { Disposers } from './shared.js';
 
 /** Where a tooltip sits relative to its anchor point. */
@@ -36,7 +37,7 @@ export interface TooltipOptions {
 export interface TooltipContent {
   /** Plain text (escaped). Use `html` for trusted rich content instead. */
   text?: string;
-  /** Trusted, library-controlled HTML. */
+  /** Rich HTML content. Sanitized (allow-list) before insertion. */
   html?: string;
   /** Anchor point in `host`-relative coordinates. */
   x: number;
@@ -121,7 +122,7 @@ export class TimelineTooltip {
   }
 
   private render(content: TooltipContent): void {
-    if (content.html !== undefined) this.el.innerHTML = content.html;
+    if (content.html !== undefined) this.el.innerHTML = sanitizeHtml(content.html);
     else this.el.textContent = content.text ?? '';
     this.position(content.x, content.y);
   }

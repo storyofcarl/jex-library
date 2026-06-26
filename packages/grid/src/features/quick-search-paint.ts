@@ -119,6 +119,7 @@ export function applyQuickSearchHighlight(
   // Active match: replace the plain text node with the feature's escaped
   // `<mark>` markup. `highlight()` HTML-escapes every non-matched span, so this
   // is XSS-safe even for values containing `<`, `>`, `&`, or quotes.
+  // jects-safe-html: highlight() escapes text before marking
   cellEl.innerHTML = search.highlight(text);
   cellEl.classList.add(SEARCH_MATCH_CELL_CLASS);
   // A non-visual hook for AT / tests / custom styling to detect a match without

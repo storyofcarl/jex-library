@@ -903,6 +903,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
         'aria-label': expanded ? 'Collapse' : 'Expand',
       },
     });
+    // jects-safe-html: renderIcon output (static icon markup) or empty string
     twisty.innerHTML = hasKids
       ? renderIcon(expanded ? 'chevron-down' : 'chevron-right', { size: 16 })
       : '';
@@ -933,6 +934,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
         title: this.t('markComplete'),
       },
     });
+    // jects-safe-html: renderIcon output + escapeHtml'd label only
     doneBtn.innerHTML =
       `<span class="jects-todo__done-mark" aria-hidden="true">${done ? renderIcon('check', { size: 12 }) : ''}</span>` +
       `<span class="jects-todo__done-text">${escapeHtml(this.t('colDone'))}</span>`;
@@ -1053,6 +1055,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       chip.style.setProperty('--_avatar-color', avatarColor(a));
       av.append(chip);
     }
+    // jects-safe-html: static markup; no interpolation
     if (!(task.assignees?.length)) av.innerHTML = `<span class="jects-todo__avatar jects-todo__avatar--add">+</span>`;
     rowEl.append(av);
 
@@ -2834,6 +2837,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     const lab = createEl('span', { className: 'jects-todo__detail-label' });
     lab.textContent = `${this.t('timeSpentH')}: ${spent}${est ? ` / ${est}` : ''}`;
     const barWrap = createEl('div', { className: 'jects-todo__timer-bar' });
+    // jects-safe-html: static template; numeric pct only
     barWrap.innerHTML = `<span class="jects-todo__timer-fill${pct > 100 ? ' jects-todo__timer-fill--over' : ''}" style="inline-size:${pct}%"></span>`;
     const btn = createEl('button', {
       className: ['jects-todo__timer-btn', running ? 'jects-todo__timer-btn--on' : ''].filter(Boolean).join(' '),
@@ -2944,6 +2948,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       const meta = createEl('div', { className: 'jects-todo__comment-meta' });
       meta.textContent = `${c.author} · ${formatDateLocale(new Date(c.createdAt).toISOString().slice(0, 10), this.locale())}`;
       const text = createEl('div', { className: 'jects-todo__comment-text' });
+      // jects-safe-html: renderMentions escapes text + mention labels
       text.innerHTML = this.renderMentions(c.text, c.mentions ?? []);
       item.append(meta, text);
       thread.append(item);
@@ -4002,6 +4007,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       className: 'jects-todo__pbadge',
       attrs: { 'aria-hidden': 'true', title: `${p.done} / ${p.total}` },
     });
+    // jects-safe-html: static template; numeric values only
     badge.innerHTML = `<span class="jects-todo__pbadge-track"><span class="jects-todo__pbadge-fill" style="inline-size:${p.percent}%"></span></span><span class="jects-todo__pbadge-num">${p.done}/${p.total}</span>`;
     return badge;
   }

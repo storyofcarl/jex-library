@@ -350,9 +350,11 @@ export function renderConnector(
   const second = pts[1] ?? b;
   const penult = pts[pts.length - 2] ?? a;
   if (arrows.end && arrows.end !== 'none') {
+    // jects-safe-html: SVG arrow marker from internal geometry, no user data
     g.insertAdjacentHTML('beforeend', arrowMarker(arrows.end, b, penult));
   }
   if (arrows.start && arrows.start !== 'none') {
+    // jects-safe-html: SVG arrow marker from internal geometry, no user data
     g.insertAdjacentHTML('beforeend', arrowMarker(arrows.start, a, second));
   }
 

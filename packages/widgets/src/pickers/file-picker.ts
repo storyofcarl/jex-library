@@ -325,6 +325,7 @@ export class FilePicker extends Widget<FilePickerConfig, FilePickerEvents> {
 
   private renderList(): void {
     const listEl = this.listEl;
+    // jects-safe-html: empty clear; rows built below as DOM nodes
     listEl.innerHTML = '';
     const entries = this.state.entries;
     listEl.hidden = entries.length === 0;

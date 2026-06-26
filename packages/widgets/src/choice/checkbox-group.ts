@@ -99,6 +99,7 @@ export class CheckboxGroup extends Widget<CheckboxGroupConfig, CheckboxGroupEven
     if (ariaLabel) el.setAttribute('aria-label', ariaLabel);
     else el.removeAttribute('aria-label');
 
+    // jects-safe-html: option label escaped via escapeHtml, value via escapeAttr in builder; rest static/renderIcon
     el.innerHTML = options
       .map((o) => {
         const checked = selected.has(o.value);

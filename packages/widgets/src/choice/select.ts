@@ -302,6 +302,7 @@ export class Select extends Widget<SelectConfig, SelectEvents> {
     const value = this.config.value;
     this.listbox.id = this.listboxId;
     this.trigger.setAttribute('aria-controls', this.listboxId);
+    // jects-safe-html: option label escaped via escapeHtml, value via escapeAttr in builder; rest static/renderIcon
     this.listbox.innerHTML = opts
       .map((o, i) => {
         const selected = o.value === value;
@@ -350,6 +351,7 @@ export class Select extends Widget<SelectConfig, SelectEvents> {
     trigger.setAttribute('aria-label', ariaLabel ?? 'Select');
 
     const showClear = clearable && hasValue && !disabled;
+    // jects-safe-html: selected label / placeholder escaped via escapeHtml below; rest static/renderIcon
     trigger.innerHTML = [
       `<span class="jects-select__value${hasValue ? '' : ' jects-select__value--placeholder'}">`,
       escapeHtml(hasValue ? selectedOpt!.label : placeholder),

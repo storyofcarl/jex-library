@@ -237,6 +237,7 @@ export class Tabbar extends Widget<TabbarConfig, TabbarEvents> {
     if (ariaLabel) el.setAttribute('aria-label', ariaLabel);
     else el.removeAttribute('aria-label');
 
+    // jects-safe-html: tab label escaped via escapeHtml, ids via escapeAttr in builder; close icon via renderIcon
     el.innerHTML = items
       .map((t) => {
         const selected = t.id === active;

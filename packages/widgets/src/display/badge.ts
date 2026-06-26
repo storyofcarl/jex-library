@@ -77,6 +77,7 @@ export class Badge extends Widget<BadgeConfig, BadgeEvents> {
         '<button type="button" class="jects-badge__dismiss" aria-label="Dismiss">&times;</button>',
       );
     }
+    // jects-safe-html: label text escaped via escapeHtml above; dot/dismiss markup static
     this.el.innerHTML = parts.join('');
   }
 }

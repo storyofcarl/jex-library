@@ -266,6 +266,7 @@ export class GanttTimelineView<T extends Model = Model> {
 
   private renderHeader(): void {
     const width = this.contentWidth();
+    // jects-safe-html: clears content; no interpolation
     this.header.innerHTML = '';
     const inner = createEl('div', { className: 'jects-gantt__timeline-header-inner' });
     inner.style.width = `${width}px`;
@@ -319,6 +320,7 @@ export class GanttTimelineView<T extends Model = Model> {
     this.content.style.height = `${height}px`;
     this.backdrop.style.width = `${width}px`;
     this.backdrop.style.height = `${height}px`;
+    // jects-safe-html: clears content; no interpolation
     this.backdrop.innerHTML = '';
 
     // Non-working shading (weekends/off-hours/holidays) — derived from the
@@ -360,6 +362,7 @@ export class GanttTimelineView<T extends Model = Model> {
   }
 
   private renderBars(): void {
+    // jects-safe-html: clears content; no interpolation
     this.barsLayer.innerHTML = '';
     this.barById.clear();
     this.barEls.clear();

@@ -782,6 +782,7 @@ export class GanttUndoRedo<T extends Model = Model> implements GanttFeature<T> {
     btn.setAttribute('aria-label', label);
     btn.title = label;
     btn.disabled = true;
+    // jects-safe-html: static icon SVG (UNDO_ICON/REDO_ICON consts)
     btn.innerHTML = icon;
     const handler = (e: Event): void => {
       e.preventDefault();
