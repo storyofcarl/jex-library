@@ -22,7 +22,7 @@
     border-collapse: collapse;
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
 
@@ -38,7 +38,7 @@
   .jects-gantt-ics-preview__table td {
     padding: var(--jects-space-1) var(--jects-space-2);
     text-align: start;
-    border-block-end: 1px solid oklch(var(--jects-border));
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   .jects-gantt-ics-preview__table thead th {

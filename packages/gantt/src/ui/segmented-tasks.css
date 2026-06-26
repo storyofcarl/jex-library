@@ -38,7 +38,7 @@
     box-sizing: border-box;
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-primary));
-    border: 1px solid oklch(var(--jects-primary) / 0.7);
+    border: var(--jects-border-width) solid oklch(var(--jects-primary) / 0.7);
     color: oklch(var(--jects-primary-foreground));
     overflow: hidden;
     pointer-events: auto;
@@ -88,7 +88,7 @@
     inset-block-start: 50%;
     block-size: 0;
     transform: translateY(-50%);
-    border-block-start: 1px dashed oklch(var(--jects-muted-foreground) / 0.8);
+    border-block-start: var(--jects-border-width) dashed oklch(var(--jects-muted-foreground) / 0.8);
     pointer-events: auto;
     cursor: pointer;
     z-index: 1;

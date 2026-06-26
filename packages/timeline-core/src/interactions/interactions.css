@@ -31,7 +31,7 @@
   .jects-timeline-bar-ghost {
     position: absolute;
     box-sizing: border-box;
-    border: 1px dashed oklch(var(--jects-primary));
+    border: var(--jects-border-width) dashed oklch(var(--jects-primary));
     background: oklch(var(--jects-primary) / 0.12);
     border-radius: var(--jects-radius-sm);
     pointer-events: none;
@@ -91,7 +91,7 @@
     line-height: 1.4;
     color: oklch(var(--jects-popover-foreground));
     background: oklch(var(--jects-popover));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     box-shadow: var(--jects-shadow-lg);
     pointer-events: none;

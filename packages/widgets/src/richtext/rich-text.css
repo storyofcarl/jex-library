@@ -8,13 +8,13 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     overflow: hidden;
   }
 
   .jects-richtext:focus-within {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -26,7 +26,7 @@
     gap: var(--jects-space-1);
     padding: var(--jects-space-2);
     background: oklch(var(--jects-muted));
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   .jects-richtext__sep {
@@ -50,7 +50,7 @@
     cursor: pointer;
     color: oklch(var(--jects-foreground));
     background: transparent;
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     transition:
       background-color var(--jects-duration-fast) ease,
@@ -64,7 +64,7 @@
   }
 
   .jects-richtext__btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -90,13 +90,13 @@
     font-size: var(--jects-font-size-xs);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     cursor: pointer;
   }
 
   .jects-richtext__select:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -113,7 +113,7 @@
     padding-inline: var(--jects-space-2);
     font-size: var(--jects-font-size-xs);
     font-weight: var(--jects-font-weight-semibold);
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     cursor: pointer;
   }
@@ -127,7 +127,7 @@
     width: 1.5rem;
     height: 1.25rem;
     padding: 0;
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     background: transparent;
     cursor: pointer;
@@ -171,7 +171,7 @@
   .jects-richtext__editable td {
     min-width: 3rem;
     padding: var(--jects-space-1) var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     vertical-align: top;
   }
 

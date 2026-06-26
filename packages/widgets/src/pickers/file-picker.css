@@ -35,8 +35,8 @@
     color: oklch(var(--jects-foreground));
   }
   .jects-filepicker__zone:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-filepicker__zone--dragover {
     border-color: oklch(var(--jects-primary));
@@ -88,7 +88,7 @@
     padding: var(--jects-space-2) var(--jects-space-3);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
   .jects-filepicker__item-info {
@@ -141,7 +141,7 @@
     line-height: 1;
     color: oklch(var(--jects-muted-foreground));
     background: transparent;
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     cursor: pointer;
     transition:
@@ -153,7 +153,7 @@
     background: oklch(var(--jects-destructive) / 0.1);
   }
   .jects-filepicker__remove:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

@@ -19,7 +19,7 @@
     box-sizing: border-box;
     padding: var(--jects-space-3) var(--jects-space-4);
     background: oklch(var(--jects-muted) / 0.4);
-    border-top: 1px solid oklch(var(--jects-border));
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   .jects-dialog__footer[hidden] {

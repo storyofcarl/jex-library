@@ -20,7 +20,7 @@
     padding: var(--jects-space-1) var(--jects-space-2);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
 
@@ -35,7 +35,7 @@
     line-height: 1.4;
     color: oklch(var(--jects-primary-foreground));
     background: oklch(var(--jects-primary));
-    border: 1px solid oklch(var(--jects-primary));
+    border: var(--jects-border-width) solid oklch(var(--jects-primary));
     border-radius: var(--jects-radius-md);
     cursor: pointer;
     transition: background var(--jects-duration-fast) ease;
@@ -46,8 +46,8 @@
   }
 
   .jects-gantt-pdf-export-btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-gantt-pdf-export-btn:disabled {

@@ -13,7 +13,7 @@
     font-size: var(--jects-font-size-sm);
     color: var(--_menu-fg);
     background: var(--_menu-bg);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     box-shadow: var(--jects-shadow-md);
   }
@@ -55,7 +55,7 @@
   }
 
   .jects-menu__item:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 
@@ -112,7 +112,7 @@
     padding: var(--jects-space-1);
     background: var(--_menu-bg);
     color: var(--_menu-fg);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     box-shadow: var(--jects-shadow-md);
   }

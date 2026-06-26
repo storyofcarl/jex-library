@@ -42,7 +42,7 @@
     box-sizing: border-box;
     pointer-events: auto;
     background: oklch(var(--jects-primary));
-    border: 1px solid oklch(var(--jects-background));
+    border: var(--jects-border-width) solid oklch(var(--jects-background));
     border-radius: 1px;
     cursor: crosshair;
     touch-action: none;
@@ -53,8 +53,8 @@
   }
 
   .jects-grid__fill-handle:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* Dashed preview rectangle over the projected fill target range, positioned in
@@ -63,7 +63,7 @@
     position: fixed;
     pointer-events: none;
     box-sizing: border-box;
-    border: 1px dashed oklch(var(--jects-primary));
+    border: var(--jects-border-width) dashed oklch(var(--jects-primary));
     background: oklch(var(--jects-primary) / 0.08);
     border-radius: var(--jects-radius-sm);
   }

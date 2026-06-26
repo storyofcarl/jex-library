@@ -10,7 +10,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
 
@@ -131,7 +131,7 @@
     position: absolute;
     inset-block: 25%;
     background: oklch(var(--jects-muted) / 0.55);
-    border: 1px dashed oklch(var(--jects-border));
+    border: var(--jects-border-width) dashed oklch(var(--jects-border));
     box-sizing: border-box;
     pointer-events: none;
   }

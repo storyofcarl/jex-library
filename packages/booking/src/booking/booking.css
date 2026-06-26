@@ -9,7 +9,7 @@
     font-family: var(--jects-font-family);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     padding: var(--jects-space-5);
   }
@@ -60,7 +60,7 @@
     font-weight: var(--jects-font-weight-medium);
     line-height: 1;
     padding: var(--jects-space-2) var(--jects-space-3);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
@@ -79,8 +79,8 @@
     border-color: oklch(var(--jects-primary));
   }
   .jects-booking__resource:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* ── slot grid ───────────────────────────────────────────────────── */
@@ -98,7 +98,7 @@
     line-height: 1;
     text-align: center;
     padding: var(--jects-space-2) var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
@@ -136,8 +136,8 @@
     opacity: 0.7;
   }
   .jects-booking__slot:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-booking__empty {
@@ -153,7 +153,7 @@
   .jects-booking__form-section {
     margin-top: var(--jects-space-2);
     padding-top: var(--jects-space-4);
-    border-top: 1px solid oklch(var(--jects-border));
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   /* ── toolbar (undo / redo / bulk delete) ─────────────────────────── */
@@ -170,7 +170,7 @@
     font-weight: var(--jects-font-weight-medium);
     line-height: 1;
     padding: var(--jects-space-2) var(--jects-space-3);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
@@ -188,8 +188,8 @@
     opacity: 0.5;
   }
   .jects-booking__tool:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* ── confirmation banner ──────────────────────────────────────────── */
@@ -217,7 +217,7 @@
     text-align: left;
     font-family: inherit;
     padding: var(--jects-space-2) var(--jects-space-3);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
@@ -235,8 +235,8 @@
     border-color: oklch(var(--jects-primary));
   }
   .jects-booking__service:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-booking__service-name {
     font-size: var(--jects-font-size-sm);
@@ -260,14 +260,14 @@
     font-family: inherit;
     font-size: var(--jects-font-size-sm);
     padding: var(--jects-space-1) var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
   }
   .jects-booking__tz-select:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* ── slot seats / waitlist ────────────────────────────────────────── */
@@ -292,7 +292,7 @@
   .jects-booking__manage {
     margin-top: var(--jects-space-2);
     padding-top: var(--jects-space-4);
-    border-top: 1px solid oklch(var(--jects-border));
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border));
   }
   .jects-booking__manage-heading {
     margin: 0 0 var(--jects-space-2);
@@ -326,7 +326,7 @@
     font-size: var(--jects-font-size-xs);
     font-weight: var(--jects-font-weight-medium);
     padding: var(--jects-space-1) var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
@@ -336,8 +336,8 @@
     color: oklch(var(--jects-accent-foreground));
   }
   .jects-booking__manage-action:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* ── calendar overview ────────────────────────────────────────────── */
@@ -369,7 +369,7 @@
     font-family: inherit;
     font-size: var(--jects-font-size-sm);
     padding: var(--jects-space-1);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
@@ -385,8 +385,8 @@
     font-weight: var(--jects-font-weight-semibold);
   }
   .jects-booking-cal__day:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-booking-cal__badge {
     position: absolute;

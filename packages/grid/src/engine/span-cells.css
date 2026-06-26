@@ -10,8 +10,8 @@
     padding-block: var(--jects-space-2);
     /* A subtle inset border distinguishes the merged block from single cells
        without a hard-coded color (token-driven). */
-    border-inline-end: 1px solid oklch(var(--jects-border) / 0.6);
-    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+    border-inline-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
     background: var(--_grid-bg, oklch(var(--jects-background)));
   }
 

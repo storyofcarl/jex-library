@@ -18,7 +18,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-card-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     overflow: hidden;
   }
@@ -37,13 +37,13 @@
     background: oklch(var(--jects-muted));
     color: oklch(var(--jects-muted-foreground));
     font-weight: var(--jects-font-weight-medium);
-    border-block-end: 1px solid oklch(var(--jects-border));
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border));
     white-space: nowrap;
   }
 
   .jects-gantt__csv-preview tbody td {
     padding: var(--jects-space-1) var(--jects-space-3);
-    border-block-end: 1px solid oklch(var(--jects-border) / 0.5);
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.5);
     /* Preserve the leading-space outline indent on the Name cell. */
     white-space: pre;
   }

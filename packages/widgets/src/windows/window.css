@@ -12,7 +12,7 @@
     font-family: var(--jects-font-family);
     color: oklch(var(--jects-card-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     box-shadow: var(--jects-shadow-lg);
   }
@@ -22,8 +22,8 @@
   }
 
   .jects-window:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-window--maximized {
@@ -48,7 +48,7 @@
     padding: var(--jects-space-2) var(--jects-space-3);
     background: oklch(var(--jects-muted));
     color: oklch(var(--jects-foreground));
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
     cursor: move;
     touch-action: none;
   }
@@ -97,7 +97,7 @@
   }
 
   .jects-window__control:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

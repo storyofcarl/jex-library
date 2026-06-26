@@ -16,7 +16,7 @@
     grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
     gap: var(--jects-space-2);
     padding: var(--jects-space-3);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
@@ -29,7 +29,7 @@
     gap: var(--jects-space-2);
     min-height: 4rem;
     padding: var(--jects-space-2);
-    border: 1px dashed oklch(var(--jects-border));
+    border: var(--jects-border-width) dashed oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-muted) / 0.4);
     transition:
@@ -65,7 +65,7 @@
     height: 1.75rem;
     padding-inline: var(--jects-space-2);
     font-size: var(--jects-font-size-sm);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-secondary));
     color: oklch(var(--jects-secondary-foreground));
@@ -74,8 +74,8 @@
   }
 
   .jects-pivot__chip:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-pivot__chip--dragging {
@@ -86,7 +86,7 @@
   /* Keyboard pick-up state (the accessible equivalent of dragging). */
   .jects-pivot__chip--picked {
     outline: 2px dashed oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline-offset: var(--jects-ring-offset);
     background: oklch(var(--jects-accent));
     color: oklch(var(--jects-accent-foreground));
   }
@@ -115,7 +115,7 @@
     font-size: var(--jects-font-size-xs);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
   }
 
@@ -141,7 +141,7 @@
   }
 
   .jects-pivot__chip-remove:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -150,7 +150,7 @@
     position: relative;
     min-height: 12rem;
     height: 24rem;
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     overflow: hidden;
   }
@@ -197,7 +197,7 @@
   }
 
   .jects-pivot__toggle:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -216,7 +216,7 @@
     font-size: var(--jects-font-size-xs);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
   }
 

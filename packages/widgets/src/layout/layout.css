@@ -33,11 +33,11 @@
 
   .jects-layout__cell--north,
   .jects-layout__cell--south {
-    border-block: 1px solid oklch(var(--jects-border));
+    border-block: var(--jects-border-width) solid oklch(var(--jects-border));
   }
   .jects-layout__cell--west,
   .jects-layout__cell--east {
-    border-inline: 1px solid oklch(var(--jects-border));
+    border-inline: var(--jects-border-width) solid oklch(var(--jects-border));
   }
   .jects-layout__cell--center {
     background: oklch(var(--jects-background));

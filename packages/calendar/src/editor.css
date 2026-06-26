@@ -34,7 +34,7 @@
     font: inherit;
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
     padding: var(--jects-space-2) var(--jects-space-3);
   }
@@ -45,7 +45,7 @@
   .jects-cal-editor__input:focus-visible,
   .jects-cal-editor__select:focus-visible,
   .jects-cal-editor__textarea:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 0;
     border-color: oklch(var(--jects-ring));
   }
@@ -70,7 +70,7 @@
     font-weight: var(--jects-font-weight-medium);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     cursor: pointer;
   }
@@ -78,8 +78,8 @@
     background: oklch(var(--jects-accent));
   }
   .jects-cal-editor__btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-cal-editor__btn--primary {
     background: oklch(var(--jects-primary));
@@ -105,7 +105,7 @@
     padding: var(--jects-space-2) var(--jects-space-3);
     margin-bottom: var(--jects-space-3);
     background: oklch(var(--jects-muted) / 0.4);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
   .jects-cal-editor__rec-row {
@@ -149,7 +149,7 @@
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 999px;
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     font-size: var(--jects-font-size-xs);
     user-select: none;
   }
@@ -159,7 +159,7 @@
     border-color: transparent;
   }
   .jects-cal-editor__weekday-cb:focus-visible + .jects-cal-editor__weekday-txt {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 }

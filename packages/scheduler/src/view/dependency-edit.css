@@ -36,7 +36,7 @@
 
   /* ── candidate target bar highlight ── */
   .jects-scheduler__bar--link-target {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
     box-shadow: var(--jects-shadow-md);
   }

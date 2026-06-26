@@ -12,7 +12,7 @@
     align-items: center;
     gap: var(--jects-space-2);
     padding: var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
@@ -30,7 +30,7 @@
     align-items: center;
     gap: var(--jects-space-1);
     padding: var(--jects-space-1) var(--jects-space-3);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-secondary));
     color: oklch(var(--jects-secondary-foreground));
@@ -45,8 +45,8 @@
   }
 
   .jects-scheduler-ics__btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-scheduler-ics__btn--primary {

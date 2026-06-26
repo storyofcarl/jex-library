@@ -29,11 +29,11 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
   }
   .jects-kanban-editor__input:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
   .jects-kanban-editor__textarea {
@@ -56,13 +56,13 @@
     font: inherit;
     font-size: var(--jects-font-size-sm);
     font-weight: var(--jects-font-weight-medium);
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-md);
     cursor: pointer;
   }
   .jects-kanban-editor__btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-kanban-editor__btn--cancel {
     color: oklch(var(--jects-foreground));

@@ -11,13 +11,13 @@
     font-family: var(--jects-font-family);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
     transition: border-color var(--jects-duration-fast) ease, box-shadow var(--jects-duration-fast) ease;
   }
   .jects-datepicker:focus-within {
     border-color: oklch(var(--jects-ring));
-    outline: 2px solid oklch(var(--jects-ring) / 0.4);
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring) / 0.4);
     outline-offset: 0;
   }
 

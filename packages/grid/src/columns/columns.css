@@ -38,7 +38,7 @@
   }
 
   .jects-grid-cell__action:focus-visible {
-    outline: 2px solid var(--jects-ring);
+    outline: var(--jects-ring-width) solid var(--jects-ring);
     outline-offset: 1px;
   }
 
@@ -49,7 +49,7 @@
     justify-content: center;
     inline-size: 1rem;
     block-size: 1rem;
-    border: 1px solid var(--jects-border);
+    border: var(--jects-border-width) solid var(--jects-border);
     border-radius: var(--jects-radius-sm);
     color: var(--jects-primary-foreground);
   }
@@ -99,7 +99,7 @@
   }
 
   .jects-grid-rating__star:focus-visible {
-    outline: 2px solid var(--jects-ring);
+    outline: var(--jects-ring-width) solid var(--jects-ring);
     outline-offset: 1px;
     border-radius: var(--jects-radius-sm);
   }

@@ -25,7 +25,7 @@
     align-items: center;
     gap: var(--jects-space-2);
     padding: var(--jects-space-2) var(--jects-space-3);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-primary));
     color: oklch(var(--jects-primary-foreground));
@@ -39,8 +39,8 @@
   }
 
   .jects-scheduler-export__btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-scheduler-export__table {
@@ -53,7 +53,7 @@
 
   .jects-scheduler-export__table th,
   .jects-scheduler-export__table td {
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     padding: var(--jects-space-1) var(--jects-space-2);
     text-align: start;
   }

@@ -39,7 +39,7 @@
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-muted-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     cursor: pointer;
     pointer-events: auto;
     box-shadow: var(--jects-shadow-sm);
@@ -52,7 +52,7 @@
   }
 
   .jects-gantt__indicator:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

@@ -16,7 +16,7 @@
     padding: var(--jects-space-4);
     background: oklch(var(--jects-popover));
     color: oklch(var(--jects-popover-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     box-shadow: var(--jects-shadow-lg);
   }
@@ -32,7 +32,7 @@
   .jects-gantt__task-editor-tabs {
     display: flex;
     gap: var(--jects-space-1);
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   .jects-gantt__task-editor-tab {
@@ -59,14 +59,14 @@
   }
 
   .jects-gantt__task-editor-tab:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 
   /* ── panels ────────────────────────────────────────────────────────────── */
   .jects-gantt__task-editor-panel:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
     border-radius: var(--jects-radius-sm);
   }
 
@@ -102,12 +102,12 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
   }
 
   .jects-gantt__task-editor-input:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
     border-color: oklch(var(--jects-ring));
   }
@@ -119,7 +119,7 @@
   }
 
   .jects-gantt__task-editor-check:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -137,12 +137,12 @@
     padding: var(--jects-space-2) var(--jects-space-4);
     font-size: var(--jects-font-size-sm);
     font-weight: var(--jects-font-weight-medium);
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-md);
   }
 
   .jects-gantt__task-editor-btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

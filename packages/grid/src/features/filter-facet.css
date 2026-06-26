@@ -13,7 +13,7 @@
     max-block-size: 70vh;
     background: oklch(var(--jects-popover));
     color: oklch(var(--jects-popover-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     box-shadow: var(--jects-shadow-lg);
     overflow: hidden;
@@ -39,7 +39,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-sm);
   }
 
@@ -48,13 +48,13 @@
   }
 
   .jects-grid-facet__search-input:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
   .jects-grid-facet__selectall {
     padding: var(--jects-space-1) var(--jects-space-3);
-    border-bottom: 1px solid oklch(var(--jects-border) / 0.6);
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
     font-weight: var(--jects-font-weight-medium);
   }
 
@@ -108,20 +108,20 @@
     gap: var(--jects-space-1);
     justify-content: flex-end;
     padding: var(--jects-space-2);
-    border-top: 1px solid oklch(var(--jects-border));
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   .jects-grid-facet__action {
     padding: var(--jects-space-1) var(--jects-space-3);
     font-family: var(--jects-font-family);
     font-size: var(--jects-font-size-sm);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     cursor: pointer;
   }
 
   .jects-grid-facet__action:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

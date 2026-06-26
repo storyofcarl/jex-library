@@ -31,7 +31,7 @@
     padding: var(--jects-space-4) var(--jects-space-6);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     box-shadow: var(--jects-shadow-lg);
   }

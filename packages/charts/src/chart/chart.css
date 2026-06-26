@@ -48,7 +48,7 @@
     right: var(--jects-space-2);
     z-index: 1;
     padding: var(--jects-space-1) var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-foreground));
@@ -60,8 +60,8 @@
     background: oklch(var(--jects-muted));
   }
   .jects-chart__zoom-reset:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-chart__zoom-reset[hidden] {
     display: none;
@@ -113,8 +113,8 @@
     color: oklch(var(--jects-foreground));
   }
   .jects-chart__legend-item:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-chart__legend-item--off {
     opacity: 0.45;
@@ -147,7 +147,7 @@
     pointer-events: none;
     background: oklch(var(--jects-popover));
     color: oklch(var(--jects-popover-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     box-shadow: var(--jects-shadow-md);
     font-size: var(--jects-font-size-xs);
@@ -212,6 +212,6 @@
   .jects-chart__data-table td {
     padding: var(--jects-space-1) var(--jects-space-2);
     text-align: start;
-    border: 1px solid oklch(var(--jects-border) / 0.5);
+    border: var(--jects-border-width) solid oklch(var(--jects-border) / 0.5);
   }
 }

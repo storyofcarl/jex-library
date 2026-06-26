@@ -52,7 +52,7 @@
     background: oklch(var(--jects-primary) / 0.6);
   }
   .jects-splitter__handle:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 

@@ -11,7 +11,7 @@
     padding: var(--jects-space-4);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     font-family: var(--jects-font-family);
     font-size: var(--jects-font-size-sm);
@@ -41,7 +41,7 @@
   .jects-gantt-xlsx-preview__table th {
     text-align: start;
     padding: var(--jects-space-1) var(--jects-space-2);
-    border-block-end: 1px solid oklch(var(--jects-border));
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border));
     background: oklch(var(--jects-muted));
     color: oklch(var(--jects-muted-foreground));
     font-weight: var(--jects-font-weight-medium);
@@ -50,7 +50,7 @@
 
   .jects-gantt-xlsx-preview__table td {
     padding: var(--jects-space-1) var(--jects-space-2);
-    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
     white-space: pre;
   }
 
@@ -73,7 +73,7 @@
     padding: var(--jects-space-2) var(--jects-space-4);
     background: oklch(var(--jects-primary));
     color: oklch(var(--jects-primary-foreground));
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-md);
     font-family: inherit;
     font-size: var(--jects-font-size-sm);
@@ -87,7 +87,7 @@
   }
 
   .jects-gantt-xlsx-preview__download:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 }

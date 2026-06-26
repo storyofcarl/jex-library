@@ -10,7 +10,7 @@
     font: inherit;
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     padding: var(--jects-space-1) var(--jects-space-2);
     cursor: pointer;
@@ -19,7 +19,7 @@
   .jects-todo__navbtn:hover { background: oklch(var(--jects-muted)); }
   .jects-todo__toolbtn:focus-visible,
   .jects-todo__navbtn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -28,7 +28,7 @@
     font: inherit;
     color: inherit;
     background: transparent;
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     padding: 0 var(--jects-space-1);
     cursor: pointer;
@@ -83,7 +83,7 @@
   .jects-todo__popover {
     background: oklch(var(--jects-popover));
     color: oklch(var(--jects-popover-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     box-shadow: var(--jects-shadow-lg);
     padding: var(--jects-space-1);
@@ -98,7 +98,7 @@
     font: inherit;
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
     padding: var(--jects-space-1) var(--jects-space-2);
   }
@@ -132,7 +132,7 @@
     font: inherit;
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     padding: var(--jects-space-1) var(--jects-space-2);
     cursor: pointer;
@@ -149,7 +149,7 @@
   .jects-todo__board--swimlanes .jects-todo__lane {
     display: flex;
     gap: var(--jects-space-2);
-    border-block-start: 1px solid oklch(var(--jects-border));
+    border-block-start: var(--jects-border-width) solid oklch(var(--jects-border));
     padding-block: var(--jects-space-2);
   }
   /* Header-strip cells span the same width as the lane columns so they align. */
@@ -178,7 +178,7 @@
   .jects-todo__cal-head { display: flex; align-items: center; justify-content: space-between; gap: var(--jects-space-2); }
   .jects-todo__cal-title { font-size: var(--jects-font-size-md); font-weight: var(--jects-font-weight-semibold); }
   .jects-todo__cal-nav { display: flex; gap: var(--jects-space-1); }
-  .jects-todo__cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: oklch(var(--jects-border)); border: 1px solid oklch(var(--jects-border)); border-radius: var(--jects-radius-md); overflow: hidden; }
+  .jects-todo__cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: oklch(var(--jects-border)); border: var(--jects-border-width) solid oklch(var(--jects-border)); border-radius: var(--jects-radius-md); overflow: hidden; }
   .jects-todo__cal-dow { background: oklch(var(--jects-muted)); padding: var(--jects-space-1); text-align: center; font-size: var(--jects-font-size-xs); font-weight: var(--jects-font-weight-medium); color: oklch(var(--jects-muted-foreground)); }
   .jects-todo__cal-cell { background: oklch(var(--jects-card)); min-block-size: 5rem; padding: var(--jects-space-1); display: flex; flex-direction: column; gap: 2px; }
   .jects-todo__cal-grid--week .jects-todo__cal-cell { min-block-size: 12rem; }
@@ -226,7 +226,7 @@
   .jects-todo__table { border-collapse: collapse; inline-size: 100%; font-size: var(--jects-font-size-sm); }
   .jects-todo__table th,
   .jects-todo__table td {
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     padding: var(--jects-space-1) var(--jects-space-2);
     text-align: start;
     white-space: nowrap;
@@ -255,7 +255,7 @@
     font: inherit;
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     padding: var(--jects-space-1) var(--jects-space-2);
     cursor: pointer;

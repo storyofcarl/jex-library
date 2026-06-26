@@ -31,7 +31,7 @@
     gap: var(--jects-space-2);
     box-sizing: border-box;
     width: 100%;
-    border: 1px solid var(--_field-border);
+    border: var(--jects-border-width) solid var(--_field-border);
     border-radius: var(--jects-radius-md);
     background: var(--_field-bg);
     transition:
@@ -73,6 +73,7 @@
     color: inherit;
     font: inherit;
     line-height: 1.4;
+    letter-spacing: var(--jects-letter-spacing);
   }
   .jects-field__input::placeholder {
     color: oklch(var(--jects-muted-foreground));
@@ -111,19 +112,21 @@
     color: oklch(var(--jects-destructive));
   }
 
-  /* ---- sizes ---- */
+  /* ---- sizes ----
+     Vertical sizing scales with --jects-density (inert at density=1).
+     md padding-inline (0.75rem) consumes --jects-control-padding-x. */
   .jects-field--sm .jects-field__control {
-    min-height: 2rem;
+    min-height: calc(2rem * var(--jects-density));
     padding-inline: var(--jects-space-2);
     font-size: var(--jects-font-size-sm);
   }
   .jects-field--md .jects-field__control {
-    min-height: 2.5rem;
-    padding-inline: var(--jects-space-3);
+    min-height: calc(2.5rem * var(--jects-density));
+    padding-inline: var(--jects-control-padding-x);
     font-size: var(--jects-font-size-sm);
   }
   .jects-field--lg .jects-field__control {
-    min-height: 2.75rem;
+    min-height: calc(2.75rem * var(--jects-density));
     padding-inline: var(--jects-space-4);
     font-size: var(--jects-font-size-md);
   }

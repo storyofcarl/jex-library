@@ -67,7 +67,7 @@
     flex-direction: column;
     gap: var(--jects-space-1);
     padding: var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
@@ -106,8 +106,8 @@
   }
 
   .jects-gantt__baseline-picker-check:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-gantt__baseline-picker-name {
@@ -147,7 +147,7 @@
   .jects-gantt__baseline-capture {
     margin-block-start: var(--jects-space-1);
     padding: var(--jects-space-1) var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-primary));
     color: oklch(var(--jects-primary-foreground));
@@ -162,7 +162,7 @@
   }
 
   .jects-gantt__baseline-capture:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 }

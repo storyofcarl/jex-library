@@ -28,7 +28,7 @@
     block-size: 100%;
     overflow: hidden;
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     color: oklch(var(--jects-foreground));
     font-family: var(--jects-font-family);
@@ -98,7 +98,7 @@
     padding: var(--jects-space-2);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-inline-start: 3px solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     box-shadow: var(--jects-shadow-sm);
@@ -114,7 +114,7 @@
   }
 
   .jects-pert-chart__node:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

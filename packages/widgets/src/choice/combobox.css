@@ -14,10 +14,12 @@
     align-items: center;
     gap: var(--jects-space-1);
     box-sizing: border-box;
-    min-height: 2.5rem;
+    min-height: calc(2.5rem * var(--jects-density));
+    /* horizontal padding (--jects-space-2 = 0.5rem) intentionally differs
+       from --jects-control-padding-x; kept as a space token. */
     padding: var(--jects-space-1) var(--jects-space-2);
     cursor: text;
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
@@ -26,7 +28,7 @@
 
   .jects-combobox--open .jects-combobox__control,
   .jects-combobox__control:focus-within {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -86,7 +88,7 @@
     max-height: 16rem;
     overflow-y: auto;
     padding: var(--jects-space-1);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-popover));
     color: oklch(var(--jects-popover-foreground));

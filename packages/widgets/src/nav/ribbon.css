@@ -8,7 +8,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
 
@@ -16,7 +16,7 @@
     display: flex;
     gap: var(--jects-space-1);
     padding: var(--jects-space-1) var(--jects-space-2);
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   .jects-ribbon__tab {
@@ -26,7 +26,7 @@
     font-weight: var(--jects-font-weight-medium);
     color: oklch(var(--jects-muted-foreground));
     background: transparent;
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     cursor: pointer;
   }
@@ -39,8 +39,8 @@
     background: oklch(var(--jects-primary) / 0.1);
   }
   .jects-ribbon__tab:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-ribbon__panel {
@@ -51,7 +51,7 @@
     overflow-x: auto;
   }
   .jects-ribbon__panel:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 
@@ -60,7 +60,7 @@
     flex-direction: column;
     gap: var(--jects-space-2);
     padding-inline-end: var(--jects-space-2);
-    border-inline-end: 1px solid oklch(var(--jects-border));
+    border-inline-end: var(--jects-border-width) solid oklch(var(--jects-border));
   }
   .jects-ribbon__group:last-child {
     border-inline-end: none;

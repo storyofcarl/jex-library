@@ -14,7 +14,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     padding: var(--jects-space-2);
     overflow: auto;
@@ -56,7 +56,7 @@
     color: oklch(var(--jects-muted-foreground));
     padding-inline: var(--jects-space-1);
     padding-block: var(--jects-space-1);
-    border-block-end: 1px solid oklch(var(--jects-border));
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   .jects-resource-view__group-count {
@@ -80,7 +80,7 @@
     padding-block: var(--jects-space-2);
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     cursor: grab;
     user-select: none;
   }
@@ -91,7 +91,7 @@
   }
 
   .jects-resource-view__row:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -157,7 +157,7 @@
   .jects-resource-view__type {
     border-radius: var(--jects-radius-sm);
     padding-inline: var(--jects-space-1);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     background: oklch(var(--jects-secondary));
     color: oklch(var(--jects-secondary-foreground));
   }
@@ -220,7 +220,7 @@
   /* ── drop target highlight (applied to a registered task drop zone) ──────── */
   .jects-resource-view-drop-over {
     outline: 2px dashed oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline-offset: var(--jects-ring-offset);
     background: oklch(var(--jects-accent) / 0.4);
   }
 }

@@ -29,7 +29,7 @@
     justify-content: center;
     inline-size: var(--jects-space-4);
     block-size: var(--jects-space-4);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-input));
     color: oklch(var(--jects-cmyk-cyan));
@@ -69,7 +69,7 @@
   /* High-contrast: ensure the toggle keeps a visible border in forced colours. */
   @media (prefers-contrast: more) {
     .jects-gantt__rollup-check {
-      outline: 1px solid oklch(var(--jects-foreground));
+      outline: var(--jects-border-width) solid oklch(var(--jects-foreground));
     }
   }
 }

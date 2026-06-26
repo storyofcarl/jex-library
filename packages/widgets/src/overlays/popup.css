@@ -12,7 +12,7 @@
     line-height: 1.4;
     color: oklch(var(--jects-popover-foreground));
     background: oklch(var(--jects-popover));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     box-shadow: var(--jects-shadow-lg);
     outline: none;
@@ -23,8 +23,8 @@
   }
 
   .jects-popup:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* ---- placement hooks (transform origin only; geometry is JS-driven) ---- */

@@ -27,7 +27,7 @@
   .jects-resource-histogram-chart__row {
     position: relative;
     inline-size: 100%;
-    border-block-end: 1px solid oklch(var(--jects-border));
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border));
     background: oklch(var(--jects-muted) / 0.25);
   }
 
@@ -40,7 +40,7 @@
     position: absolute;
     inset-inline: 0;
     block-size: 0;
-    border-block-start: 1px dashed oklch(var(--jects-muted-foreground) / 0.7);
+    border-block-start: var(--jects-border-width) dashed oklch(var(--jects-muted-foreground) / 0.7);
     pointer-events: none;
     z-index: 1;
   }
@@ -55,7 +55,7 @@
   }
 
   .jects-resource-histogram-chart__bar:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 
@@ -92,7 +92,7 @@
     overflow: auto;
     inline-size: 100%;
     max-block-size: 16rem;
-    border-block-start: 1px solid oklch(var(--jects-border));
+    border-block-start: var(--jects-border-width) solid oklch(var(--jects-border));
     background: oklch(var(--jects-card));
   }
 }

@@ -9,7 +9,7 @@
     flex-direction: column;
     gap: var(--jects-space-3);
     padding: var(--jects-space-4);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
@@ -124,7 +124,7 @@
     padding-inline: var(--jects-space-2);
     padding-block: var(--jects-space-1);
     border-radius: var(--jects-radius-md);
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
     font: inherit;
@@ -135,7 +135,7 @@
     padding-inline: var(--jects-space-3);
     padding-block: var(--jects-space-1);
     border-radius: var(--jects-radius-md);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     background: oklch(var(--jects-primary));
     color: oklch(var(--jects-primary-foreground));
     font: inherit;
@@ -149,7 +149,7 @@
 
   .jects-effort-panel__btn:focus-visible,
   .jects-effort-panel__select:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

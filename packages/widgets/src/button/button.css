@@ -16,7 +16,7 @@
     white-space: nowrap;
     user-select: none;
     cursor: pointer;
-    border: 1px solid var(--_btn-border);
+    border: var(--jects-border-width) solid var(--_btn-border);
     border-radius: var(--jects-radius-md);
     background: var(--_btn-bg);
     color: var(--_btn-fg);
@@ -28,8 +28,8 @@
   }
 
   .jects-btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-btn:disabled,
@@ -39,19 +39,22 @@
     pointer-events: none;
   }
 
-  /* ---- sizes ---- */
+  /* ---- sizes ----
+     Height scales with --jects-density (inert at density=1).
+     md padding-inline (--jects-space-4 = 1rem) intentionally exceeds
+     --jects-control-padding-x and is left as a space token. */
   .jects-btn--sm {
-    height: 2rem;
+    height: calc(2rem * var(--jects-density));
     padding-inline: var(--jects-space-3);
     font-size: var(--jects-font-size-sm);
   }
   .jects-btn--md {
-    height: 2.5rem;
+    height: calc(2.5rem * var(--jects-density));
     padding-inline: var(--jects-space-4);
     font-size: var(--jects-font-size-sm);
   }
   .jects-btn--lg {
-    height: 2.75rem;
+    height: calc(2.75rem * var(--jects-density));
     padding-inline: var(--jects-space-6);
     font-size: var(--jects-font-size-md);
   }

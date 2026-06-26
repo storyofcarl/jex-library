@@ -720,6 +720,11 @@ pre.g-code code {
   border: 1px solid oklch(var(--jects-border));
   border-radius: var(--jects-radius-md);
   padding: 1rem;
+  /* Bind the typography line-height + letter-spacing tokens to the preview
+     surface so editing them visibly reflows the preview text (the dialog is the
+     only built-in consumer of --jects-line-height and isn't shown here). */
+  line-height: var(--jects-line-height);
+  letter-spacing: var(--jects-letter-spacing);
 }
 .g-cz-pvgrid {
   display: grid;
@@ -753,6 +758,110 @@ pre.g-code code {
 }
 .g-cz-gridhost { height: 240px; width: 100%; }
 .g-cz-charthost { width: 100%; min-width: 0; }
+
+/* — Enriched: search / filter — */
+.g-cz-search {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: var(--jects-font-size-sm);
+  color: oklch(var(--jects-foreground));
+  background: oklch(var(--jects-background));
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-md);
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.75rem;
+}
+.g-cz-search:focus-visible { outline: 2px solid oklch(var(--jects-ring)); outline-offset: 1px; }
+
+/* — Enriched: collapsible groups — */
+.g-cz-group { border: 1px solid oklch(var(--jects-border) / 0.7); border-radius: var(--jects-radius-md); margin-bottom: 0.5rem; overflow: hidden; }
+.g-cz-group-headwrap { display: flex; align-items: stretch; background: oklch(var(--jects-muted) / 0.4); }
+.g-cz-group-hd {
+  appearance: none;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font: inherit;
+  font-size: var(--jects-font-size-sm);
+  font-weight: var(--jects-font-weight-semibold);
+  color: oklch(var(--jects-foreground));
+  background: transparent;
+  border: 0;
+  padding: 0.5rem 0.65rem;
+  cursor: pointer;
+  text-align: left;
+}
+.g-cz-caret { display: inline-block; transition: transform var(--jects-duration-fast) ease; color: oklch(var(--jects-muted-foreground)); font-size: 0.7rem; }
+.g-cz-group-hd[aria-expanded="true"] .g-cz-caret { transform: rotate(90deg); }
+.g-cz-secreset {
+  appearance: none;
+  font: inherit;
+  font-size: var(--jects-font-size-xs);
+  color: oklch(var(--jects-muted-foreground));
+  background: transparent;
+  border: 0;
+  border-left: 1px solid oklch(var(--jects-border) / 0.6);
+  padding: 0 0.6rem;
+  cursor: pointer;
+}
+.g-cz-secreset:hover { color: oklch(var(--jects-foreground)); background: oklch(var(--jects-accent) / 0.4); }
+.g-cz-group-body { display: none; flex-direction: column; gap: 0.6rem; padding: 0.7rem 0.65rem; }
+.g-cz-group-hd[aria-expanded="true"] + .g-cz-secreset { /* keep visible */ }
+.g-cz-group:has(.g-cz-group-hd[aria-expanded="true"]) .g-cz-group-body { display: flex; }
+.g-cz-row--block { grid-template-columns: 1fr; gap: 0.35rem; }
+.g-cz-importwrap { display: flex; flex-direction: column; gap: 0.5rem; }
+.g-cz-import {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 72px;
+  resize: vertical;
+  font-family: var(--jects-font-family-mono);
+  font-size: var(--jects-font-size-xs);
+  color: oklch(var(--jects-foreground));
+  background: oklch(var(--jects-muted) / 0.5);
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-sm);
+  padding: 0.45rem 0.55rem;
+}
+
+/* — Enriched: per-component focus selector — */
+.g-cz-pvhd { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.g-cz-focus { width: auto; min-width: 9rem; }
+
+/* — Enriched: surfaces / elevation demo — */
+.g-cz-surfrow { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.g-cz-surf {
+  flex: 1 1 0;
+  min-width: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 0.4rem;
+  border-radius: var(--jects-radius-md);
+  background: oklch(var(--jects-card));
+  border: var(--jects-border-width) solid oklch(var(--jects-border));
+  font-size: var(--jects-font-size-xs);
+  color: oklch(var(--jects-muted-foreground));
+}
+.g-cz-surf--sm { box-shadow: var(--jects-shadow-sm); }
+.g-cz-surf--md { box-shadow: var(--jects-shadow-md); }
+.g-cz-surf--lg { box-shadow: var(--jects-shadow-lg); }
+
+/* — Enriched: contrast checker — */
+.g-cz-contrast { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.5rem; }
+.g-cz-contrast-row { display: flex; align-items: center; gap: 0.5rem; font-size: var(--jects-font-size-sm); }
+.g-cz-contrast-lbl { flex: 1; color: oklch(var(--jects-foreground)); }
+.g-cz-contrast-ratio { font-variant-numeric: tabular-nums; color: oklch(var(--jects-muted-foreground)); min-width: 4rem; text-align: right; }
+.g-cz-badge {
+  font-size: 0.7rem;
+  font-weight: var(--jects-font-weight-semibold);
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--jects-radius-sm);
+}
+.g-cz-badge.is-pass { background: oklch(var(--jects-success) / 0.18); color: oklch(var(--jects-success)); }
+.g-cz-badge.is-fail { background: oklch(var(--jects-destructive) / 0.15); color: oklch(var(--jects-destructive)); }
 
 /* Export code area */
 .g-cz-code {

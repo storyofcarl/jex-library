@@ -27,12 +27,13 @@
     box-sizing: border-box;
     width: 100%;
     resize: vertical;
-    border: 1px solid var(--_ta-border);
+    border: var(--jects-border-width) solid var(--_ta-border);
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-background));
     color: oklch(var(--jects-foreground));
     font-family: var(--jects-font-family);
     line-height: 1.4;
+    letter-spacing: var(--jects-letter-spacing);
     transition:
       border-color var(--jects-duration-fast) ease,
       box-shadow var(--jects-duration-fast) ease;
@@ -83,7 +84,9 @@
     font-size: var(--jects-font-size-sm);
   }
   .jects-textarea--md .jects-textarea__input {
-    padding: var(--jects-space-3);
+    /* horizontal padding (0.75rem) consumes --jects-control-padding-x;
+       vertical kept at --jects-space-3 (differs from control-padding-y). */
+    padding: var(--jects-space-3) var(--jects-control-padding-x);
     font-size: var(--jects-font-size-sm);
   }
   .jects-textarea--lg .jects-textarea__input {

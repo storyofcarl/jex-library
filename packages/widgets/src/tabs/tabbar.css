@@ -6,7 +6,7 @@
     gap: var(--jects-space-1);
     box-sizing: border-box;
     font-family: var(--jects-font-family);
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: thin;
@@ -53,7 +53,7 @@
   }
 
   .jects-tabbar__tab:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
     border-radius: var(--jects-radius-sm);
   }

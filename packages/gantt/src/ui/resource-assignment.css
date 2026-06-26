@@ -40,7 +40,7 @@
     font-size: var(--jects-font-size-xs);
     font-weight: var(--jects-font-weight-semibold);
     line-height: 1;
-    border: 1px solid oklch(var(--jects-background) / 0.6);
+    border: var(--jects-border-width) solid oklch(var(--jects-background) / 0.6);
   }
 
   .jects-gantt__avatar--more {
@@ -106,7 +106,7 @@
     max-block-size: 16rem;
     overflow-y: auto;
     padding: var(--jects-space-1);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-background));
   }
@@ -140,7 +140,7 @@
   }
 
   .jects-gantt__assign-check:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -166,13 +166,13 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     text-align: end;
   }
 
   .jects-gantt__assign-units-input:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
     border-color: oklch(var(--jects-ring));
   }

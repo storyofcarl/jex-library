@@ -16,7 +16,7 @@
   .jects-gantt__dep-grid {
     display: flex;
     flex-direction: column;
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     overflow: hidden;
   }
@@ -32,7 +32,7 @@
 
   .jects-gantt__dep-grid-head {
     background: oklch(var(--jects-muted));
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   .jects-gantt__dep-grid-th {
@@ -49,7 +49,7 @@
   }
 
   .jects-gantt__dep-row + .jects-gantt__dep-row {
-    border-top: 1px solid oklch(var(--jects-border) / 0.6);
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
   }
 
   .jects-gantt__dep-cell {
@@ -70,12 +70,12 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-sm);
   }
 
   .jects-gantt__dep-input:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
     border-color: oklch(var(--jects-ring));
   }
@@ -91,7 +91,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-muted-foreground));
     background: transparent;
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
   }
 
@@ -102,7 +102,7 @@
   }
 
   .jects-gantt__dep-remove:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -112,7 +112,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-muted-foreground));
     text-align: center;
-    border: 1px dashed oklch(var(--jects-border));
+    border: var(--jects-border-width) dashed oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
 
@@ -129,7 +129,7 @@
     font-weight: var(--jects-font-weight-medium);
     color: oklch(var(--jects-primary-foreground));
     background: oklch(var(--jects-primary));
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-md);
   }
 
@@ -138,7 +138,7 @@
   }
 
   .jects-gantt__dep-add:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -174,12 +174,12 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
   }
 
   .jects-gantt__adv-input:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
     border-color: oklch(var(--jects-ring));
   }
@@ -191,7 +191,7 @@
   }
 
   .jects-gantt__adv-check:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -216,13 +216,13 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
     resize: vertical;
   }
 
   .jects-gantt__notes-input:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
     border-color: oklch(var(--jects-ring));
   }

@@ -18,7 +18,7 @@
   .jects-form__fieldset {
     margin: 0;
     padding: var(--jects-space-4);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     display: flex;
     flex-direction: column;
@@ -91,7 +91,7 @@
     font-weight: var(--jects-font-weight-medium);
     line-height: 1;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-md);
     transition:
       background-color var(--jects-duration-fast) ease,
@@ -122,8 +122,8 @@
 
   .jects-form__submit:focus-visible,
   .jects-form__reset:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-form__error {
@@ -156,7 +156,7 @@
     box-sizing: border-box;
     padding: var(--jects-space-2);
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
 

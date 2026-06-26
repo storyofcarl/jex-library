@@ -16,7 +16,7 @@
     font-weight: var(--jects-font-weight-medium);
     line-height: 1.25;
     white-space: nowrap;
-    border: 1px solid var(--_badge-border);
+    border: var(--jects-border-width) solid var(--_badge-border);
     border-radius: var(--jects-radius-xl);
     background: var(--_badge-bg);
     color: var(--_badge-fg);
@@ -55,7 +55,7 @@
     opacity: 1;
   }
   .jects-badge__dismiss:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

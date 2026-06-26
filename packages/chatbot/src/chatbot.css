@@ -10,7 +10,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     overflow: hidden;
   }
@@ -22,7 +22,7 @@
     justify-content: space-between;
     gap: var(--jects-space-2);
     padding: var(--jects-space-3) var(--jects-space-4);
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
     background: oklch(var(--jects-card));
   }
   .jects-chatbot__title {
@@ -48,7 +48,7 @@
     scroll-behavior: smooth;
   }
   .jects-chatbot__list:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 
@@ -238,7 +238,7 @@
     padding: var(--jects-space-1) var(--jects-space-2);
     color: oklch(var(--jects-muted-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
     cursor: pointer;
     opacity: 0;
@@ -253,7 +253,7 @@
     opacity: 1;
   }
   .jects-chatbot__copy:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
   .jects-chatbot__copy:hover {
@@ -278,7 +278,7 @@
     padding: var(--jects-space-2) var(--jects-space-3);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-xl);
     cursor: pointer;
     transition:
@@ -291,8 +291,8 @@
     border-color: oklch(var(--jects-ring));
   }
   .jects-chatbot__chip:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* ---- composer ---- */
@@ -301,7 +301,7 @@
     align-items: flex-end;
     gap: var(--jects-space-2);
     padding: var(--jects-space-3) var(--jects-space-4);
-    border-top: 1px solid oklch(var(--jects-border));
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border));
     background: oklch(var(--jects-card));
   }
   .jects-chatbot__input {

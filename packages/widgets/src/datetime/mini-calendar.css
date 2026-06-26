@@ -8,7 +8,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-popover-foreground));
     background: oklch(var(--jects-popover));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
 
@@ -36,7 +36,7 @@
     cursor: pointer;
     color: oklch(var(--jects-foreground));
     background: transparent;
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     font-size: var(--jects-font-size-md);
     line-height: 1;
@@ -47,7 +47,7 @@
     color: oklch(var(--jects-accent-foreground));
   }
   .jects-minical__nav:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -87,7 +87,7 @@
     cursor: pointer;
     color: oklch(var(--jects-foreground));
     background: transparent;
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     font-family: inherit;
     font-size: var(--jects-font-size-sm);
@@ -101,7 +101,7 @@
     color: oklch(var(--jects-accent-foreground));
   }
   .jects-minical__day:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -134,7 +134,7 @@
     position: fixed;
     z-index: var(--jects-z-popover);
     background: oklch(var(--jects-popover));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     box-shadow: var(--jects-shadow-lg);
   }

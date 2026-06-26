@@ -16,12 +16,12 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid var(--_cal-border);
+    border: var(--jects-border-width) solid var(--_cal-border);
     border-radius: var(--jects-radius-lg);
     overflow: hidden;
   }
   .jects-cal:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
   .jects-cal *,
@@ -36,7 +36,7 @@
     align-items: center;
     gap: var(--jects-space-3);
     padding: var(--jects-space-3) var(--jects-space-4);
-    border-bottom: 1px solid var(--_cal-border);
+    border-bottom: var(--jects-border-width) solid var(--_cal-border);
     background: oklch(var(--jects-card));
   }
   .jects-cal__nav {
@@ -68,7 +68,7 @@
     font-weight: var(--jects-font-weight-medium);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid var(--_cal-border);
+    border: var(--jects-border-width) solid var(--_cal-border);
     border-radius: var(--jects-radius-md);
     cursor: pointer;
     transition: background-color var(--jects-duration-fast) ease;
@@ -78,8 +78,8 @@
     color: oklch(var(--jects-accent-foreground));
   }
   .jects-cal__btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-cal__view-btn {
     border-color: transparent;
@@ -101,7 +101,7 @@
     width: 14rem;
     flex: none;
     padding: var(--jects-space-3);
-    border-right: 1px solid var(--_cal-border);
+    border-right: var(--jects-border-width) solid var(--_cal-border);
     overflow-y: auto;
     background: oklch(var(--jects-card));
   }
@@ -165,7 +165,7 @@
     color: oklch(var(--jects-primary-foreground));
   }
   .jects-cal__mini-day:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -208,7 +208,7 @@
   .jects-cal__month-head {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    border-bottom: 1px solid var(--_cal-border);
+    border-bottom: var(--jects-border-width) solid var(--_cal-border);
     position: sticky;
     top: 0;
     background: oklch(var(--jects-card));
@@ -228,8 +228,8 @@
     min-height: 5rem;
   }
   .jects-cal__month-cell {
-    border-right: 1px solid var(--_cal-border);
-    border-bottom: 1px solid var(--_cal-border);
+    border-right: var(--jects-border-width) solid var(--_cal-border);
+    border-bottom: var(--jects-border-width) solid var(--_cal-border);
     padding: var(--jects-space-1);
     display: flex;
     flex-direction: column;
@@ -252,7 +252,7 @@
     border-radius: var(--jects-radius-full, 999px);
   }
   .jects-cal__month-cell--selected {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
   .jects-cal__month-num {
@@ -296,7 +296,7 @@
     color: oklch(var(--jects-foreground));
   }
   .jects-cal__event:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
   .jects-cal__event--chip {
@@ -359,7 +359,7 @@
     top: 0;
     z-index: 2;
     background: oklch(var(--jects-card));
-    border-bottom: 1px solid var(--_cal-border);
+    border-bottom: var(--jects-border-width) solid var(--_cal-border);
   }
   .jects-cal__tg-header > .jects-cal__tg-daycol-head:nth-child(2) {
     grid-column: 2;
@@ -368,12 +368,12 @@
     grid-template-columns: 3.5rem repeat(var(--_cal-cols, 1), 1fr);
   }
   .jects-cal__tg-corner {
-    border-right: 1px solid var(--_cal-border);
+    border-right: var(--jects-border-width) solid var(--_cal-border);
   }
   .jects-cal__tg-daycol-head {
     padding: var(--jects-space-2);
     text-align: center;
-    border-right: 1px solid var(--_cal-border);
+    border-right: var(--jects-border-width) solid var(--_cal-border);
     cursor: default;
   }
   .jects-cal__tg-dow {
@@ -399,7 +399,7 @@
   .jects-cal__tg-allday {
     display: grid;
     grid-template-columns: 3.5rem repeat(var(--_cal-cols, 1), 1fr);
-    border-bottom: 1px solid var(--_cal-border);
+    border-bottom: var(--jects-border-width) solid var(--_cal-border);
     min-height: 1.75rem;
     background: oklch(var(--jects-background));
   }
@@ -407,11 +407,11 @@
     font-size: var(--jects-font-size-xs);
     color: var(--_cal-muted);
     padding: var(--jects-space-1);
-    border-right: 1px solid var(--_cal-border);
+    border-right: var(--jects-border-width) solid var(--_cal-border);
     text-align: right;
   }
   .jects-cal__tg-allday-lane {
-    border-right: 1px solid var(--_cal-border);
+    border-right: var(--jects-border-width) solid var(--_cal-border);
     padding: 2px;
     min-width: 0;
   }
@@ -422,11 +422,11 @@
     flex: 1;
   }
   .jects-cal__tg-gutter {
-    border-right: 1px solid var(--_cal-border);
+    border-right: var(--jects-border-width) solid var(--_cal-border);
   }
   .jects-cal__tg-hour {
     position: relative;
-    border-bottom: 1px solid oklch(var(--jects-border) / 0.5);
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border) / 0.5);
   }
   .jects-cal__tg-hour-label {
     position: absolute;
@@ -443,13 +443,13 @@
   }
   .jects-cal__tg-col {
     position: relative;
-    border-right: 1px solid var(--_cal-border);
+    border-right: var(--jects-border-width) solid var(--_cal-border);
   }
   .jects-cal__tg-col--today {
     background: oklch(var(--jects-primary) / 0.04);
   }
   .jects-cal__tg-line {
-    border-bottom: 1px solid oklch(var(--jects-border) / 0.5);
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border) / 0.5);
     pointer-events: none;
   }
   .jects-cal__tg-now {
@@ -497,7 +497,7 @@
     right: 2px;
     border-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-primary) / 0.3);
-    border: 1px dashed oklch(var(--jects-primary));
+    border: var(--jects-border-width) dashed oklch(var(--jects-primary));
     font-size: var(--jects-font-size-xs);
     color: oklch(var(--jects-foreground));
     padding: 1px var(--jects-space-1);
@@ -571,7 +571,7 @@
   .jects-cal__agenda-date {
     font-weight: var(--jects-font-weight-semibold);
     padding-bottom: var(--jects-space-1);
-    border-bottom: 1px solid var(--_cal-border);
+    border-bottom: var(--jects-border-width) solid var(--_cal-border);
     margin-bottom: var(--jects-space-2);
   }
   .jects-cal__agenda-date--today {
@@ -637,14 +637,14 @@
     top: 0;
     z-index: 2;
     background: oklch(var(--jects-card));
-    border-bottom: 1px solid var(--_cal-border);
+    border-bottom: var(--jects-border-width) solid var(--_cal-border);
   }
   .jects-cal__tl-rowhead {
     flex: none;
     width: var(--_cal-tl-rowhead);
     padding: var(--jects-space-2) var(--jects-space-3);
     font-weight: var(--jects-font-weight-medium);
-    border-right: 1px solid var(--_cal-border);
+    border-right: var(--jects-border-width) solid var(--_cal-border);
     display: flex;
     align-items: center;
     box-sizing: border-box;
@@ -661,13 +661,13 @@
     padding: var(--jects-space-2) var(--jects-space-1);
     font-size: var(--jects-font-size-xs);
     color: var(--_cal-muted);
-    border-left: 1px solid var(--_cal-border);
+    border-left: var(--jects-border-width) solid var(--_cal-border);
     font-variant-numeric: tabular-nums;
   }
   .jects-cal__tl-row {
     display: flex;
     min-height: 2.75rem;
-    border-bottom: 1px solid var(--_cal-border);
+    border-bottom: var(--jects-border-width) solid var(--_cal-border);
   }
   .jects-cal__tl-row .jects-cal__tl-rowhead {
     color: var(--_cal-muted);
@@ -683,7 +683,7 @@
     top: 0;
     bottom: 0;
     width: 0;
-    border-left: 1px solid var(--_cal-border);
+    border-left: var(--jects-border-width) solid var(--_cal-border);
     opacity: 0.5;
   }
   .jects-cal__tl-event {
@@ -704,7 +704,7 @@
     cursor: pointer;
   }
   .jects-cal__tl-event:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
   .jects-cal__tl-event .jects-cal__event-time {

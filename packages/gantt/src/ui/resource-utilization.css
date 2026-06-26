@@ -21,14 +21,14 @@
     font-size: var(--jects-font-size-xs);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     overflow: auto;
   }
 
   .jects-resource-utilization:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* Each row is a sub-grid spanning all columns so cells align to the header. */
@@ -36,7 +36,7 @@
     display: grid;
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
-    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
   }
 
   .jects-resource-utilization__cell {
@@ -46,7 +46,7 @@
     padding-inline: var(--jects-space-2);
     padding-block: var(--jects-space-1);
     min-block-size: 1.75rem;
-    border-inline-end: 1px solid oklch(var(--jects-border) / 0.4);
+    border-inline-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.4);
     box-sizing: border-box;
   }
 
@@ -120,7 +120,7 @@
   }
 
   .jects-resource-utilization__cell--data[tabindex]:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 
@@ -162,7 +162,7 @@
   }
 
   .jects-resource-utilization__toggle:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

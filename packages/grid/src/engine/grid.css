@@ -1,16 +1,21 @@
 /* Grid engine styles — references ONLY --jects-* tokens (no hard-coded colors). */
 @layer jects.components {
   .jects-grid {
-    --_grid-border: oklch(var(--jects-border));
+    /* Component-tier table tokens (from @jects/theme) drive the themeable
+       surfaces so the theme customizer's Table controls restyle the grid.
+       Each public token's default equals the grid's prior literal, so wiring
+       them is visually inert at defaults. */
+    --_grid-border: var(--jects-table-border);
     --_grid-bg: oklch(var(--jects-background));
     --_grid-fg: oklch(var(--jects-foreground));
-    --_grid-header-bg: oklch(var(--jects-muted));
+    --_grid-header-bg: var(--jects-table-header-bg);
     /* Use the high-contrast foreground (not muted-foreground) so header labels
        on the muted header background meet WCAG AA contrast (≥4.5:1). */
     --_grid-header-fg: oklch(var(--jects-foreground));
-    --_grid-row-hover: oklch(var(--jects-accent) / 0.4);
+    /* Row hover is themeable via the table tier (default == grid's prior value). */
+    --_grid-row-hover: var(--jects-table-row-hover);
     --_grid-row-selected: oklch(var(--jects-primary) / 0.12);
-    --_grid-row-odd: oklch(var(--jects-muted) / 0.3);
+    --_grid-row-odd: var(--jects-table-row-stripe);
     --_grid-cell-selected: oklch(var(--jects-primary) / 0.18);
 
     position: relative;
@@ -24,7 +29,7 @@
     font-size: var(--jects-font-size-sm);
     color: var(--_grid-fg);
     background: var(--_grid-bg);
-    border: 1px solid var(--_grid-border);
+    border: var(--jects-border-width) solid var(--_grid-border);
     border-radius: var(--jects-radius-md);
     overflow: hidden;
     contain: layout style;
@@ -47,7 +52,7 @@
     z-index: var(--jects-z-sticky);
     background: var(--_grid-header-bg);
     color: var(--_grid-header-fg);
-    border-block-end: 1px solid var(--_grid-border);
+    border-block-end: var(--jects-border-width) solid var(--_grid-border);
     font-weight: var(--jects-font-weight-semibold);
   }
   .jects-grid__header-row {
@@ -60,8 +65,8 @@
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    padding-inline: var(--jects-space-3);
-    border-inline-end: 1px solid oklch(var(--jects-border) / 0.6);
+    padding-inline: var(--jects-table-cell-padding-x);
+    border-inline-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -95,7 +100,7 @@
     inset-inline-start: 0;
     display: block;
     box-sizing: border-box;
-    border-block-end: 1px solid oklch(var(--jects-border) / 0.5);
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.5);
     contain: layout style paint;
     content-visibility: auto;
   }
@@ -116,11 +121,11 @@
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    padding-inline: var(--jects-space-3);
+    padding-inline: var(--jects-table-cell-padding-x);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    border-inline-end: 1px solid oklch(var(--jects-border) / 0.35);
+    border-inline-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.35);
   }
   .jects-grid__cell--center {
     justify-content: center;
@@ -156,7 +161,7 @@
     box-sizing: border-box;
     border: none;
     outline: none;
-    padding-inline: var(--jects-space-3);
+    padding-inline: var(--jects-table-cell-padding-x);
     font: inherit;
     color: var(--_grid-fg);
     background: var(--_grid-bg);
@@ -198,7 +203,7 @@
   .jects-grid__scroller:focus-visible,
   .jects-grid__cell:focus-visible,
   .jects-grid__header-cell:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 

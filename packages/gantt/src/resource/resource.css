@@ -28,7 +28,7 @@
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-secondary));
     color: oklch(var(--jects-secondary-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     cursor: pointer;
     max-inline-size: 12rem;
   }
@@ -39,7 +39,7 @@
   }
 
   .jects-resource-chips__chip:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

@@ -10,8 +10,8 @@
   }
 
   .jects-dataview:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
     border-radius: var(--jects-radius-md);
   }
 
@@ -32,7 +32,7 @@
     padding: var(--jects-space-4);
     background: oklch(var(--jects-card));
     color: oklch(var(--jects-card-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     box-shadow: var(--jects-shadow-sm);
     cursor: pointer;
@@ -54,8 +54,8 @@
   }
 
   .jects-dataview__card--active {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   .jects-dataview__title {
@@ -73,7 +73,7 @@
     padding: var(--jects-space-8);
     color: oklch(var(--jects-muted-foreground));
     background: oklch(var(--jects-muted) / 0.3);
-    border: 1px dashed oklch(var(--jects-border));
+    border: var(--jects-border-width) dashed oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
 }

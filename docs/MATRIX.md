@@ -6,27 +6,27 @@
 
 | Package | Public exports | Unit tests | Browser | A11y | Stories | Live demo | Docs | Bundle (gzip) |
 | --- | --: | --- | --: | --: | :-: | :-: | :-: | --: |
-| `@jects/angular` | 61 | 4 (1f) | — | — | — | — | — | 1.0 KB |
+| `@jects/angular` | 61 | 4 (1f) | — | — | — | ✓ | — | 1.0 KB |
 | `@jects/booking` | 100 | 150 (17f) | 4 | 5 | ✓ | ✓ | ✓ | 17.7 KB |
 | `@jects/calendar` | 77 | 132 (12f) | 9 | — | ✓ | ✓ | ✓ | 21.8 KB |
 | `@jects/charts` | 87 | 137 (10f) | 8 | 3 | ✓ | ✓ | ✓ | 21.8 KB |
 | `@jects/chatbot` | 8 | 33 (3f) | 11 | — | ✓ | ✓ | ✓ | 5.1 KB |
 | `@jects/core` | 57 | 66 (6f) | — | — | — | ✓ | ✓ | 8.1 KB |
 | `@jects/diagram` | 114 | 169 (16f) | 5 | 4 | — | ✓ | ✓ | 30.5 KB |
-| `@jects/elements` | 64 | 7 (1f) | — | — | — | — | — | 2.0 KB |
+| `@jects/elements` | 64 | 7 (1f) | — | — | — | ✓ | — | 2.0 KB |
 | `@jects/gantt` | 431 | 1121 (73f) | 28 | 129 | ✓ | ✓ | ✓ | 116.9 KB |
 | `@jects/grid` | 316 | 608 (47f) | 58 | 22 | ✓ | ✓ | ✓ | 84.1 KB |
 | `@jects/icons` | 8 | 4 (1f) | — | — | — | — | ✓ | 1.2 KB |
 | `@jects/kanban` | 27 | 69 (4f) | 5 | 4 | ✓ | ✓ | ✓ | 15.3 KB |
 | `@jects/pivot` | 61 | 78 (10f) | — | 2 | ✓ | ✓ | ✓ | 14.6 KB |
-| `@jects/react` | 61 | 5 (1f) | — | — | — | — | — | 1.5 KB |
+| `@jects/react` | 61 | 5 (1f) | — | — | — | ✓ | — | 1.5 KB |
 | `@jects/scheduler` | 60 | 346 (32f) | 46 | 13 | ✓ | ✓ | ✓ | 39.1 KB |
 | `@jects/spreadsheet` | 112 | 368 (36f) | — | 7 | ✓ | ✓ | ✓ | 48.9 KB |
 | `@jects/theme` | 11 | — | — | — | — | ✓ | ✓ | 0.6 KB |
 | `@jects/timeline-core` | 32 | 136 (11f) | 4 | 2 | — | ✓ | ✓ | 9.4 KB |
 | `@jects/todo` | 98 | 114 (4f) | — | 5 | ✓ | ✓ | ✓ | 38.4 KB |
 | `@jects/tokens` | 13 | — | — | — | — | — | ✓ | 1.1 KB |
-| `@jects/vue` | 62 | 5 (1f) | — | — | — | — | — | 1.6 KB |
+| `@jects/vue` | 62 | 5 (1f) | — | — | — | ✓ | — | 1.6 KB |
 | `@jects/widgets` | 249 | 545 (52f) | 73 | 86 | ✓ | ✓ | ✓ | 74.4 KB |
 
 **Legend** — *Public exports*: count from `dist/index.d.ts` (breadth proxy). *Unit/Browser/A11y*:

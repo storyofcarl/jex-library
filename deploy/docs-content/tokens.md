@@ -162,3 +162,29 @@ Categorical (qualitative) palette, theme-invariant.
 - **Tokens-only theming.** Every visual change should be expressible as a token override — components never hardcode colors/spacing.
 - **Single radius.** Set `--jects-radius` once; the whole radius scale follows.
 - Generated files are **auto-generated** from `src/tokens.json` (do not hand-edit `dist/tokens.css` / `tokens.scss`).
+
+## Component tokens (tier 3)
+
+Component-level tokens layer on top of the semantic tier; they let the theme customizer (and consumers)
+tune controls, borders, focus outlines, density, and tables without touching component CSS. Defaults equal
+the values components previously hard-coded (so introducing them changed nothing visually).
+
+| Token | Default | Drives |
+| --- | --- | --- |
+| `--jects-border-width` | `1px` | every bordered surface |
+| `--jects-ring-width` | `2px` | `:focus-visible` outline width |
+| `--jects-ring-offset` | `2px` | `:focus-visible` outline offset |
+| `--jects-density` | `1` | multiplier on control height/padding (compact↔comfortable) |
+| `--jects-control-height` | `2.25rem` | control height baseline |
+| `--jects-control-padding-x` / `-y` | `0.75rem` / `0.375rem` | control padding |
+| `--jects-line-height` | `1.5` | body/control line-height |
+| `--jects-letter-spacing` | `0em` | body/control letter-spacing |
+| `--jects-table-header-bg` | `oklch(var(--jects-muted))` | data-grid header background |
+| `--jects-table-border` | `oklch(var(--jects-border))` | grid/header border |
+| `--jects-table-row-stripe` | `oklch(var(--jects-muted) / 0.3)` | zebra striping |
+| `--jects-table-row-hover` | `oklch(var(--jects-accent) / 0.4)` | row hover |
+| `--jects-table-cell-padding-x` | `0.75rem` | table cell horizontal padding |
+| `--jects-table-cell-padding-y` / `--jects-table-row-height` | `0.5rem` / `2.25rem` | reserved for CSS-driven tables (grid row height is JS-virtualized) |
+
+Override them per scope like any token (`applyTheme(scope, { 'border-width': '2px', 'table-header-bg': 'oklch(...)' })`),
+or edit them live in the **theme customizer** (`#customizer`).

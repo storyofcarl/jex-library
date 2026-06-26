@@ -16,7 +16,7 @@
     align-items: center;
     gap: var(--jects-space-1);
     padding: var(--jects-space-1);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-popover));
     color: oklch(var(--jects-popover-foreground));
@@ -32,7 +32,7 @@
     min-block-size: var(--jects-space-7);
     padding-block: var(--jects-space-1);
     padding-inline: var(--jects-space-2);
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     background: transparent;
     color: oklch(var(--jects-foreground));
@@ -69,7 +69,7 @@
   }
 
   .jects-gantt__export-toolbar__btn:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

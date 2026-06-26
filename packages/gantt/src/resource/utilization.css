@@ -17,7 +17,7 @@
     font-size: var(--jects-font-size-xs);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     overflow: auto;
     inline-size: 100%;
@@ -26,7 +26,7 @@
   .jects-resource-util__row {
     display: flex;
     align-items: stretch;
-    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+    border-block-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
   }
 
   .jects-resource-util__row:last-child {
@@ -60,7 +60,7 @@
     padding-block: var(--jects-space-1);
     text-align: end;
     font-variant-numeric: tabular-nums;
-    border-inline-end: 1px solid oklch(var(--jects-border) / 0.4);
+    border-inline-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.4);
     box-sizing: border-box;
   }
 
@@ -69,7 +69,7 @@
   }
 
   .jects-resource-util__cell:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 
@@ -135,7 +135,7 @@
   }
 
   .jects-resource-util__twisty:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

@@ -31,7 +31,7 @@
     flex-direction: column;
     gap: var(--jects-space-1);
     padding-block: var(--jects-space-1);
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
   }
 
   .jects-resource-histogram__lane-header {
@@ -75,7 +75,7 @@
     position: absolute;
     inset-inline: 0;
     height: 0;
-    border-top: 1px dashed oklch(var(--jects-foreground) / 0.55);
+    border-top: var(--jects-border-width) dashed oklch(var(--jects-foreground) / 0.55);
     pointer-events: none;
     z-index: 1;
   }
@@ -88,7 +88,7 @@
     margin: 0;
     padding: 0;
     border: none;
-    border-inline: 1px solid oklch(var(--jects-background) / 0.6);
+    border-inline: var(--jects-border-width) solid oklch(var(--jects-background) / 0.6);
     border-top-left-radius: var(--jects-radius-sm);
     border-top-right-radius: var(--jects-radius-sm);
     background: oklch(var(--jects-primary) / 0.8);
@@ -101,7 +101,7 @@
   }
 
   .jects-resource-histogram__bar:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
     z-index: 2;
   }

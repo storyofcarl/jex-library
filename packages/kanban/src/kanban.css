@@ -17,7 +17,7 @@
     align-items: center;
     gap: var(--jects-space-2);
     padding: var(--jects-space-2) var(--jects-space-3);
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
     background: oklch(var(--jects-card));
   }
   .jects-kanban__search {
@@ -31,12 +31,12 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
   }
   .jects-kanban__search:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* ── toolbar sort control ── */
@@ -59,11 +59,11 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
   }
   .jects-kanban__sort-select:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -81,7 +81,7 @@
     font-size: var(--jects-font-size-xs);
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-md);
     cursor: pointer;
   }
@@ -90,7 +90,7 @@
     color: oklch(var(--jects-accent-foreground));
   }
   .jects-kanban__filter:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
   .jects-kanban__filter--on {
@@ -124,7 +124,7 @@
     min-height: 0;
     box-sizing: border-box;
     background: oklch(var(--jects-muted) / 0.5);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
   }
   .jects-kanban-col--collapsed {
@@ -143,7 +143,7 @@
     align-items: center;
     gap: var(--jects-space-2);
     padding: var(--jects-space-2) var(--jects-space-3);
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
     border-top: 3px solid var(--_kb-col-accent);
     border-top-left-radius: var(--jects-radius-lg);
     border-top-right-radius: var(--jects-radius-lg);
@@ -166,7 +166,7 @@
     line-height: 1;
     color: oklch(var(--jects-foreground));
     background: transparent;
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     cursor: pointer;
   }
@@ -175,7 +175,7 @@
     color: oklch(var(--jects-accent-foreground));
   }
   .jects-kanban-col__toggle:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
   .jects-kanban-col__title {
@@ -195,7 +195,7 @@
     font-variant-numeric: tabular-nums;
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-sm);
   }
   .jects-kanban-col__count--over {
@@ -222,7 +222,7 @@
     text-align: center;
     font-size: var(--jects-font-size-xs);
     color: oklch(var(--jects-foreground));
-    border: 1px dashed oklch(var(--jects-border));
+    border: var(--jects-border-width) dashed oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
   }
 
@@ -230,7 +230,7 @@
   .jects-kanban-col__lane {
     display: flex;
     flex-direction: column;
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
   }
   .jects-kanban-col__lane:last-child {
     border-bottom: none;
@@ -272,7 +272,7 @@
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-card-foreground));
     background: oklch(var(--jects-card));
-    border: 1px solid oklch(var(--jects-ring));
+    border: var(--jects-border-width) solid oklch(var(--jects-ring));
     border-radius: var(--jects-radius-md);
     box-shadow: var(--jects-shadow-lg);
     overflow: hidden;

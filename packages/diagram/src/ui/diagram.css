@@ -20,7 +20,7 @@
     box-sizing: border-box;
     color: var(--_diagram-fg);
     background: var(--_diagram-bg);
-    border: 1px solid var(--_diagram-border);
+    border: var(--jects-border-width) solid var(--_diagram-border);
     border-radius: var(--jects-radius-md);
     font-family: var(--jects-font-family);
     overflow: hidden;
@@ -28,7 +28,7 @@
 
   .jects-diagram__toolbar {
     flex: 0 0 auto;
-    border-block-end: 1px solid var(--_diagram-border);
+    border-block-end: var(--jects-border-width) solid var(--_diagram-border);
     background: var(--_diagram-muted);
     padding: var(--jects-space-1);
   }
@@ -48,7 +48,7 @@
     gap: var(--jects-space-1);
     padding: var(--jects-space-2);
     overflow-y: auto;
-    border-inline-end: 1px solid var(--_diagram-border);
+    border-inline-end: var(--jects-border-width) solid var(--_diagram-border);
     background: var(--_diagram-card);
   }
 
@@ -59,7 +59,7 @@
     gap: 2px;
     padding: var(--jects-space-1);
     cursor: grab;
-    border: 1px solid transparent;
+    border: var(--jects-border-width) solid transparent;
     border-radius: var(--jects-radius-sm);
     background: transparent;
     color: var(--_diagram-fg);
@@ -70,7 +70,7 @@
     border-color: var(--_diagram-border);
   }
   .jects-diagram__shapebar-item:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
   .jects-diagram__shapebar-glyph {
@@ -108,7 +108,7 @@
     background-size: 16px 16px;
   }
   .jects-diagram__canvas:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 
@@ -305,7 +305,7 @@
   .jects-diagram__panel {
     flex: 0 0 auto;
     inline-size: 220px;
-    border-inline-start: 1px solid var(--_diagram-border);
+    border-inline-start: var(--jects-border-width) solid var(--_diagram-border);
     background: var(--_diagram-card);
     overflow-y: auto;
   }
@@ -317,7 +317,7 @@
     padding: var(--jects-space-2);
     font-weight: var(--jects-font-weight-semibold);
     font-size: var(--jects-font-size-sm);
-    border-block-end: 1px solid var(--_diagram-border);
+    border-block-end: var(--jects-border-width) solid var(--_diagram-border);
     color: var(--_diagram-fg);
   }
   .jects-diagram-props__body {

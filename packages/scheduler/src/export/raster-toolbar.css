@@ -42,7 +42,7 @@
   .jects-scheduler-raster__preview {
     margin: 0;
     padding: var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-card));
     overflow: auto;

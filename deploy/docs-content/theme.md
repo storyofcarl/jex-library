@@ -174,3 +174,12 @@ setTheme('dark'); // honor user preference
 - **OKLCH triplets** for color values everywhere (both in CSS overrides and `applyTheme`); scalar tokens (radius, font-family) take normal CSS values.
 - **No Shadow DOM** in data components — these stylesheets cascade into widgets normally, which is why the `@layer` ordering matters for predictable overrides.
 - Generated CSS is **auto-generated** by `scripts/build-theme.mjs` from `@jects/tokens` — don't hand-edit files in `dist/css/`.
+
+## Theme customizer
+
+The product site ships a live theme customizer at `#customizer` — collapsible, searchable groups for the full
+token system (semantic colors, data/CMYK ramps, typography incl. weights/line-height/letter-spacing, spacing +
+**density**, radius, **borders & outlines**, **tables**, elevation, motion), a multi-component live preview, a
+WCAG contrast checker, preset starting points + `theme.css` import, shareable-URL state, and Download/Copy of the
+complete overridden token set as `theme.css`. It writes overrides via `applyTheme(scope, …)` and exports via
+`exportThemeCss(scope, …)`.

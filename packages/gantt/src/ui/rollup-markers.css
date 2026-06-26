@@ -48,7 +48,7 @@
      forced-colours mode against the summary slab. */
   @media (prefers-contrast: more) {
     .jects-gantt__rollup {
-      outline: 1px solid oklch(var(--jects-foreground));
+      outline: var(--jects-border-width) solid oklch(var(--jects-foreground));
     }
   }
 }

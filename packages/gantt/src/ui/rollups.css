@@ -75,7 +75,7 @@
     transform: translate(-50%, calc(-100% - var(--jects-space-1)));
     max-inline-size: 18rem;
     padding: var(--jects-space-1) var(--jects-space-2);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     background: oklch(var(--jects-popover));
     color: oklch(var(--jects-popover-foreground));
@@ -95,7 +95,7 @@
      forced-colours mode against the summary slab. */
   @media (prefers-contrast: more) {
     .jects-gantt__rollup-glyph {
-      outline: 1px solid oklch(var(--jects-foreground));
+      outline: var(--jects-border-width) solid oklch(var(--jects-foreground));
     }
   }
 }

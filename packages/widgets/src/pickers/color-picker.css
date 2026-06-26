@@ -26,7 +26,7 @@
     font-family: inherit;
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     cursor: pointer;
     transition:
@@ -37,8 +37,8 @@
     border-color: oklch(var(--jects-ring));
   }
   .jects-colorpicker__trigger:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-colorpicker__trigger:disabled {
     opacity: 0.5;
@@ -49,7 +49,7 @@
     width: 1.125rem;
     height: 1.125rem;
     border-radius: var(--jects-radius-sm);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     background-color: var(--_swatch);
   }
   .jects-colorpicker__trigger-text {
@@ -71,7 +71,7 @@
     gap: var(--jects-space-3);
     background: oklch(var(--jects-popover));
     color: oklch(var(--jects-popover-foreground));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
     box-shadow: var(--jects-shadow-lg);
   }
@@ -97,8 +97,8 @@
       linear-gradient(to right, var(--_white), transparent);
   }
   .jects-colorpicker__sv:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
   .jects-colorpicker__sv-thumb {
     position: absolute;
@@ -129,7 +129,7 @@
     height: 2rem;
     flex: none;
     border-radius: var(--jects-radius-md);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     background-color: var(--_preview);
   }
 
@@ -194,8 +194,8 @@
   }
   .jects-colorpicker__hue:focus-visible,
   .jects-colorpicker__alpha:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
-    outline-offset: 2px;
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
   }
 
   /* ---- hex + rgb inputs ---- */
@@ -227,12 +227,12 @@
     text-align: center;
     color: oklch(var(--jects-foreground));
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-input));
+    border: var(--jects-border-width) solid oklch(var(--jects-input));
     border-radius: var(--jects-radius-sm);
   }
   .jects-colorpicker__hex:focus-visible,
   .jects-colorpicker__num:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 
@@ -246,7 +246,7 @@
     aspect-ratio: 1;
     padding: 0;
     border-radius: var(--jects-radius-sm);
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     background-color: var(--_swatch);
     cursor: pointer;
     transition: transform var(--jects-duration-fast) ease;
@@ -255,7 +255,7 @@
     transform: scale(1.1);
   }
   .jects-colorpicker__swatch:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

@@ -12,7 +12,7 @@
     position: absolute;
     inset-block: 0;
     inline-size: 50%;
-    border-inline-end: 1px solid oklch(var(--jects-border) / 0.6);
+    border-inline-end: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
   }
   .jects-scheduler--vertical .jects-scheduler__time-band:first-child {
     inset-inline-start: 0;
@@ -30,7 +30,7 @@
     padding-block: var(--jects-space-1);
     font-size: var(--jects-font-size-xs);
     color: oklch(var(--jects-foreground));
-    border-block-start: 1px solid oklch(var(--jects-border) / 0.5);
+    border-block-start: var(--jects-border-width) solid oklch(var(--jects-border) / 0.5);
     white-space: nowrap;
     overflow: hidden;
     box-sizing: border-box;
@@ -66,7 +66,7 @@
     color: oklch(var(--jects-foreground));
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    border-inline-start: 1px solid oklch(var(--jects-border) / 0.6);
+    border-inline-start: var(--jects-border-width) solid oklch(var(--jects-border) / 0.6);
     white-space: nowrap;
     overflow: hidden;
     box-sizing: border-box;

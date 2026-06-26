@@ -9,7 +9,7 @@
     box-sizing: border-box;
     background: oklch(var(--jects-muted));
     color: oklch(var(--jects-foreground));
-    border-bottom: 1px solid oklch(var(--jects-border));
+    border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
     cursor: default;
     padding: 0;
     overflow: hidden;
@@ -60,7 +60,7 @@
   }
 
   .jects-grid-expander__toggle:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: 1px;
   }
 

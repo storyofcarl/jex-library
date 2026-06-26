@@ -16,7 +16,7 @@
     block-size: 100%;
     overflow: hidden;
     background: oklch(var(--jects-background));
-    border: 1px solid oklch(var(--jects-border));
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
     /* Pan affordance. */
     cursor: grab;
@@ -24,7 +24,7 @@
   }
 
   .jects-pert:focus-visible {
-    outline: 2px solid oklch(var(--jects-ring));
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
     outline-offset: -2px;
   }
 
