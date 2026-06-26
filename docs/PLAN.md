@@ -1,8 +1,9 @@
 # Jects UI — Master Plan
 
-> A framework-agnostic, commercially-licensed JavaScript UI component suite that replicates the
-> combined surface area of **Bryntum** and **DHTMLX**, with a clean, modern, fully-customizable
-> (shadcn-style) design system. Vanilla JS first; **React, Angular, and Vue** wrappers on the roadmap.
+> A framework-agnostic, commercially-licensed JavaScript **enterprise planning & data UI suite** —
+> grids, scheduling, Gantt, dashboards, diagrams, spreadsheets, forms, and productivity modules on a
+> clean, modern, fully-customizable (shadcn-style) design system. Vanilla JS first; **React, Angular,
+> and Vue** wrappers on the roadmap.
 
 **Status:** Planning / Foundation
 **Working name:** Jects UI · npm scope `@jects/*` (placeholder — confirm branding)

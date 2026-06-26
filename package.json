@@ -2,7 +2,7 @@
   "name": "jects-ui",
   "version": "0.0.0",
   "private": true,
-  "description": "Jects UI — framework-agnostic JS/TS component library (Bryntum + DHTMLX replica).",
+  "description": "Jects UI — a framework-agnostic enterprise planning and data UI suite (grids, scheduling, Gantt, dashboards, diagrams, spreadsheets, forms, productivity).",
   "type": "module",
   "packageManager": "pnpm@10.24.0",
   "engines": {

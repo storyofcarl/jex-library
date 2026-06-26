@@ -41,6 +41,7 @@ const countCases = (files) =>
 const kb = (bytes) => (bytes / 1024).toFixed(1) + ' KB';
 
 const rows = [];
+const noDist = []; // packages with neither a source build nor a vendored deploy dist
 for (const name of readdirSync(PKG_DIR).sort()) {
   const dir = join(PKG_DIR, name);
   if (!statSync(dir).isDirectory()) continue;
@@ -55,10 +56,20 @@ for (const name of readdirSync(PKG_DIR).sort()) {
   const a11y = files.filter((f) => /\.a11y\.test\.tsx?$/.test(f));
   const stories = files.filter((f) => /\.stories\.tsx?$/.test(f));
 
+  // Resolve a dist dir: prefer the package's own build; fall back to the vendored
+  // copy under deploy/ so the matrix never silently blanks export/bundle numbers
+  // when run from a clean (un-built) source tree.
+  let distBase = join(dir, 'dist');
+  if (!existsSync(distBase)) {
+    const vendored = join(ROOT, 'deploy/packages', name, 'dist');
+    distBase = existsSync(vendored) ? vendored : '';
+  }
+  if (!distBase) noDist.push(pj.name);
+
   // public export count from dist/index.d.ts
   let exportCount = 0;
-  const dts = join(dir, 'dist/index.d.ts');
-  if (existsSync(dts)) {
+  const dts = distBase ? join(distBase, 'index.d.ts') : '';
+  if (dts && existsSync(dts)) {
     const d = readFileSync(dts, 'utf8');
     exportCount = (d.match(/^export\s+(declare\s+)?(abstract\s+)?(class|function|const|type|interface|enum)\s/gm) ?? []).length;
     // also count names inside `export { a, b, c }` / `export type { ... }` blocks
@@ -76,11 +87,11 @@ for (const name of readdirSync(PKG_DIR).sort()) {
   const docPath = join(ROOT, 'docs/modules', `${name}.md`);
   const hasDoc = existsSync(docPath);
 
-  // gzip of built entry
+  // gzip of built entry (from source dist or the vendored deploy dist)
   let gz = '';
   const entry = pj.exports?.['.']?.import || pj.module;
-  if (entry) {
-    const abs = join(dir, entry.replace(/^\.\//, ''));
+  if (entry && distBase) {
+    const abs = join(distBase, entry.replace(/^\.\/dist\//, '').replace(/^\.\//, ''));
     if (existsSync(abs)) gz = kb(gzipSync(readFileSync(abs)).length);
   }
 
@@ -126,3 +137,12 @@ Totals: **${rows.length} packages**, ~**${totalUnit} unit test cases** across th
 
 writeFileSync(join(ROOT, 'docs/MATRIX.md'), out);
 console.log(`Wrote docs/MATRIX.md (${rows.length} packages, ~${totalUnit} unit cases)`);
+if (noDist.length) {
+  // Loud warning (not silent) — and fail hard in CI so a degraded proof file
+  // can never be committed with blank export/bundle numbers.
+  console.warn(`WARNING: no dist (source or deploy) for: ${noDist.join(', ')} — export/bundle columns are blank for these. Run "pnpm build" first.`);
+  if (process.env.CI) {
+    console.error('::error::Matrix generated without dist for some packages; build before generating in CI.');
+    process.exit(1);
+  }
+}

@@ -1,10 +1,10 @@
 # Jects UI — Module Documentation
 
-Per-module developer documentation for the **Jects UI** component library — a commercial,
-framework-free UI suite (vanilla TS first; React / Angular / Vue wrappers planned) that
-replicates the combined surface of **Bryntum + DHTMLX**. Every component is a light-DOM
-class with a stable **imperative API** and **CSS-custom-property theming** (3-tier OKLCH
-tokens). Live gallery: <https://jexlibrary.vercel.app>.
+Per-module developer documentation for **Jects UI** — a commercial, framework-agnostic
+**enterprise planning & data UI suite** (grids, scheduling, Gantt, dashboards, diagrams,
+spreadsheets, forms, productivity; vanilla TS first, with React / Angular / Vue / Web-Component
+wrappers). Every component is a light-DOM class with a stable **imperative API** and
+**CSS-custom-property theming** (3-tier OKLCH tokens). Live gallery: <https://jexlibrary.vercel.app>.
 
 Each module doc follows the same shape: **Overview · Installation · Integration
 (vanilla + framework + theming) · Features · Quick start · Configuration · Methods ·
