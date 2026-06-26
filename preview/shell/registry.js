@@ -297,11 +297,17 @@ export const ROUTE_META = {
   performance: { title: 'Performance', doc: 'grid', desc: 'Live, measured benchmarks of the heavy modules (Grid 100k rows, Pivot 50k records, Scheduler, Gantt) — build+render time and sampled frame rate, measured in your browser on this device, not synthetic claims.' },
   'server-data': { title: 'Server-side data', doc: 'grid', desc: 'A Grid bound to a simulated async backend — server-side sort, filter and pagination over a 100,000-row store, fetching one page at a time with a live request log proving only one page is in the DOM.' },
   compare: { title: 'How it compares', doc: 'core', desc: 'A controlled, honest comparison against the category leaders — positioned on one-core architecture, suite-wide OKLCH theming and breadth, with per-category benchmarks and "when to choose what" guidance.' },
+  // Solutions — flagship, application-grade demos combining many modules on one model.
+  'planning-control-center': { title: 'Planning Control Center', doc: 'gantt', desc: 'A project-planning application: Gantt timeline, task grid, resource schedule and risk chart over one shared project model — select a task to drive the inspector and resources.' },
+  'operations-dispatch': { title: 'Operations Dispatch', doc: 'scheduler', desc: 'A dispatch application: technicians with capacity, a resource scheduler, an unplanned-work queue and a utilization strip — assign a job and watch the schedule, calendar and KPIs update.' },
+  'analytics-workspace': { title: 'Analytics Workspace', doc: 'pivot', desc: 'An analytics application: KPI cards, pivot field wells, a pivot table, a bound chart and a spreadsheet forecast over one dataset — switch measure/dimension to re-pivot and re-chart live.' },
+  'workflow-delivery': { title: 'Workflow Delivery', doc: 'kanban', desc: 'A delivery application: a Kanban board, a Gantt plan and a scheduler of assignments over one set of work items — move a card to advance status and update the plan and KPIs.' },
 };
 
 /* ── sidebar grouping (the product taxonomy) ──────────────────────────── */
 export const SIDEBAR_GROUPS = [
   { label: 'Start', items: ['home'] },
+  { label: 'Solutions', items: ['planning-control-center', 'operations-dispatch', 'analytics-workspace', 'workflow-delivery'] },
   { label: 'Foundation', items: ['foundations', 'core', 'theme', 'icons', 'timeline-core'] },
   { label: 'Theme', items: ['customizer'] },
   { label: 'Data', items: ['grid', 'pivot', 'spreadsheet'] },

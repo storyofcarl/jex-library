@@ -1393,3 +1393,71 @@ pre.g-code code {
   .g-install-code { max-width: none; flex: 1 1 auto; }
   .g-home-hero { padding: 1.25rem 1.1rem; }
 }
+
+/* ============================================================================
+   Commercial chrome — shared "application-grade" primitives for the flagship
+   integrated demos (#planning-control-center, #operations-dispatch,
+   #analytics-workspace, #workflow-delivery). Gallery-scoped surface/elevation
+   tokens layer on top of the theme tokens for clearer visual hierarchy.
+   ========================================================================= */
+:root {
+  --jects-surface-0: oklch(var(--jects-background));
+  --jects-surface-1: oklch(var(--jects-card));
+  --jects-surface-2: oklch(var(--jects-muted) / 0.55);
+  --jects-surface-3: oklch(var(--jects-muted));
+  --jects-elevated:  oklch(var(--jects-popover));
+  --jects-shadow-panel: 0 1px 2px oklch(0 0 0 / 0.06), 0 8px 24px oklch(0 0 0 / 0.08);
+  --jects-shadow-floating: 0 12px 32px oklch(0 0 0 / 0.16);
+}
+
+/* App shell: a bordered, elevated surface that frames a multi-pane demo. */
+.jects-app-shell {
+  display: grid;
+  gap: 1px;
+  background: oklch(var(--jects-border));
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-lg, 0.6rem);
+  overflow: clip;
+  box-shadow: var(--jects-shadow-panel);
+  min-width: 0;
+}
+.jects-app-pane { background: var(--jects-surface-1); min-width: 0; min-height: 0; overflow: auto; }
+.jects-app-pane--muted { background: var(--jects-surface-2); }
+
+/* Command bar: the top toolbar strip of an app. */
+.jects-commandbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.55rem 0.85rem;
+  background: var(--jects-surface-1);
+  border-bottom: 1px solid oklch(var(--jects-border));
+  font-size: var(--jects-font-size-sm);
+}
+.jects-commandbar__title { font-weight: 650; margin-right: auto; color: oklch(var(--jects-foreground)); }
+
+/* Inspector: a right-hand details panel. */
+.jects-inspector { padding: 0.85rem 0.95rem; background: var(--jects-surface-1); font-size: var(--jects-font-size-sm); }
+.jects-inspector h4 { margin: 0 0 0.5rem; font-size: var(--jects-font-size-sm); color: oklch(var(--jects-muted-foreground)); text-transform: uppercase; letter-spacing: 0.04em; }
+.jects-inspector dl { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 0.75rem; margin: 0; }
+.jects-inspector dt { color: oklch(var(--jects-muted-foreground)); }
+.jects-inspector dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* KPI strip + cards. */
+.jects-kpi-strip { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.jects-kpi { flex: 1 1 8rem; min-width: 0; padding: 0.7rem 0.9rem; background: var(--jects-surface-1); border: 1px solid oklch(var(--jects-border)); border-radius: var(--jects-radius-md, 0.4rem); }
+.jects-kpi__value { font-size: 1.45rem; font-weight: 680; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.jects-kpi__label { font-size: var(--jects-font-size-xs, 0.75rem); color: oklch(var(--jects-muted-foreground)); margin-top: 0.15rem; }
+
+/* Status chip (tone via data-tone). */
+.jects-status-chip { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: var(--jects-font-size-xs, 0.75rem); font-weight: 600; background: var(--jects-surface-3); color: oklch(var(--jects-foreground)); }
+.jects-status-chip[data-tone="ok"]   { background: oklch(var(--jects-data-2, var(--jects-primary)) / 0.18); }
+.jects-status-chip[data-tone="warn"] { background: oklch(var(--jects-data-3, var(--jects-accent)) / 0.22); }
+.jects-status-chip[data-tone="risk"] { background: oklch(var(--jects-destructive) / 0.16); color: oklch(var(--jects-destructive)); }
+
+/* Module hero band used to introduce a flagship scenario. */
+.jects-module-hero { padding: 0.4rem 0 0.9rem; }
+.jects-module-hero h3 { margin: 0 0 0.2rem; }
+.jects-module-hero p { margin: 0; color: oklch(var(--jects-muted-foreground)); }

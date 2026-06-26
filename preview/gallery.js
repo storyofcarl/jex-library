@@ -53,6 +53,11 @@ const ROUTES = {
   overlays: () => import('./routes/overlays.js'),
   richtext: () => import('./routes/richtext.js'),
   chatbot: () => import('./routes/chatbot.js'),
+  // Solutions — flagship application demos
+  'planning-control-center': () => import('./workflows/planning-control-center.js'),
+  'operations-dispatch': () => import('./workflows/operations-dispatch.js'),
+  'analytics-workspace': () => import('./workflows/analytics-workspace.js'),
+  'workflow-delivery': () => import('./workflows/workflow-delivery.js'),
   // Integrated workflows
   'flow-analytics': () => import('./workflows/flow-analytics.js'),
   'flow-planning': () => import('./workflows/flow-planning.js'),
