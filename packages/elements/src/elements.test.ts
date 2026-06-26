@@ -6,6 +6,8 @@ import {
   JectsButtonElement,
   type JectsElement,
 } from './index.js';
+// Per-component subpath entry: pulls ONLY @jects/grid + the shared factory, no siblings.
+import { registerGrid, JectsGridElement, gridElementDefinition } from './grid.js';
 import type { Button } from '@jects/widgets';
 import type { ButtonConfig, ButtonEvents } from '@jects/widgets';
 
@@ -28,6 +30,15 @@ describe('@jects/elements smoke suite', () => {
     }
     // Second call must not throw (guarded by customElements.get).
     expect(() => register()).not.toThrow();
+  });
+
+  it('a per-component subpath entry registers only its own tag and matches the root class', () => {
+    // The subpath helper defines exactly one element, and is idempotent.
+    expect(gridElementDefinition.tag).toBe('jects-grid');
+    expect(() => registerGrid()).not.toThrow();
+    expect(customElements.get('jects-grid')).toBeTypeOf('function');
+    // The class from the subpath entry is the same one the root barrel re-exports.
+    expect(gridElementDefinition.ctor).toBe(JectsGridElement);
   });
 
   it('renders the engine .jects- DOM into the light-DOM element on connect', () => {

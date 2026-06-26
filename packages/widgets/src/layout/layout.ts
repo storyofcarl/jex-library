@@ -30,11 +30,16 @@ import {
   type WidgetEvents,
   createEl,
   register,
+  sanitizeHtml,
 } from '@jects/core';
 import { Splitter, type SplitterConfig } from './splitter.js';
 
 export type RegionName = 'north' | 'south' | 'west' | 'east' | 'center';
-/** Cell content: a widget, an element, or trusted HTML. */
+/**
+ * Cell content: a widget, an element, or an HTML string. A string is treated as
+ * authored HTML and sanitized through the shared `@jects/core` sanitizer before
+ * insertion (unless the Layout is configured `trusted: true`).
+ */
 export type CellContent = Widget | HTMLElement | string;
 
 export interface RegionConfig {
@@ -65,6 +70,8 @@ export interface LayoutConfig extends WidgetConfig {
   east?: RegionConfig;
   /** Center region (always fills remaining space). */
   center?: RegionConfig;
+  /** Opt out of HTML sanitization for string cell content. Default `false`. */
+  trusted?: boolean;
 }
 
 export interface LayoutEvents extends WidgetEvents {
@@ -214,7 +221,9 @@ export class Layout extends Widget<LayoutConfig, LayoutEvents> {
     } else if (content instanceof HTMLElement) {
       cell.appendChild(content);
     } else if (typeof content === 'string') {
-      cell.innerHTML = content;
+      // A string is authored HTML → sanitized by default; only the explicit
+      // `trusted` opt-out injects it raw.
+      cell.innerHTML = this.config.trusted ? content : sanitizeHtml(content);
     }
     return cell;
   }

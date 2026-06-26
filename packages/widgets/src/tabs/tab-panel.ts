@@ -13,13 +13,25 @@
  * CSS lives in tab-panel.css (token-only, @layer jects.components).
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import {
+  Widget,
+  type WidgetConfig,
+  type WidgetEvents,
+  createEl,
+  register,
+  sanitizeHtml,
+} from '@jects/core';
 import { Tabbar, type TabItem, type TabbarConfig, panelElementId } from './tabbar.js';
 
 export type TabPanelContent = string | Node | ((host: HTMLElement) => void);
 
 export interface TabPanelItem extends TabItem {
-  /** Panel content: HTML string, a Node, or a factory called with the panel host. */
+  /**
+   * Panel content: an HTML string, a Node, or a factory called with the panel
+   * host. A string is treated as authored HTML and sanitized through the shared
+   * `@jects/core` allow-list sanitizer before insertion (unless the TabPanel is
+   * configured `trusted: true`). For full control, pass a Node or a factory.
+   */
   content?: TabPanelContent;
 }
 
@@ -36,6 +48,8 @@ export interface TabPanelConfig extends WidgetConfig {
   lazy?: boolean;
   /** Keep rendered panels in the DOM (hidden) once built. Default `true`. */
   keepAlive?: boolean;
+  /** Opt out of HTML sanitization for string panel `content`. Default `false`. */
+  trusted?: boolean;
   /** Convenience handler (also via `.on('change', ...)`). */
   onChange?: (id: string) => void;
 }
@@ -217,7 +231,9 @@ export class TabPanel extends Widget<TabPanelConfig, TabPanelEvents> {
     if (typeof content === 'function') {
       content(panel);
     } else if (typeof content === 'string') {
-      panel.innerHTML = content;
+      // A string is authored HTML → sanitized by default; only the explicit
+      // `trusted` opt-out injects it raw.
+      panel.innerHTML = this.config.trusted ? content : sanitizeHtml(content);
     } else {
       panel.append(content);
     }

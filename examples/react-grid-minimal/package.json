@@ -1,0 +1,14 @@
+{
+  "name": "react-grid-minimal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal isolated install: a React grid that imports ONLY @jects/react/grid + @jects/grid. No other @jects engine (gantt, scheduler, ...) is a dependency, so a bundler never resolves a sibling engine.",
+  "dependencies": {
+    "@jects/react": "workspace:*",
+    "@jects/grid": "workspace:*",
+    "@jects/core": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

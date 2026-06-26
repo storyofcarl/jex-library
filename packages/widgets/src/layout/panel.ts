@@ -21,18 +21,25 @@ import {
   type WidgetEvents,
   createEl,
   register,
+  escape as escapeHtml,
+  sanitizeHtml,
 } from '@jects/core';
 
+/**
+ * Panel body content: a widget, an element, or an HTML string. A string is
+ * treated as authored HTML and sanitized through the shared `@jects/core`
+ * sanitizer before insertion (unless the Panel is configured `trusted: true`).
+ */
 export type PanelBody = Widget | HTMLElement | string;
 
 export interface PanelConfig extends WidgetConfig {
-  /** Header title text. When omitted the header is hidden (unless tools/collapsible). */
+  /** Header title text (plain text, always escaped). When omitted the header is hidden (unless tools/collapsible). */
   title?: string;
-  /** Trusted HTML for header tools (right-aligned actions). */
+  /** HTML for header tools (right-aligned actions). Sanitized unless `trusted: true`. */
   tools?: string;
-  /** Body content: a widget, an element, or trusted HTML. */
+  /** Body content: a widget, an element, or an HTML string (sanitized unless `trusted: true`). */
   body?: PanelBody;
-  /** Trusted HTML for an optional footer. */
+  /** HTML for an optional footer. Sanitized unless `trusted: true`. */
   footer?: string;
   /** Whether the body can collapse. Default `false`. */
   collapsible?: boolean;
@@ -40,6 +47,8 @@ export interface PanelConfig extends WidgetConfig {
   collapsed?: boolean;
   /** Remove the surrounding border/background chrome. Default `false`. */
   flat?: boolean;
+  /** Opt out of HTML sanitization for `tools`, `footer`, and string `body`. Default `false`. */
+  trusted?: boolean;
 }
 
 export interface PanelEvents extends WidgetEvents {
@@ -162,7 +171,9 @@ export class Panel extends Widget<PanelConfig, PanelEvents> {
     } else if (body instanceof HTMLElement) {
       host.appendChild(body);
     } else {
-      host.innerHTML = body;
+      // A string is authored HTML → sanitized by default; only the explicit
+      // `trusted` opt-out injects it raw.
+      host.innerHTML = this.config.trusted ? body : sanitizeHtml(body);
     }
   }
 
@@ -199,7 +210,12 @@ export class Panel extends Widget<PanelConfig, PanelEvents> {
           `<span class="jects-panel__title">${escapeHtml(title ?? '')}</span>` +
           `</button>`
         : `<span class="jects-panel__title">${escapeHtml(title ?? '')}</span>`;
-      const toolsHtml = tools ? `<div class="jects-panel__tools">${tools}</div>` : '';
+      const safeTools = tools
+        ? this.config.trusted
+          ? tools
+          : sanitizeHtml(tools)
+        : '';
+      const toolsHtml = safeTools ? `<div class="jects-panel__tools">${safeTools}</div>` : '';
       header.innerHTML = toggle + toolsHtml;
     } else {
       header.innerHTML = '';
@@ -215,7 +231,8 @@ export class Panel extends Widget<PanelConfig, PanelEvents> {
     const footerEl = this.footerEl;
     if (footer) {
       footerEl.hidden = false;
-      footerEl.innerHTML = footer;
+      // Authored HTML → sanitized by default; `trusted` opt-out injects raw.
+      footerEl.innerHTML = this.config.trusted ? footer : sanitizeHtml(footer);
     } else {
       footerEl.hidden = true;
       footerEl.innerHTML = '';
@@ -227,10 +244,6 @@ export class Panel extends Widget<PanelConfig, PanelEvents> {
     this.disposeBodyWidget();
     super.destroy();
   }
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 register(

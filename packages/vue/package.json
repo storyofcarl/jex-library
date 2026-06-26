@@ -10,13 +10,87 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/vue.js",
-      "require": "./dist/vue.umd.cjs"
+      "import": "./dist/index.js"
+    },
+    "./grid": {
+      "types": "./dist/grid.d.ts",
+      "import": "./dist/grid.js"
+    },
+    "./gantt": {
+      "types": "./dist/gantt.d.ts",
+      "import": "./dist/gantt.js"
+    },
+    "./scheduler": {
+      "types": "./dist/scheduler.d.ts",
+      "import": "./dist/scheduler.js"
+    },
+    "./calendar": {
+      "types": "./dist/calendar.d.ts",
+      "import": "./dist/calendar.js"
+    },
+    "./booking": {
+      "types": "./dist/booking.d.ts",
+      "import": "./dist/booking.js"
+    },
+    "./kanban": {
+      "types": "./dist/kanban.d.ts",
+      "import": "./dist/kanban.js"
+    },
+    "./todo": {
+      "types": "./dist/todo.d.ts",
+      "import": "./dist/todo.js"
+    },
+    "./charts": {
+      "types": "./dist/charts.d.ts",
+      "import": "./dist/charts.js"
+    },
+    "./diagram": {
+      "types": "./dist/diagram.d.ts",
+      "import": "./dist/diagram.js"
+    },
+    "./spreadsheet": {
+      "types": "./dist/spreadsheet.d.ts",
+      "import": "./dist/spreadsheet.js"
+    },
+    "./pivot": {
+      "types": "./dist/pivot.d.ts",
+      "import": "./dist/pivot.js"
+    },
+    "./chatbot": {
+      "types": "./dist/chatbot.d.ts",
+      "import": "./dist/chatbot.js"
+    },
+    "./button": {
+      "types": "./dist/button.d.ts",
+      "import": "./dist/button.js"
+    },
+    "./form": {
+      "types": "./dist/form.d.ts",
+      "import": "./dist/form.js"
+    },
+    "./window": {
+      "types": "./dist/window.d.ts",
+      "import": "./dist/window.js"
+    },
+    "./textfield": {
+      "types": "./dist/textfield.d.ts",
+      "import": "./dist/textfield.js"
+    },
+    "./select": {
+      "types": "./dist/select.d.ts",
+      "import": "./dist/select.js"
+    },
+    "./richtext": {
+      "types": "./dist/richtext.d.ts",
+      "import": "./dist/richtext.js"
+    },
+    "./factory": {
+      "types": "./dist/factory.d.ts",
+      "import": "./dist/factory.js"
     }
   },
   "types": "./dist/index.d.ts",
-  "module": "./dist/vue.js",
-  "main": "./dist/vue.umd.cjs",
+  "module": "./dist/index.js",
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",

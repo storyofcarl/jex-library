@@ -10,13 +10,103 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/elements.js",
-      "require": "./dist/elements.umd.cjs"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./grid": {
+      "types": "./dist/grid.d.ts",
+      "import": "./dist/grid.js",
+      "require": "./dist/grid.cjs"
+    },
+    "./gantt": {
+      "types": "./dist/gantt.d.ts",
+      "import": "./dist/gantt.js",
+      "require": "./dist/gantt.cjs"
+    },
+    "./scheduler": {
+      "types": "./dist/scheduler.d.ts",
+      "import": "./dist/scheduler.js",
+      "require": "./dist/scheduler.cjs"
+    },
+    "./calendar": {
+      "types": "./dist/calendar.d.ts",
+      "import": "./dist/calendar.js",
+      "require": "./dist/calendar.cjs"
+    },
+    "./booking": {
+      "types": "./dist/booking.d.ts",
+      "import": "./dist/booking.js",
+      "require": "./dist/booking.cjs"
+    },
+    "./kanban": {
+      "types": "./dist/kanban.d.ts",
+      "import": "./dist/kanban.js",
+      "require": "./dist/kanban.cjs"
+    },
+    "./todo": {
+      "types": "./dist/todo.d.ts",
+      "import": "./dist/todo.js",
+      "require": "./dist/todo.cjs"
+    },
+    "./charts": {
+      "types": "./dist/charts.d.ts",
+      "import": "./dist/charts.js",
+      "require": "./dist/charts.cjs"
+    },
+    "./diagram": {
+      "types": "./dist/diagram.d.ts",
+      "import": "./dist/diagram.js",
+      "require": "./dist/diagram.cjs"
+    },
+    "./spreadsheet": {
+      "types": "./dist/spreadsheet.d.ts",
+      "import": "./dist/spreadsheet.js",
+      "require": "./dist/spreadsheet.cjs"
+    },
+    "./pivot": {
+      "types": "./dist/pivot.d.ts",
+      "import": "./dist/pivot.js",
+      "require": "./dist/pivot.cjs"
+    },
+    "./chatbot": {
+      "types": "./dist/chatbot.d.ts",
+      "import": "./dist/chatbot.js",
+      "require": "./dist/chatbot.cjs"
+    },
+    "./button": {
+      "types": "./dist/button.d.ts",
+      "import": "./dist/button.js",
+      "require": "./dist/button.cjs"
+    },
+    "./form": {
+      "types": "./dist/form.d.ts",
+      "import": "./dist/form.js",
+      "require": "./dist/form.cjs"
+    },
+    "./window": {
+      "types": "./dist/window.d.ts",
+      "import": "./dist/window.js",
+      "require": "./dist/window.cjs"
+    },
+    "./textfield": {
+      "types": "./dist/textfield.d.ts",
+      "import": "./dist/textfield.js",
+      "require": "./dist/textfield.cjs"
+    },
+    "./select": {
+      "types": "./dist/select.d.ts",
+      "import": "./dist/select.js",
+      "require": "./dist/select.cjs"
+    },
+    "./richtext": {
+      "types": "./dist/richtext.d.ts",
+      "import": "./dist/richtext.js",
+      "require": "./dist/richtext.cjs"
     }
   },
   "types": "./dist/index.d.ts",
-  "module": "./dist/elements.js",
-  "main": "./dist/elements.umd.cjs",
+  "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",

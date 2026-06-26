@@ -11,6 +11,78 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./grid": {
+      "types": "./dist/grid.d.ts",
+      "default": "./dist/grid.js"
+    },
+    "./gantt": {
+      "types": "./dist/gantt.d.ts",
+      "default": "./dist/gantt.js"
+    },
+    "./scheduler": {
+      "types": "./dist/scheduler.d.ts",
+      "default": "./dist/scheduler.js"
+    },
+    "./calendar": {
+      "types": "./dist/calendar.d.ts",
+      "default": "./dist/calendar.js"
+    },
+    "./booking": {
+      "types": "./dist/booking.d.ts",
+      "default": "./dist/booking.js"
+    },
+    "./kanban": {
+      "types": "./dist/kanban.d.ts",
+      "default": "./dist/kanban.js"
+    },
+    "./todo": {
+      "types": "./dist/todo.d.ts",
+      "default": "./dist/todo.js"
+    },
+    "./charts": {
+      "types": "./dist/charts.d.ts",
+      "default": "./dist/charts.js"
+    },
+    "./diagram": {
+      "types": "./dist/diagram.d.ts",
+      "default": "./dist/diagram.js"
+    },
+    "./spreadsheet": {
+      "types": "./dist/spreadsheet.d.ts",
+      "default": "./dist/spreadsheet.js"
+    },
+    "./pivot": {
+      "types": "./dist/pivot.d.ts",
+      "default": "./dist/pivot.js"
+    },
+    "./chatbot": {
+      "types": "./dist/chatbot.d.ts",
+      "default": "./dist/chatbot.js"
+    },
+    "./button": {
+      "types": "./dist/button.d.ts",
+      "default": "./dist/button.js"
+    },
+    "./form": {
+      "types": "./dist/form.d.ts",
+      "default": "./dist/form.js"
+    },
+    "./window": {
+      "types": "./dist/window.d.ts",
+      "default": "./dist/window.js"
+    },
+    "./textfield": {
+      "types": "./dist/textfield.d.ts",
+      "default": "./dist/textfield.js"
+    },
+    "./select": {
+      "types": "./dist/select.d.ts",
+      "default": "./dist/select.js"
+    },
+    "./richtext": {
+      "types": "./dist/richtext.d.ts",
+      "default": "./dist/richtext.js"
     }
   },
   "types": "./dist/index.d.ts",

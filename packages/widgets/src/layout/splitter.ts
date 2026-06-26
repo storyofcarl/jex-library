@@ -22,10 +22,15 @@ import {
   type WidgetEvents,
   createEl,
   register,
+  sanitizeHtml,
 } from '@jects/core';
 
 export type SplitterOrientation = 'horizontal' | 'vertical';
-/** Pane content: a widget, an element, or trusted HTML. */
+/**
+ * Pane content: a widget, an element, or an HTML string. A string is treated as
+ * authored HTML and sanitized through the shared `@jects/core` sanitizer before
+ * insertion (unless the Splitter is configured `trusted: true`).
+ */
 export type SplitterPane = Widget | HTMLElement | string;
 
 export interface SplitterConfig extends WidgetConfig {
@@ -51,6 +56,8 @@ export interface SplitterConfig extends WidgetConfig {
   disabled?: boolean;
   /** localStorage key to persist the ratio under. */
   persist?: string;
+  /** Opt out of HTML sanitization for string pane content. Default `false`. */
+  trusted?: boolean;
   /** Convenience handler (also via `.on('resize', ...)`). */
   onResize?: (ratio: number) => void;
 }
@@ -272,7 +279,9 @@ export class Splitter extends Widget<SplitterConfig, SplitterEvents> {
       host.appendChild(pane);
       return null;
     }
-    host.innerHTML = pane;
+    // A string is authored HTML → sanitized by default; only the explicit
+    // `trusted` opt-out injects it raw.
+    host.innerHTML = this.config.trusted ? pane : sanitizeHtml(pane);
     return null;
   }
 

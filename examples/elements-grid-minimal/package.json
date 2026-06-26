@@ -1,0 +1,12 @@
+{
+  "name": "elements-grid-minimal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal isolated install: a Web Component grid that imports ONLY @jects/elements/grid + @jects/grid. No other @jects engine (gantt, scheduler, ...) is a dependency, so a bundler never resolves a sibling engine.",
+  "dependencies": {
+    "@jects/elements": "workspace:*",
+    "@jects/grid": "workspace:*",
+    "@jects/core": "workspace:*"
+  }
+}

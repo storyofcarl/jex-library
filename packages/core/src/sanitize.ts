@@ -160,6 +160,10 @@ function resolveConfig(opts: SanitizeOptions | undefined): ResolvedConfig {
 
 function isAttrAllowed(tag: string, attr: string, cfg: ResolvedConfig): boolean {
   if (cfg.globalAttrs.has(attr)) return true;
+  // `data-*` and `aria-*` are non-executable, author-controlled hook/a11y
+  // attributes; allow them on any element (no script vector). `on*` handlers are
+  // already rejected before this is reached (see cleanElement).
+  if (attr.startsWith('data-') || attr.startsWith('aria-')) return true;
   return cfg.tagAttrs[tag]?.has(attr) ?? false;
 }
 

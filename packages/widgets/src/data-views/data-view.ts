@@ -17,6 +17,8 @@ import {
   Store,
   type Model,
   type RecordId,
+  escape as escapeHtml,
+  sanitizeHtml,
 } from '@jects/core';
 
 export type DataViewSelectionMode = 'single' | 'multi' | 'none';
@@ -28,7 +30,12 @@ export interface DataViewConfig<T extends Model = Model> extends WidgetConfig {
   data?: T[];
   /** Field rendered as a card title when no `cardTemplate` is given. Default `'text'`. */
   titleField?: string;
-  /** Custom card renderer returning trusted HTML (library-controlled). */
+  /**
+   * Custom card renderer returning HTML. Sanitized through the shared
+   * `@jects/core` allow-list sanitizer before insertion unless `trusted: true`.
+   * Authors interpolating record values into the markup should escape them with
+   * the exported `escape()` helper.
+   */
   cardTemplate?: (record: T, index: number) => string;
   /** Minimum card width in px for the responsive grid. Default `200`. */
   minCardWidth?: number;
@@ -36,8 +43,15 @@ export interface DataViewConfig<T extends Model = Model> extends WidgetConfig {
   gap?: number;
   /** Selection behaviour. Default `'single'`. */
   selectionMode?: DataViewSelectionMode;
-  /** Markup shown when the store is empty. Plain text or trusted HTML. */
+  /** Plain-text message shown when the store is empty. Always escaped. Default `'No items'`. */
   emptyText?: string;
+  /**
+   * HTML for the empty state (used instead of `emptyText`). Sanitized through
+   * the shared `@jects/core` sanitizer unless `trusted: true`.
+   */
+  emptyHtml?: string;
+  /** Opt out of HTML sanitization for `emptyHtml` / `cardTemplate` output. Default `false`. */
+  trusted?: boolean;
   /** Accessible name for the listbox (`aria-label`). Default `'Items'`. */
   label?: string;
 }
@@ -105,7 +119,16 @@ export class DataView<T extends Model = Model> extends Widget<DataViewConfig<T>,
       this.el.setAttribute('role', 'group');
       this.el.removeAttribute('aria-multiselectable');
       this.grid.classList.add('jects-dataview__grid--empty');
-      this.grid.innerHTML = `<div class="jects-dataview__empty" role="status">${emptyText}</div>`;
+      const emptyHtml = this.config.emptyHtml;
+      // `emptyText` is plain text (escaped); `emptyHtml` is authored markup
+      // (sanitized unless trusted). Default to the escaped text message.
+      const emptyInner =
+        emptyHtml !== undefined
+          ? this.config.trusted
+            ? emptyHtml
+            : sanitizeHtml(emptyHtml)
+          : escapeHtml(emptyText);
+      this.grid.innerHTML = `<div class="jects-dataview__empty" role="status">${emptyInner}</div>`;
       return;
     }
     this.el.setAttribute('role', 'listbox');
@@ -116,9 +139,15 @@ export class DataView<T extends Model = Model> extends Widget<DataViewConfig<T>,
       const id = this.idOf(record);
       const isSelected = this.selected.has(id);
       const isActive = this.activeIndex === index;
-      const inner = this.config.cardTemplate
-        ? this.config.cardTemplate(record, index)
-        : `<div class="jects-dataview__title">${escapeHtml(String((record as Record<string, unknown>)[titleField] ?? ''))}</div>`;
+      let inner: string;
+      if (this.config.cardTemplate) {
+        // Renderer output is authored HTML → sanitized by default; only the
+        // explicit `trusted` opt-out injects it raw.
+        const tpl = this.config.cardTemplate(record, index);
+        inner = this.config.trusted ? tpl : sanitizeHtml(tpl);
+      } else {
+        inner = `<div class="jects-dataview__title">${escapeHtml(String((record as Record<string, unknown>)[titleField] ?? ''))}</div>`;
+      }
       return (
         `<div class="jects-dataview__card${isSelected ? ' jects-dataview__card--selected' : ''}${isActive ? ' jects-dataview__card--active' : ''}"` +
         ` role="option" aria-selected="${isSelected}" data-id="${escapeAttr(String(id))}" data-index="${index}"` +
@@ -258,12 +287,9 @@ export class DataView<T extends Model = Model> extends Widget<DataViewConfig<T>,
   }
 }
 
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-function escapeAttr(s: string): string {
-  return escapeHtml(s).replace(/"/g, '&quot;');
-}
+// The shared `escape()` (imported as `escapeHtml`) already escapes quotes, so it
+// is safe for both element text and double-quoted attribute values.
+const escapeAttr = escapeHtml;
 
 register(
   'dataview',

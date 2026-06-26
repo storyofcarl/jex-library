@@ -7,122 +7,195 @@
  * (engine events arrive as `CustomEvent`s), and reach the live engine instance through
  * the element's `.instance` property.
  *
- * Call {@link register} once to define every `<jects-*>` tag, or define them
- * individually with `customElements.define(tag, ElementClass)`.
+ * This root barrel re-exports EVERY per-component entry, so importing it pulls all
+ * engines — a convenience for "give me everything". To install a single component
+ * WITHOUT its siblings, import the matching subpath instead, e.g.
+ * `@jects/elements/grid` (pulls only `@jects/grid`). Each subpath also ships its own
+ * `register*` helper; this barrel's {@link register} defines every tag at once.
  */
-import { createComponent, type JectsElementConstructor } from './factory.js';
+import { defineElements, type JectsElementDefinition } from './shared.js';
 
-// --- data + scheduling engines ---------------------------------------------
-import { Grid, type GridOptions, type GridEvents } from '@jects/grid';
-import { Gantt, type GanttOptions, type GanttEvents } from '@jects/gantt';
-import { Scheduler, type SchedulerConfig, type SchedulerEvents } from '@jects/scheduler';
-import { Calendar, type CalendarConfig, type CalendarEvents } from '@jects/calendar';
-import { TaskBoard, type TaskBoardConfig, type TaskBoardEvents } from '@jects/kanban';
-import { TodoList, type TodoListConfig, type TodoListEvents } from '@jects/todo';
-import { Chart, type ChartConfig, type ChartEvents } from '@jects/charts';
-import { Diagram, type DiagramConfig, type DiagramEvents } from '@jects/diagram';
-import { Spreadsheet, type SpreadsheetConfig, type SpreadsheetEvents } from '@jects/spreadsheet';
-import { PivotTable, type PivotTableConfig, type PivotTableEvents } from '@jects/pivot';
-import { Booking, type BookingConfig, type BookingEvents } from '@jects/booking';
-import { Chatbot, type ChatbotConfig, type ChatbotEvents } from '@jects/chatbot';
+import { gridElementDefinition } from './grid.js';
+import { ganttElementDefinition } from './gantt.js';
+import { schedulerElementDefinition } from './scheduler.js';
+import { calendarElementDefinition } from './calendar.js';
+import { kanbanElementDefinition } from './kanban.js';
+import { todoElementDefinition } from './todo.js';
+import { chartElementDefinition } from './charts.js';
+import { diagramElementDefinition } from './diagram.js';
+import { spreadsheetElementDefinition } from './spreadsheet.js';
+import { pivotElementDefinition } from './pivot.js';
+import { bookingElementDefinition } from './booking.js';
+import { chatbotElementDefinition } from './chatbot.js';
+import { buttonElementDefinition } from './button.js';
+import { formElementDefinition } from './form.js';
+import { windowElementDefinition } from './window.js';
+import { textFieldElementDefinition } from './textfield.js';
+import { selectElementDefinition } from './select.js';
+import { richTextElementDefinition } from './richtext.js';
 
-// --- key widgets ------------------------------------------------------------
-import {
-  Button,
-  type ButtonConfig,
-  type ButtonEvents,
-  Form,
-  type FormConfig,
-  type FormEvents,
-  Window,
-  type WindowConfig,
-  type WindowEvents,
-  TextField,
-  type TextFieldConfig,
-  type TextFieldEvents,
-  Select,
-  type SelectConfig,
-  type SelectEvents,
-  RichText,
-  type RichTextConfig,
-  type RichTextEvents,
-} from '@jects/widgets';
-
-export { createComponent } from './factory.js';
+// --- shared factory surface (engine-free) ----------------------------------
+export { createComponent, defineElements } from './shared.js';
 export type {
   WidgetCtor,
   JectsElement,
   JectsElementConstructor,
   CreateComponentOptions,
-} from './factory.js';
+  JectsElementDefinition,
+} from './shared.js';
 
-// --- engine elements --------------------------------------------------------
-export const JectsGridElement = createComponent<Grid, GridOptions, GridEvents>(Grid);
-export const JectsGanttElement = createComponent<Gantt, GanttOptions, GanttEvents>(Gantt);
-export const JectsSchedulerElement = createComponent<Scheduler, SchedulerConfig, SchedulerEvents>(
-  Scheduler,
-);
-export const JectsCalendarElement = createComponent<Calendar, CalendarConfig, CalendarEvents>(
-  Calendar,
-);
-export const JectsKanbanElement = createComponent<TaskBoard, TaskBoardConfig, TaskBoardEvents>(
-  TaskBoard,
-);
-export const JectsTodoElement = createComponent<TodoList, TodoListConfig, TodoListEvents>(TodoList);
-export const JectsChartElement = createComponent<Chart, ChartConfig, ChartEvents>(Chart);
-export const JectsDiagramElement = createComponent<Diagram, DiagramConfig, DiagramEvents>(Diagram);
-export const JectsSpreadsheetElement = createComponent<
-  Spreadsheet,
-  SpreadsheetConfig,
-  SpreadsheetEvents
->(Spreadsheet);
-export const JectsPivotElement = createComponent<PivotTable, PivotTableConfig, PivotTableEvents>(
-  PivotTable,
-);
-export const JectsBookingElement = createComponent<Booking, BookingConfig, BookingEvents>(Booking);
-export const JectsChatbotElement = createComponent<Chatbot, ChatbotConfig, ChatbotEvents>(Chatbot);
-
-// --- widget elements --------------------------------------------------------
-export const JectsButtonElement = createComponent<Button, ButtonConfig, ButtonEvents>(Button);
-export const JectsFormElement = createComponent<Form, FormConfig, FormEvents>(Form);
-export const JectsWindowElement = createComponent<Window, WindowConfig, WindowEvents>(Window);
-export const JectsTextFieldElement = createComponent<TextField, TextFieldConfig, TextFieldEvents>(
-  TextField,
-);
-export const JectsSelectElement = createComponent<Select, SelectConfig, SelectEvents>(Select);
-export const JectsRichTextElement = createComponent<RichText, RichTextConfig, RichTextEvents>(
-  RichText,
-);
-
-/** The custom-element tag for each generated element, paired with its class. */
-export interface JectsElementDefinition {
-  readonly tag: string;
-  readonly ctor: JectsElementConstructor<object, unknown, unknown>;
-}
+// --- per-component element classes, register* helpers, definitions & types --
+// Re-exported from each subpath entry so the root barrel is back-compat-complete.
+export {
+  JectsGridElement,
+  registerGrid,
+  gridElementDefinition,
+  type GridOptions,
+  type GridEvents,
+} from './grid.js';
+export {
+  JectsGanttElement,
+  registerGantt,
+  ganttElementDefinition,
+  type GanttOptions,
+  type GanttEvents,
+} from './gantt.js';
+export {
+  JectsSchedulerElement,
+  registerScheduler,
+  schedulerElementDefinition,
+  type SchedulerConfig,
+  type SchedulerEvents,
+} from './scheduler.js';
+export {
+  JectsCalendarElement,
+  registerCalendar,
+  calendarElementDefinition,
+  type CalendarConfig,
+  type CalendarEvents,
+} from './calendar.js';
+export {
+  JectsKanbanElement,
+  registerKanban,
+  kanbanElementDefinition,
+  type TaskBoardConfig,
+  type TaskBoardEvents,
+} from './kanban.js';
+export {
+  JectsTodoElement,
+  registerTodo,
+  todoElementDefinition,
+  type TodoListConfig,
+  type TodoListEvents,
+} from './todo.js';
+export {
+  JectsChartElement,
+  registerChart,
+  chartElementDefinition,
+  type ChartConfig,
+  type ChartEvents,
+} from './charts.js';
+export {
+  JectsDiagramElement,
+  registerDiagram,
+  diagramElementDefinition,
+  type DiagramConfig,
+  type DiagramEvents,
+} from './diagram.js';
+export {
+  JectsSpreadsheetElement,
+  registerSpreadsheet,
+  spreadsheetElementDefinition,
+  type SpreadsheetConfig,
+  type SpreadsheetEvents,
+} from './spreadsheet.js';
+export {
+  JectsPivotElement,
+  registerPivot,
+  pivotElementDefinition,
+  type PivotTableConfig,
+  type PivotTableEvents,
+} from './pivot.js';
+export {
+  JectsBookingElement,
+  registerBooking,
+  bookingElementDefinition,
+  type BookingConfig,
+  type BookingEvents,
+} from './booking.js';
+export {
+  JectsChatbotElement,
+  registerChatbot,
+  chatbotElementDefinition,
+  type ChatbotConfig,
+  type ChatbotEvents,
+} from './chatbot.js';
+export {
+  JectsButtonElement,
+  registerButton,
+  buttonElementDefinition,
+  type ButtonConfig,
+  type ButtonEvents,
+} from './button.js';
+export {
+  JectsFormElement,
+  registerForm,
+  formElementDefinition,
+  type FormConfig,
+  type FormEvents,
+} from './form.js';
+export {
+  JectsWindowElement,
+  registerWindow,
+  windowElementDefinition,
+  type WindowConfig,
+  type WindowEvents,
+} from './window.js';
+export {
+  JectsTextFieldElement,
+  registerTextField,
+  textFieldElementDefinition,
+  type TextFieldConfig,
+  type TextFieldEvents,
+} from './textfield.js';
+export {
+  JectsSelectElement,
+  registerSelect,
+  selectElementDefinition,
+  type SelectConfig,
+  type SelectEvents,
+} from './select.js';
+export {
+  JectsRichTextElement,
+  registerRichText,
+  richTextElementDefinition,
+  type RichTextConfig,
+  type RichTextEvents,
+} from './richtext.js';
 
 /**
  * Every `<jects-*>` tag and its element class, in a stable order. The list is the
  * single source of truth {@link register} iterates over.
  */
 export const elementDefinitions: readonly JectsElementDefinition[] = [
-  { tag: 'jects-grid', ctor: JectsGridElement },
-  { tag: 'jects-gantt', ctor: JectsGanttElement },
-  { tag: 'jects-scheduler', ctor: JectsSchedulerElement },
-  { tag: 'jects-calendar', ctor: JectsCalendarElement },
-  { tag: 'jects-kanban', ctor: JectsKanbanElement },
-  { tag: 'jects-todo', ctor: JectsTodoElement },
-  { tag: 'jects-chart', ctor: JectsChartElement },
-  { tag: 'jects-diagram', ctor: JectsDiagramElement },
-  { tag: 'jects-spreadsheet', ctor: JectsSpreadsheetElement },
-  { tag: 'jects-pivot', ctor: JectsPivotElement },
-  { tag: 'jects-booking', ctor: JectsBookingElement },
-  { tag: 'jects-chatbot', ctor: JectsChatbotElement },
-  { tag: 'jects-button', ctor: JectsButtonElement },
-  { tag: 'jects-form', ctor: JectsFormElement },
-  { tag: 'jects-window', ctor: JectsWindowElement },
-  { tag: 'jects-text-field', ctor: JectsTextFieldElement },
-  { tag: 'jects-select', ctor: JectsSelectElement },
-  { tag: 'jects-rich-text', ctor: JectsRichTextElement },
+  gridElementDefinition,
+  ganttElementDefinition,
+  schedulerElementDefinition,
+  calendarElementDefinition,
+  kanbanElementDefinition,
+  todoElementDefinition,
+  chartElementDefinition,
+  diagramElementDefinition,
+  spreadsheetElementDefinition,
+  pivotElementDefinition,
+  bookingElementDefinition,
+  chatbotElementDefinition,
+  buttonElementDefinition,
+  formElementDefinition,
+  windowElementDefinition,
+  textFieldElementDefinition,
+  selectElementDefinition,
+  richTextElementDefinition,
 ] as const;
 
 /**
@@ -132,49 +205,5 @@ export const elementDefinitions: readonly JectsElementDefinition[] = [
  * @param target Registry to define into. Defaults to the global `customElements`.
  */
 export function register(target: CustomElementRegistry = customElements): void {
-  for (const { tag, ctor } of elementDefinitions) {
-    if (!target.get(tag)) {
-      target.define(tag, ctor as unknown as CustomElementConstructor);
-    }
-  }
+  defineElements(elementDefinitions, target);
 }
-
-// Re-export the engine config/event types so consumers can annotate config & handlers.
-export type {
-  GridOptions,
-  GridEvents,
-  GanttOptions,
-  GanttEvents,
-  SchedulerConfig,
-  SchedulerEvents,
-  CalendarConfig,
-  CalendarEvents,
-  TaskBoardConfig,
-  TaskBoardEvents,
-  TodoListConfig,
-  TodoListEvents,
-  ChartConfig,
-  ChartEvents,
-  DiagramConfig,
-  DiagramEvents,
-  SpreadsheetConfig,
-  SpreadsheetEvents,
-  PivotTableConfig,
-  PivotTableEvents,
-  BookingConfig,
-  BookingEvents,
-  ChatbotConfig,
-  ChatbotEvents,
-  ButtonConfig,
-  ButtonEvents,
-  FormConfig,
-  FormEvents,
-  WindowConfig,
-  WindowEvents,
-  TextFieldConfig,
-  TextFieldEvents,
-  SelectConfig,
-  SelectEvents,
-  RichTextConfig,
-  RichTextEvents,
-};

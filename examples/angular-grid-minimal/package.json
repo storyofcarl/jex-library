@@ -1,0 +1,13 @@
+{
+  "name": "angular-grid-minimal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal Angular app that installs ONLY the grid slice of @jects/angular. It depends on @jects/angular + @jects/grid and imports from the per-component subpath '@jects/angular/grid', so a bundler never has to resolve any sibling engine (@jects/gantt, @jects/scheduler, …). This is the isolated-install demo for the per-component subpath exports.",
+  "dependencies": {
+    "@angular/core": ">=17.1.0",
+    "@angular/platform-browser": ">=17.1.0",
+    "@jects/angular": "*",
+    "@jects/grid": "*"
+  }
+}
