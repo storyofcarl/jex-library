@@ -1,0 +1,14 @@
+{
+  "name": "react-spreadsheet-minimal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal isolated install: a React spreadsheet that imports ONLY @jects/react/spreadsheet + @jects/spreadsheet. No other @jects engine (gantt, scheduler, ...) is a dependency, so a bundler never resolves a sibling engine.",
+  "dependencies": {
+    "@jects/react": "workspace:*",
+    "@jects/spreadsheet": "workspace:*",
+    "@jects/core": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

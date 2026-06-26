@@ -1,0 +1,14 @@
+{
+  "name": "react-scheduler-minimal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal isolated install: a React scheduler that imports ONLY @jects/react/scheduler + @jects/scheduler. No other @jects engine (grid, gantt, ...) is a dependency, so a bundler never resolves a sibling engine.",
+  "dependencies": {
+    "@jects/react": "workspace:*",
+    "@jects/scheduler": "workspace:*",
+    "@jects/core": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

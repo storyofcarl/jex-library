@@ -1,0 +1,19 @@
+{
+  "name": "vue-pivot-minimal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal Vue 3 app that installs ONLY @jects/vue/pivot + @jects/pivot — proving you can use a single Jects component without pulling in sibling engines (gantt, scheduler, …).",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@jects/vue": "*",
+    "@jects/pivot": "*",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "vite": "^6.0.5"
+  }
+}

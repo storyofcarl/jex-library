@@ -1,0 +1,14 @@
+{
+  "name": "react-diagram-minimal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal isolated install: a React diagram that imports ONLY @jects/react/diagram + @jects/diagram. No other @jects engine (gantt, scheduler, ...) is a dependency, so a bundler never resolves a sibling engine.",
+  "dependencies": {
+    "@jects/react": "workspace:*",
+    "@jects/diagram": "workspace:*",
+    "@jects/core": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

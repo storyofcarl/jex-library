@@ -1,0 +1,12 @@
+{
+  "name": "elements-gantt-minimal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal isolated install: a Web Component gantt that imports ONLY @jects/elements/gantt + @jects/gantt. No other @jects engine (grid, scheduler, ...) is a dependency, so a bundler never resolves a sibling engine.",
+  "dependencies": {
+    "@jects/elements": "workspace:*",
+    "@jects/gantt": "workspace:*",
+    "@jects/core": "workspace:*"
+  }
+}
