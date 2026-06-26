@@ -11,7 +11,7 @@
 | `@jects/calendar` | Beta | 4 | 132 (12f) | 9 | — | ✓ | ✓ | 21.8 KB | 2.8 KB | 77 |
 | `@jects/charts` | Beta | 4 | 137 (10f) | 8 | 3 | ✓ | ✓ | 21.8 KB | 1.0 KB | 87 |
 | `@jects/chatbot` | Experimental | — | 33 (3f) | 11 | — | ✓ | ✓ | 5.1 KB | 1.6 KB | 8 |
-| `@jects/core` | Stable | — | 66 (6f) | — | — | ✓ | ✓ | 8.1 KB | — | 57 |
+| `@jects/core` | Stable | — | 66 (6f) | — | — | ✓ | ✓ | 8.1 KB | — | 60 |
 | `@jects/diagram` | Beta | 4 | 169 (16f) | 5 | 4 | ✓ | ✓ | 30.5 KB | 1.8 KB | 114 |
 | `@jects/elements` | Beta | 18 | 8 (1f) | — | — | ✓ | — | 3.7 KB | — | 100 |
 | `@jects/gantt` | Beta | 4 | 1127 (74f) | 28 | 129 | ✓ | ✓ | 117.6 KB | 10.1 KB | 431 |
