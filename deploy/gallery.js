@@ -715,8 +715,19 @@ main.appendChild(
       ]);
       const colorControl = (label, key, applyFn) => {
         const inp = el('input', { type: 'color', class: 'g-cz-color', value: CZ_DEFAULTS[key], 'aria-label': label });
-        inp.addEventListener('input', () => { applyFn(inp.value); refreshExport(); });
-        controls.appendChild(controlRow(label, inp));
+        // Editable hex code alongside the swatch (type a hex OR pick a color — synced both ways).
+        const hex = el('input', { type: 'text', class: 'g-cz-hex', value: CZ_DEFAULTS[key], spellcheck: 'false', maxlength: '7', 'aria-label': label + ' hex value' });
+        const apply = (v) => { applyFn(v); refreshExport(); };
+        inp.addEventListener('input', () => { hex.value = inp.value; apply(inp.value); });
+        hex.addEventListener('input', () => {
+          let v = hex.value.trim(); if (v && v[0] !== '#') v = '#' + v;
+          // Accept #rgb or #rrggbb; expand short form for the native swatch.
+          if (/^#[0-9a-fA-F]{3}$/.test(v)) v = '#' + v.slice(1).split('').map((c) => c + c).join('');
+          if (/^#[0-9a-fA-F]{6}$/.test(v)) { inp.value = v; apply(v); }
+        });
+        // Keep both in sync on programmatic set (used by Reset).
+        inp.setHex = (v) => { inp.value = v; hex.value = v; };
+        controls.appendChild(controlRow(label, el('span', { class: 'g-cz-colorwrap' }, [inp, hex])));
         return inp;
       };
       const rangeControl = (label, key, min, max, step, applyFn, unit) => {
@@ -793,10 +804,10 @@ main.appendChild(
         baseSeg.querySelectorAll('button').forEach((n) =>
           n.setAttribute('aria-pressed', n.getAttribute('data-cz-base') === 'light' ? 'true' : 'false'));
         // Restore each control to its default value (no re-applying — tokens are cleared).
-        primaryInp.value = CZ_DEFAULTS.primary;
-        accentInp.value = CZ_DEFAULTS.accent;
-        fgInp.value = CZ_DEFAULTS.foreground;
-        bgInp.value = CZ_DEFAULTS.background;
+        primaryInp.setHex(CZ_DEFAULTS.primary);
+        accentInp.setHex(CZ_DEFAULTS.accent);
+        fgInp.setHex(CZ_DEFAULTS.foreground);
+        bgInp.setHex(CZ_DEFAULTS.background);
         radiusInp.value = String(CZ_DEFAULTS.radius);
         fontSel.value = CZ_DEFAULTS.fontFamily;
         fontSizeInp.value = String(CZ_DEFAULTS.fontSize);
@@ -4589,11 +4600,15 @@ function hexToOklchTriplet(hex) {
 }
 
 const colorInput = el('input', { type: 'color', value: '#3b82f6', title: 'Primary color' });
-colorInput.addEventListener('input', () => {
-  applyTheme(document.documentElement, {
-    primary: hexToOklchTriplet(colorInput.value),
-    ring: hexToOklchTriplet(colorInput.value),
-  });
+const colorHex = el('input', { type: 'text', class: 'g-topbar-hex', value: '#3b82f6', spellcheck: 'false', maxlength: '7', 'aria-label': 'Primary color hex value' });
+const applyPrimary = (hex) => {
+  applyTheme(document.documentElement, { primary: hexToOklchTriplet(hex), ring: hexToOklchTriplet(hex) });
+};
+colorInput.addEventListener('input', () => { colorHex.value = colorInput.value; applyPrimary(colorInput.value); });
+colorHex.addEventListener('input', () => {
+  let v = colorHex.value.trim(); if (v && v[0] !== '#') v = '#' + v;
+  if (/^#[0-9a-fA-F]{3}$/.test(v)) v = '#' + v.slice(1).split('').map((c) => c + c).join('');
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) { colorInput.value = v; applyPrimary(v); }
 });
 
 const radiusInput = el('input', { type: 'range', min: '0', max: '20', value: '10', title: 'Corner radius' });
@@ -4603,7 +4618,7 @@ radiusInput.addEventListener('input', () => {
 
 const topbar = el('div', { class: 'g-topbar' }, [
   el('div', { class: 'g-control' }, [el('label', { text: 'Theme' }), seg]),
-  el('div', { class: 'g-control' }, [el('label', { text: 'Primary' }), colorInput]),
+  el('div', { class: 'g-control' }, [el('label', { text: 'Primary' }), el('span', { class: 'g-colorwrap' }, [colorInput, colorHex])]),
   el('div', { class: 'g-control' }, [el('label', { text: 'Radius' }), radiusInput]),
 ]);
 
