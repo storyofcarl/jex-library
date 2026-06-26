@@ -108,7 +108,16 @@ export class MultiBaselineCompare<T extends AnyModel = AnyModel>
   private overlay: HTMLElement | null = null;
   /** The baseline picker region (when `showPicker`). */
   private picker: HTMLElement | null = null;
+  /** The disclosure trigger button that opens/closes the picker panel. */
+  private pickerToggle: HTMLButtonElement | null = null;
+  /** The collapsible panel holding the picker chrome (starts CLOSED). */
+  private pickerPanel: HTMLElement | null = null;
   private pickerList: HTMLElement | null = null;
+  /** Whether the picker panel is currently expanded. */
+  private pickerOpen = false;
+  /** Document-level listeners wired only while the panel is open. */
+  private onDocPointerDown: ((e: Event) => void) | null = null;
+  private onDocKeydown: ((e: KeyboardEvent) => void) | null = null;
 
   private disposers: Array<() => void> = [];
   /** The un-proxied capture, bound to the api, used internally to avoid re-entry. */
@@ -203,10 +212,14 @@ export class MultiBaselineCompare<T extends AnyModel = AnyModel>
     this.originalCapture = null;
     this.prevCapture = null;
     this.hadOwnCapture = false;
+    this.unbindPickerDismiss();
+    this.pickerOpen = false;
     this.overlay?.remove();
     this.overlay = null;
     this.picker?.remove();
     this.picker = null;
+    this.pickerToggle = null;
+    this.pickerPanel = null;
     this.pickerList = null;
     this.baselines.length = 0;
     this.slotOf.clear();
@@ -449,13 +462,39 @@ export class MultiBaselineCompare<T extends AnyModel = AnyModel>
   private mountPicker(): void {
     const root = this.api.el;
     const picker = createEl('div', { className: 'jects-gantt__baseline-picker' });
-    picker.setAttribute('role', 'group');
-    picker.setAttribute('aria-label', this.opts.pickerLabel);
+
+    const panelId = `${this.name}-panel`;
+    const titleId = `${this.name}-title`;
+
+    // Disclosure trigger: the panel below it starts CLOSED and only opens on
+    // click (matching the export menu affordance). Without this the full picker
+    // chrome floated permanently open over the chart, overlapping the export
+    // button in the same top-end corner.
+    const toggle = createEl('button', {
+      className: 'jects-gantt__baseline-picker-toggle',
+    }) as HTMLButtonElement;
+    toggle.type = 'button';
+    toggle.textContent = this.opts.pickerLabel;
+    toggle.setAttribute('aria-haspopup', 'true');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', panelId);
+    toggle.setAttribute('aria-label', this.opts.pickerLabel);
+    toggle.title = this.opts.pickerLabel;
+    const onToggleClick = (): void => this.togglePicker();
+    toggle.addEventListener('click', onToggleClick);
+    this.disposers.push(() => toggle.removeEventListener('click', onToggleClick));
+
+    // Collapsible panel — hidden until the trigger is clicked.
+    const panel = createEl('div', { className: 'jects-gantt__baseline-picker-panel' });
+    panel.id = panelId;
+    panel.hidden = true;
+    panel.setAttribute('role', 'group');
+    panel.setAttribute('aria-label', this.opts.pickerLabel);
 
     const title = createEl('div', { className: 'jects-gantt__baseline-picker-title' });
     title.textContent = this.opts.pickerLabel;
-    title.id = `${this.name}-title`;
-    picker.setAttribute('aria-labelledby', title.id);
+    title.id = titleId;
+    panel.setAttribute('aria-labelledby', title.id);
 
     const list = createEl('div', { className: 'jects-gantt__baseline-picker-list' });
     list.setAttribute('role', 'group');
@@ -472,11 +511,79 @@ export class MultiBaselineCompare<T extends AnyModel = AnyModel>
     capture.addEventListener('click', onCapture);
     this.disposers.push(() => capture.removeEventListener('click', onCapture));
 
-    picker.append(title, list, capture);
+    panel.append(title, list, capture);
+    picker.append(toggle, panel);
     root.append(picker);
     this.picker = picker;
+    this.pickerToggle = toggle;
+    this.pickerPanel = panel;
     this.pickerList = list;
     this.refreshPicker();
+  }
+
+  /* ── picker disclosure (open / close / toggle) ─────────────────────────── */
+
+  /** Is the picker panel currently expanded? */
+  get pickerOpened(): boolean {
+    return this.pickerOpen;
+  }
+
+  /** Toggle the picker panel open/closed. */
+  togglePicker(): void {
+    if (this.pickerOpen) this.closePicker();
+    else this.openPicker();
+  }
+
+  /** Open the picker panel (no-op if already open or no picker mounted). */
+  openPicker(): void {
+    if (this.destroyed || this.pickerOpen) return;
+    const panel = this.pickerPanel;
+    const toggle = this.pickerToggle;
+    if (!panel || !toggle) return;
+    this.pickerOpen = true;
+    panel.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+    this.bindPickerDismiss();
+  }
+
+  /** Close the picker panel (no-op if already closed). */
+  closePicker(): void {
+    if (!this.pickerOpen) return;
+    this.pickerOpen = false;
+    if (this.pickerPanel) this.pickerPanel.hidden = true;
+    this.pickerToggle?.setAttribute('aria-expanded', 'false');
+    this.unbindPickerDismiss();
+  }
+
+  /** While open, dismiss on Escape or a pointer-down outside the picker. */
+  private bindPickerDismiss(): void {
+    if (typeof document === 'undefined') return;
+    this.onDocPointerDown = (e: Event): void => {
+      const t = e.target as Node | null;
+      if (t && this.picker && this.picker.contains(t)) return;
+      this.closePicker();
+    };
+    this.onDocKeydown = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        this.closePicker();
+        this.pickerToggle?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', this.onDocPointerDown, true);
+    document.addEventListener('keydown', this.onDocKeydown, true);
+  }
+
+  private unbindPickerDismiss(): void {
+    if (typeof document === 'undefined') return;
+    if (this.onDocPointerDown) {
+      document.removeEventListener('pointerdown', this.onDocPointerDown, true);
+      this.onDocPointerDown = null;
+    }
+    if (this.onDocKeydown) {
+      document.removeEventListener('keydown', this.onDocKeydown, true);
+      this.onDocKeydown = null;
+    }
   }
 
   private refreshPicker(): void {

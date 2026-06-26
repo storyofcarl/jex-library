@@ -53,6 +53,21 @@ describe('TextArea (jsdom)', () => {
     f.destroy();
   });
 
+  it('autoGrow height includes the border so the last line is not clipped', () => {
+    const f = new TextArea(host, { autoGrow: true });
+    const ta = host.querySelector('textarea') as HTMLTextAreaElement;
+    // jsdom does not lay out; simulate a 2px top/bottom border + content scrollHeight.
+    ta.style.borderTopWidth = '1px';
+    ta.style.borderBottomWidth = '1px';
+    Object.defineProperty(ta, 'scrollHeight', { configurable: true, value: 40 });
+    ta.value = 'multi\nline\ntext';
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+    // Because the textarea is border-box, the grown height must add both borders
+    // (40 + 1 + 1 = 42px) — otherwise descenders on the last line are clipped.
+    expect(ta.style.height).toBe('42px');
+    f.destroy();
+  });
+
   it('error sets aria-invalid and renders message', () => {
     const f = new TextArea(host, { error: 'Too short' });
     const ta = host.querySelector('textarea') as HTMLTextAreaElement;

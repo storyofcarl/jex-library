@@ -11,8 +11,14 @@
     inline-size: 100%;
     /* Fill a sized host so the body scrolls INTERNALLY instead of overflowing
        past the host (in an auto-height container this resolves to content
-       height, so the simple checklist case still grows naturally). */
+       height, so the simple checklist case still grows naturally). Cap at the
+       host so we never push PAST it, but never exceed it either. */
     block-size: 100%;
+    max-block-size: 100%;
+    /* min-block-size:0 lets this flex item shrink inside a sized parent so the
+       scroll boundary is the list/area (which carry overflow:auto), never the
+       root — the root clip only ever trims the rounded border, never content. */
+    min-block-size: 0;
     font-family: var(--jects-font-family);
     font-size: var(--jects-font-size-sm);
     color: oklch(var(--jects-foreground));
@@ -115,7 +121,9 @@
   .jects-todo__list {
     position: relative;
     flex: 1 1 auto;
-    min-block-size: 2rem;
+    /* The scroll boundary: shrinks to fit the sized area and scrolls its rows
+       internally so tall lists are fully reachable without clipping. */
+    min-block-size: 0;
     overflow: auto;
   }
   .jects-todo__body {
@@ -597,11 +605,13 @@
   .jects-todo__area {
     position: relative;
     flex: 1 1 auto;
-    min-block-size: 2rem;
+    /* min-block-size:0 so the area shrinks inside the sized root and hands the
+       overflow to the scrolling list/board below — never to the root clip. */
+    min-block-size: 0;
     display: flex;
     overflow: hidden;
   }
-  .jects-todo__list { flex: 1 1 auto; }
+  .jects-todo__list { flex: 1 1 auto; min-block-size: 0; }
   .jects-todo__list[hidden],
   .jects-todo__board[hidden] { display: none; }
 
@@ -775,6 +785,9 @@
     flex-direction: column;
     flex: 0 0 16rem;
     min-block-size: 4rem;
+    /* Cap to the board height so a column with many cards scrolls its body
+       (below) instead of growing past the area and being clipped. */
+    max-block-size: 100%;
     background: oklch(var(--jects-muted) / 0.35);
     border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
@@ -794,6 +807,8 @@
   .jects-todo__col-body {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
+    min-block-size: 0;
     gap: var(--jects-space-2);
     padding: var(--jects-space-2);
     overflow-y: auto;

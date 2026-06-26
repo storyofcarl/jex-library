@@ -37,8 +37,13 @@ describe('BookingCalendarView widget', () => {
       date: new Date(2030, 5, 24),
       bookings: [{ date: '2030-06-24', time: '09:00' }],
     });
-    expect(view.el.getAttribute('role')).toBe('grid');
+    expect(view.el.getAttribute('role')).toBe('group');
+    expect(view.el.querySelector('.jects-booking-cal__grid')?.getAttribute('role')).toBe('grid');
     expect(view.el.querySelectorAll('.jects-booking-cal__row').length).toBe(6);
+    // A visible caption + weekday header anchor the grid so it is not mistaken
+    // for a stray, unlabelled table.
+    expect(view.el.querySelector('.jects-booking-cal__caption')?.textContent).toBe('June 2030');
+    expect(view.el.querySelectorAll('.jects-booking-cal__weekday').length).toBe(7);
     const cell = view.el.querySelector<HTMLElement>('.jects-booking-cal__day[data-date="2030-06-24"]')!;
     expect(cell.querySelector('.jects-booking-cal__badge')?.textContent).toBe('1');
 

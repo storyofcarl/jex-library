@@ -107,7 +107,16 @@ export class TextArea extends Widget<TextAreaConfig, TextAreaEvents> {
   protected grow(): void {
     const ta = this.textarea;
     ta.style.height = 'auto';
-    ta.style.height = `${ta.scrollHeight}px`;
+    // `scrollHeight` measures the content box + padding but NOT the border. The
+    // textarea is `box-sizing: border-box`, so its rendered `height` must also
+    // cover the top/bottom borders — otherwise the box is short by the border
+    // width and the last line's descenders are clipped at the bottom. Read the
+    // actual border widths (token-driven via CSS) and add them back.
+    const cs = ta.ownerDocument.defaultView?.getComputedStyle(ta);
+    const borderY = cs
+      ? (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.borderBottomWidth) || 0)
+      : 0;
+    ta.style.height = `${ta.scrollHeight + borderY}px`;
   }
 
   protected updateCounter(): void {

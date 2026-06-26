@@ -61,6 +61,8 @@ export interface BookingMessages {
   /** Calendar (month/week) view toggle labels. */
   viewSlots: string;
   viewCalendar: string;
+  /** Heading above the month/week booking overview (`showCalendarView`). */
+  overviewHeading: string;
   /** Recurrence summary prefixes (used by `describeRule`). */
   recurDaily: string;
   recurWeekly: string;
@@ -106,6 +108,7 @@ export const defaultMessages: BookingMessages = Object.freeze({
   exportIcs: 'Add to calendar',
   viewSlots: 'Times',
   viewCalendar: 'Calendar',
+  overviewHeading: 'Bookings overview',
   recurDaily: 'day',
   recurWeekly: 'week',
   recurMonthly: 'month',

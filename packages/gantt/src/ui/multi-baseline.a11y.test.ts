@@ -89,6 +89,10 @@ describe('MultiBaselineCompare (browser)', () => {
     feat.capture('b2', 'Baseline 2');
     expect(bands().length).toBe(6);
 
+    // The picker is a disclosure that starts closed — open it so the checkboxes
+    // are rendered/focusable (keyboard path).
+    feat.openPicker();
+
     const checks = host.querySelectorAll<HTMLInputElement>('.jects-gantt__baseline-picker-check');
     expect(checks.length).toBe(2);
 
@@ -113,6 +117,8 @@ describe('MultiBaselineCompare (browser)', () => {
     feat.capture('b1', 'Baseline 1');
     feat.capture('b2', 'Baseline 2');
     feat.repaint();
+    // Validate both the collapsed trigger and the expanded panel.
+    feat.openPicker();
     await expectNoA11yViolations(host);
   });
 });

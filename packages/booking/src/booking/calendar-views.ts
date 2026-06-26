@@ -71,6 +71,14 @@ export interface BookingCalendarConfig extends WidgetConfig {
   weekStart?: number;
   /** Accessible name. */
   ariaLabel?: string;
+  /**
+   * Visible caption rendered above the grid (e.g. the month/week name). When
+   * omitted it is derived from `date`/`mode`. Pass `''` to suppress it. A
+   * caption stops the bare cell grid from reading as a stray, unlabelled table.
+   */
+  caption?: string;
+  /** BCP-47 locale used for the derived caption + weekday header labels. */
+  locale?: string;
 }
 
 export interface BookingCalendarEvents extends WidgetEvents {
@@ -92,17 +100,45 @@ export class BookingCalendarView extends Widget<BookingCalendarConfig, BookingCa
   protected override render(): void {
     const cfg = this.config;
     this.el.className = ['jects-booking-cal', cfg.cls ?? ''].filter(Boolean).join(' ');
-    this.el.setAttribute('role', 'grid');
+    // The grid is the cell matrix only; the whole widget is a labelled group so
+    // assistive tech (and sighted users) read it as a calendar, not a raw table.
+    this.el.setAttribute('role', 'group');
     if (cfg.ariaLabel) this.el.setAttribute('aria-label', cfg.ariaLabel);
     this.el.replaceChildren();
 
     const anchor = cfg.date ?? new Date();
     const weekStart = cfg.weekStart ?? 0;
+    const mode = cfg.mode ?? 'month';
     const counts = summarizeByDay(cfg.bookings ?? []);
     const todayIso = isoOf(new Date());
 
+    // Caption — explicit, derived, or suppressed with ''. Anchors the grid so it
+    // is not mistaken for a stray, unlabelled table.
+    const caption = cfg.caption ?? this.deriveCaption(anchor, mode, cfg.locale);
+    if (caption) {
+      const cap = createEl('div', {
+        className: 'jects-booking-cal__caption',
+        attrs: { 'aria-hidden': 'true' },
+      });
+      cap.textContent = caption;
+      this.el.append(cap);
+    }
+
+    // Weekday header row (Sun..Sat, locale-aware, honouring weekStart).
+    const weekdays = this.weekdayLabels(weekStart, cfg.locale);
+    const head = createEl('div', { className: 'jects-booking-cal__weekdays', attrs: { 'aria-hidden': 'true' } });
+    for (const label of weekdays) {
+      const cell = createEl('span', { className: 'jects-booking-cal__weekday' });
+      cell.textContent = label;
+      head.append(cell);
+    }
+    this.el.append(head);
+
+    // The actual day grid.
+    const gridEl = createEl('div', { className: 'jects-booking-cal__grid', attrs: { role: 'grid' } });
+
     const rows =
-      (cfg.mode ?? 'month') === 'week'
+      mode === 'week'
         ? [weekDays(anchor, weekStart)]
         : monthMatrix(anchor.getFullYear(), anchor.getMonth(), weekStart);
 
@@ -110,7 +146,7 @@ export class BookingCalendarView extends Widget<BookingCalendarConfig, BookingCa
       const rowEl = createEl('div', { className: 'jects-booking-cal__row', attrs: { role: 'row' } });
       for (const day of week) {
         const iso = isoOf(day);
-        const inMonth = (cfg.mode ?? 'month') === 'week' || day.getMonth() === anchor.getMonth();
+        const inMonth = mode === 'week' || day.getMonth() === anchor.getMonth();
         const count = counts.get(iso) ?? 0;
         const cell = createEl('button', {
           className: [
@@ -138,8 +174,28 @@ export class BookingCalendarView extends Widget<BookingCalendarConfig, BookingCa
         }
         rowEl.append(cell);
       }
-      this.el.append(rowEl);
+      gridEl.append(rowEl);
     }
+    this.el.append(gridEl);
+  }
+
+  /** Localised, abbreviated weekday labels honouring `weekStart`. */
+  private weekdayLabels(weekStart: number, locale?: string): string[] {
+    // 2023-01-01 was a Sunday — a stable anchor to derive day names from.
+    const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+    return Array.from({ length: 7 }, (_, i) => {
+      const dow = (weekStart + i) % 7;
+      return fmt.format(new Date(2023, 0, 1 + dow));
+    });
+  }
+
+  /** Derive a visible caption ("June 2030" / "Week of Jun 24") from the anchor. */
+  private deriveCaption(anchor: Date, mode: BookingCalendarMode, locale?: string): string {
+    if (mode === 'week') {
+      const label = new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(anchor);
+      return `Week of ${label}`;
+    }
+    return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(anchor);
   }
 
   private handleClick(e: Event): void {

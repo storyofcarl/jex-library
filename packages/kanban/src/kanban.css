@@ -123,6 +123,13 @@
     max-height: 100%;
     min-height: 0;
     box-sizing: border-box;
+    /* Last-resort scroll boundary: whatever the column holds (a single scrolling
+       body, OR a stack of swimlanes that each flow at content height), tall
+       content scrolls WITHIN the column instead of spilling past max-height and
+       being clipped by the scroller's overflow-y:hidden. Cards are always
+       reachable. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
     background: oklch(var(--jects-muted) / 0.5);
     border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-lg);
@@ -227,13 +234,22 @@
   }
 
   /* ── swimlanes ── */
+  /* In swimlane mode the COLUMN owns the vertical scroll (see .jects-kanban-col),
+     so each lane flows at content height — its body is NOT a nested scroll
+     container (which would clip a lane with many cards). The column scrolls
+     through every lane so all cards stay reachable. */
   .jects-kanban-col__lane {
     display: flex;
     flex-direction: column;
+    flex: 0 0 auto;
     border-bottom: var(--jects-border-width) solid oklch(var(--jects-border));
   }
   .jects-kanban-col__lane:last-child {
     border-bottom: none;
+  }
+  .jects-kanban-col__lane > .jects-kanban-col__body {
+    flex: 0 0 auto;
+    overflow-y: visible;
   }
   .jects-kanban-col__lane-head {
     padding: var(--jects-space-1) var(--jects-space-3);

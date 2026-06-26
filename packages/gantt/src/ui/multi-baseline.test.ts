@@ -53,6 +53,34 @@ describe('MultiBaselineCompare', () => {
     expect(host.querySelector('.jects-gantt__baseline-picker')).not.toBeNull();
   });
 
+  it('the picker panel starts CLOSED and opens only on its trigger', () => {
+    gantt = new Gantt(host, { tasks: tasks(), projectStart: T0 });
+    const feat = gantt.use(createMultiBaselineCompare());
+    const toggle = host.querySelector<HTMLButtonElement>(
+      '.jects-gantt__baseline-picker-toggle',
+    )!;
+    const panel = host.querySelector<HTMLElement>('.jects-gantt__baseline-picker-panel')!;
+    expect(toggle).not.toBeNull();
+    expect(panel).not.toBeNull();
+
+    // Closed by default: panel hidden, trigger collapsed.
+    expect(panel.hidden).toBe(true);
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(feat.pickerOpened).toBe(false);
+
+    // Opens on click.
+    toggle.click();
+    expect(panel.hidden).toBe(false);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(feat.pickerOpened).toBe(true);
+
+    // Closes again on a second click.
+    toggle.click();
+    expect(panel.hidden).toBe(true);
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(feat.pickerOpened).toBe(false);
+  });
+
   it('captures multiple named baselines and renders a distinct band per active one', () => {
     gantt = new Gantt(host, { tasks: tasks(), projectStart: T0 });
     const feat = new MultiBaselineCompare();

@@ -57,15 +57,71 @@
     box-shadow: 0 0 0 1px oklch(var(--jects-data-6) / 0.9);
   }
 
-  /* ── baseline picker ─────────────────────────────────────────────────── */
+  /* ── baseline picker (disclosure) ────────────────────────────────────── */
+  /* The wrapper is just the anchor for the trigger + floating panel; it pins
+     to the top-end corner, offset inward from the export menu button so the two
+     top-end affordances do not overlap. It carries NO chrome of its own so the
+     panel can start collapsed (closed) without leaving a floating box behind. */
   .jects-gantt__baseline-picker {
     position: absolute;
     inset-block-start: var(--jects-space-2);
-    inset-inline-end: var(--jects-space-2);
+    /* Sit to the inline-start of the export menu button (which pins at
+       space-2): clear its width so the trigger does not overlap it. */
+    inset-inline-end: calc(var(--jects-space-2) + var(--jects-space-12));
     z-index: var(--jects-z-sticky);
+    display: inline-flex;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  /* Disclosure trigger — a compact button matching the export trigger. */
+  .jects-gantt__baseline-picker-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border: var(--jects-border-width) solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    cursor: pointer;
+    box-shadow: var(--jects-shadow-sm);
+  }
+
+  .jects-gantt__baseline-picker-toggle:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-gantt__baseline-picker-toggle:focus-visible {
+    outline: var(--jects-ring-width) solid oklch(var(--jects-ring));
+    outline-offset: var(--jects-ring-offset);
+  }
+
+  /* A small caret hint after the label, rotating when expanded. */
+  .jects-gantt__baseline-picker-toggle::after {
+    content: '';
+    inline-size: 0;
+    block-size: 0;
+    border-inline: var(--jects-space-1) solid transparent;
+    border-block-start: var(--jects-space-1) solid currentColor;
+    margin-inline-start: var(--jects-space-1);
+  }
+
+  /* The collapsible panel — floats below the trigger; starts CLOSED via
+     `hidden`. */
+  .jects-gantt__baseline-picker-panel {
+    position: absolute;
+    inset-block-start: calc(100% + var(--jects-space-1));
+    inset-inline-end: 0;
+    z-index: var(--jects-z-popover);
     display: flex;
     flex-direction: column;
     gap: var(--jects-space-1);
+    min-inline-size: var(--jects-space-12);
     padding: var(--jects-space-2);
     border: var(--jects-border-width) solid oklch(var(--jects-border));
     border-radius: var(--jects-radius-md);
@@ -74,6 +130,10 @@
     font-family: var(--jects-font-family);
     font-size: var(--jects-font-size-xs);
     box-shadow: var(--jects-shadow-md);
+  }
+
+  .jects-gantt__baseline-picker-panel[hidden] {
+    display: none;
   }
 
   .jects-gantt__baseline-picker-title {

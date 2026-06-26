@@ -468,16 +468,27 @@ export class Booking extends Widget<BookingConfig, BookingEvents> {
 
     this.el.append(main);
 
-    // Optional month/week booking overview, mounted below the columns.
+    // Optional month/week booking overview, mounted below the columns. A heading
+    // labels it so the month grid is not mistaken for a stray table on the right.
     if (cfg.showCalendarView) {
-      const overviewHost = createEl('div', { className: 'jects-booking__overview' });
-      this.el.append(overviewHost);
+      const overviewSection = createEl('div', { className: 'jects-booking__overview' });
+      const overviewHeading = createEl('h4', {
+        className: 'jects-booking__overview-heading',
+        attrs: { id: `${this.uid}-overview-label` },
+      });
+      overviewHeading.textContent = this.messages.overviewHeading;
+      overviewSection.append(overviewHeading);
+      const overviewHost = createEl('div', { className: 'jects-booking__overview-grid' });
+      overviewSection.append(overviewHost);
+      this.el.append(overviewSection);
       this.overview = create(
         {
           type: 'bookingcalendar',
           date: this.selectedDate,
           mode: 'month',
           bookings: this.activeBookings(),
+          ariaLabel: this.messages.overviewHeading,
+          ...(cfg.locale ? { locale: cfg.locale } : {}),
         },
         overviewHost,
       ) as unknown as { update(p: Record<string, unknown>): unknown; destroy(): void; el: HTMLElement };

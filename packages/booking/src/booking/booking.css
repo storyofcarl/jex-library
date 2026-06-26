@@ -341,17 +341,51 @@
   }
 
   /* ── calendar overview ────────────────────────────────────────────── */
+  /* Full-width row below the booking columns. A heading + caption + weekday
+     header label it as the month overview so it never reads as a stray table. */
   .jects-booking__overview {
     flex: 1 1 100%;
     /* Keep the month overview a compact, bounded mini-month rather than a
        page-wide block of empty cells. */
     max-width: 28rem;
+    margin-top: var(--jects-space-2);
+    padding-top: var(--jects-space-4);
+    border-top: var(--jects-border-width) solid oklch(var(--jects-border));
+  }
+  .jects-booking__overview-heading {
+    margin: 0 0 var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
   }
   .jects-booking-cal {
     display: flex;
     flex-direction: column;
     gap: var(--jects-space-1);
     font-family: var(--jects-font-family);
+  }
+  .jects-booking-cal__caption {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+    margin-bottom: var(--jects-space-1);
+  }
+  .jects-booking-cal__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--jects-space-1);
+    margin-bottom: var(--jects-space-1);
+  }
+  .jects-booking-cal__weekday {
+    text-align: center;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-booking-cal__grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
   }
   .jects-booking-cal__row {
     display: grid;
