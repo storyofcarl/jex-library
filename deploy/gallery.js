@@ -66,6 +66,7 @@ const ROUTES = {
   realtime: () => import('./workflows/realtime.js'),
   // Proof
   performance: () => import('./routes/performance.js'),
+  a11y: () => import('./routes/a11y.js'),
   'server-data': () => import('./routes/server-data.js'),
   compare: () => import('./routes/compare.js'),
 };

@@ -22,7 +22,7 @@ via `window.__runJectsBench()`, reads `window.__JECTS_PERF__`, and rewrites this
 
 | Field | Value |
 | --- | --- |
-| Run at | 2026-06-26T19:07:55.657Z |
+| Run at | 2026-06-26T23:31:24.955Z |
 | Platform | win32 |
 | Architecture | x64 |
 | CPU | 12th Gen Intel(R) Core(TM) i7-12700KF |
@@ -31,12 +31,17 @@ via `window.__runJectsBench()`, reads `window.__JECTS_PERF__`, and rewrites this
 
 ## Results
 
-| Module | Dataset rows | Build+render ms | Avg frame ms | ~FPS |
-| --- | --: | --: | --: | --: |
-| Grid | 100,000 | 88.0 | 16.67 | 60 |
-| Pivot | 50,000 | 67.0 | 16.67 | 60 |
-| Scheduler | 2,000 | 14.0 | 16.67 | 60 |
-| Gantt | 1,000 | 398.0 | 16.67 | 60 |
+| Module | Dataset rows | Build avg ms | Frame p50 ms | Frame p95 ms | Frame p99 ms | ~FPS | Memory MB | Budget ms | Status |
+| --- | --: | --: | --: | --: | --: | --: | --: | --: | :-: |
+| Grid | 100,000 | 48.0 | 16.70 | 16.80 | 16.80 | 60 | 87.5 | 180 | ok |
+| Pivot | 50,000 | 53.0 | 16.70 | 16.80 | 16.80 | 60 | 87.5 | 180 | ok |
+| Scheduler | 2,000 | 6.0 | 16.70 | 16.70 | 16.80 | 60 | 87.5 | 450 | ok |
+| Gantt | 1,000 | 267.0 | 16.70 | 16.70 | 16.80 | 60 | 87.5 | 600 | ok |
+| Spreadsheet | 1,000 | 26.0 | 16.70 | 16.80 | 16.80 | 60 | 87.5 | 320 | ok |
+| Diagram | 600 | 1.0 | 16.70 | 16.70 | 16.80 | 60 | 87.5 | 400 | ok |
+| Kanban | 2,000 | 32.0 | 16.70 | 16.80 | 16.80 | 60 | 87.5 | 260 | ok |
+| Calendar | 1,000 | 11.0 | 16.70 | 16.80 | 16.80 | 60 | 87.5 | 220 | ok |
+| Charts | 2,000 | 23.0 | 16.70 | 16.70 | 16.80 | 60 | 87.5 | 160 | ok |
 
 ## Methodology & disclaimer
 

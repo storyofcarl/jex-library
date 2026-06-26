@@ -185,7 +185,10 @@ export const SECTION_LOADERS = {
   performance: () => Promise.all([
     loadWidgets(), loadGrid(), loadCore(), loadPivot(),
     loadScheduler(), loadGantt(), loadTimeline(),
+    loadSpreadsheet(), loadDiagram(), loadKanban(), loadCalendar(), loadCharts(),
   ]),
+  // Proof — accessibility status page (no @jects component modules needed).
+  a11y: () => Promise.resolve(),
   'server-data': () => Promise.all([loadWidgets(), loadGrid(), loadCore()]),
   // Static positioning page — no @jects component modules, no component CSS.
   compare: () => Promise.resolve(),
@@ -296,6 +299,7 @@ export const ROUTE_META = {
   // Proof — measured performance + server-side data integration.
   performance: { title: 'Performance', doc: 'grid', desc: 'Live, measured benchmarks of the heavy modules (Grid 100k rows, Pivot 50k records, Scheduler, Gantt) — build+render time and sampled frame rate, measured in your browser on this device, not synthetic claims.' },
   'server-data': { title: 'Server-side data', doc: 'grid', desc: 'A Grid bound to a simulated async backend — server-side sort, filter and pagination over a 100,000-row store, fetching one page at a time with a live request log proving only one page is in the DOM.' },
+  a11y: { title: 'Accessibility', doc: 'core', desc: 'Per-module accessibility status — keyboard model, ARIA roles and axe-checked test coverage across the suite, with high-contrast themes and reduced-motion support.' },
   compare: { title: 'How it compares', doc: 'core', desc: 'A controlled, honest comparison against the category leaders — positioned on one-core architecture, suite-wide OKLCH theming and breadth, with per-category benchmarks and "when to choose what" guidance.' },
   // Solutions — flagship, application-grade demos combining many modules on one model.
   'planning-control-center': { title: 'Planning Control Center', doc: 'gantt', desc: 'A project-planning application: Gantt timeline, task grid, resource schedule and risk chart over one shared project model — select a task to drive the inspector and resources.' },
@@ -316,5 +320,5 @@ export const SIDEBAR_GROUPS = [
   { label: 'Widgets & Chat', items: ['widgets', 'buttons', 'inputs', 'forms', 'layout', 'navigation', 'overlays', 'richtext', 'chatbot'] },
   { label: 'Integrated workflows', items: ['flow-analytics', 'flow-planning', 'flow-data'] },
   { label: 'Live', items: ['realtime'] },
-  { label: 'Proof', items: ['performance', 'server-data', 'compare'] },
+  { label: 'Proof', items: ['performance', 'a11y', 'server-data', 'compare'] },
 ];

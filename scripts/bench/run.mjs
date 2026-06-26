@@ -114,10 +114,11 @@ function fmt(n, digits = 1) {
 
 function buildMarkdown({ results, machine, runStamp }) {
   const rows = results
-    .map(
-      (r) =>
-        `| ${r.module ?? '—'} | ${typeof r.rows === 'number' ? r.rows.toLocaleString('en-US') : '—'} | ${fmt(r.buildMs)} | ${fmt(r.frameMs, 2)} | ${fmt(r.fps, 0)} |`,
-    )
+    .map((r) => {
+      const ds = typeof r.rows === 'number' ? r.rows.toLocaleString('en-US') : '—';
+      const p = r.skipped ? 'skipped' : r.pass === false ? 'over' : r.pass === true ? 'ok' : '—';
+      return `| ${r.module ?? '—'} | ${ds} | ${fmt(r.buildMs)} | ${fmt(r.frameP50 ?? r.frameMs, 2)} | ${fmt(r.frameP95, 2)} | ${fmt(r.frameP99, 2)} | ${fmt(r.fps, 0)} | ${fmt(r.memMB, 1)} | ${fmt(r.budgetMs, 0)} | ${p} |`;
+    })
     .join('\n');
 
   return `# Jects UI — Performance
@@ -153,8 +154,8 @@ via \`window.__runJectsBench()\`, reads \`window.__JECTS_PERF__\`, and rewrites 
 
 ## Results
 
-| Module | Dataset rows | Build+render ms | Avg frame ms | ~FPS |
-| --- | --: | --: | --: | --: |
+| Module | Dataset rows | Build avg ms | Frame p50 ms | Frame p95 ms | Frame p99 ms | ~FPS | Memory MB | Budget ms | Status |
+| --- | --: | --: | --: | --: | --: | --: | --: | --: | :-: |
 ${rows}
 
 ## Methodology & disclaimer
