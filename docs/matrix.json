@@ -17,7 +17,7 @@
     {
       "name": "@jects/booking",
       "maturity": "Beta",
-      "subpaths": "—",
+      "subpaths": 3,
       "unit": "150 (17f)",
       "browser": "4",
       "a11y": "5",
@@ -30,7 +30,7 @@
     {
       "name": "@jects/calendar",
       "maturity": "Beta",
-      "subpaths": "—",
+      "subpaths": 4,
       "unit": "132 (12f)",
       "browser": "9",
       "a11y": "—",
@@ -43,7 +43,7 @@
     {
       "name": "@jects/charts",
       "maturity": "Beta",
-      "subpaths": "—",
+      "subpaths": 4,
       "unit": "137 (10f)",
       "browser": "8",
       "a11y": "3",
@@ -82,7 +82,7 @@
     {
       "name": "@jects/diagram",
       "maturity": "Beta",
-      "subpaths": "—",
+      "subpaths": 4,
       "unit": "169 (16f)",
       "browser": "5",
       "a11y": "4",
@@ -147,7 +147,7 @@
     {
       "name": "@jects/kanban",
       "maturity": "Beta",
-      "subpaths": "—",
+      "subpaths": 2,
       "unit": "69 (4f)",
       "browser": "5",
       "a11y": "4",
@@ -160,7 +160,7 @@
     {
       "name": "@jects/pivot",
       "maturity": "Beta",
-      "subpaths": "—",
+      "subpaths": 3,
       "unit": "78 (10f)",
       "browser": "—",
       "a11y": "2",
@@ -238,7 +238,7 @@
     {
       "name": "@jects/todo",
       "maturity": "Beta",
-      "subpaths": "—",
+      "subpaths": 1,
       "unit": "123 (4f)",
       "browser": "—",
       "a11y": "5",

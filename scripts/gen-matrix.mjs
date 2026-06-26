@@ -19,9 +19,20 @@ import { gzipSync } from 'node:zlib';
 
 const ROOT = process.cwd();
 const PKG_DIR = join(ROOT, 'packages');
-const gallery = existsSync(join(ROOT, 'preview/gallery.js'))
-  ? readFileSync(join(ROOT, 'preview/gallery.js'), 'utf8')
-  : '';
+// The gallery is split across preview/gallery.js + preview/{shell,routes,workflows}/*.js,
+// so scan the whole preview/ JS tree (not just gallery.js) to detect which packages
+// are mounted in a live demo.
+function readPreviewJs(dir, acc = []) {
+  if (!existsSync(dir)) return acc;
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    if (e.name === 'node_modules') continue;
+    const p = join(dir, e.name);
+    if (e.isDirectory()) readPreviewJs(p, acc);
+    else if (e.name.endsWith('.js')) acc.push(readFileSync(p, 'utf8'));
+  }
+  return acc;
+}
+const gallery = readPreviewJs(join(ROOT, 'preview')).join('\n');
 
 // Maturity mirrors docs/STATUS.md (single source of truth for human-set maturity).
 const MATURITY = {

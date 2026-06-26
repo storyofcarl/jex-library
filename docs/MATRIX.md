@@ -7,24 +7,24 @@
 | Package | Maturity | Subpaths | Unit tests | Browser | A11y | Live demo | Docs | JS (gzip) | CSS (gzip) | Exported names |
 | --- | :-: | --: | --- | --: | --: | :-: | :-: | --: | --: | --: |
 | `@jects/angular` | Beta | 18 | 4 (1f) | — | — | ✓ | — | 8.6 KB | — | 60 |
-| `@jects/booking` | Beta | — | 150 (17f) | 4 | 5 | ✓ | ✓ | 18.1 KB | 1.4 KB | 100 |
-| `@jects/calendar` | Beta | — | 132 (12f) | 9 | — | ✓ | ✓ | 21.8 KB | 2.8 KB | 77 |
-| `@jects/charts` | Beta | — | 137 (10f) | 8 | 3 | ✓ | ✓ | 21.8 KB | 1.0 KB | 87 |
+| `@jects/booking` | Beta | 3 | 150 (17f) | 4 | 5 | ✓ | ✓ | 18.1 KB | 1.4 KB | 100 |
+| `@jects/calendar` | Beta | 4 | 132 (12f) | 9 | — | ✓ | ✓ | 21.8 KB | 2.8 KB | 77 |
+| `@jects/charts` | Beta | 4 | 137 (10f) | 8 | 3 | ✓ | ✓ | 21.8 KB | 1.0 KB | 87 |
 | `@jects/chatbot` | Experimental | — | 33 (3f) | 11 | — | ✓ | ✓ | 5.1 KB | 1.6 KB | 8 |
 | `@jects/core` | Stable | — | 66 (6f) | — | — | ✓ | ✓ | 8.1 KB | — | 57 |
-| `@jects/diagram` | Beta | — | 169 (16f) | 5 | 4 | ✓ | ✓ | 30.5 KB | 1.8 KB | 114 |
+| `@jects/diagram` | Beta | 4 | 169 (16f) | 5 | 4 | ✓ | ✓ | 30.5 KB | 1.8 KB | 114 |
 | `@jects/elements` | Beta | 18 | 8 (1f) | — | — | ✓ | — | 3.7 KB | — | 100 |
 | `@jects/gantt` | Beta | 4 | 1127 (74f) | 28 | 129 | ✓ | ✓ | 117.6 KB | 10.1 KB | 431 |
 | `@jects/grid` | Stable | 4 | 608 (47f) | 58 | 22 | ✓ | ✓ | 91.0 KB | 5.4 KB | 316 |
 | `@jects/icons` | Stable | 1 | 4 (1f) | — | — | — | ✓ | 1.2 KB | — | 8 |
-| `@jects/kanban` | Beta | — | 69 (4f) | 5 | 4 | ✓ | ✓ | 15.3 KB | 2.1 KB | 27 |
-| `@jects/pivot` | Beta | — | 78 (10f) | — | 2 | ✓ | ✓ | 14.6 KB | 1.1 KB | 61 |
+| `@jects/kanban` | Beta | 2 | 69 (4f) | 5 | 4 | ✓ | ✓ | 15.3 KB | 2.1 KB | 27 |
+| `@jects/pivot` | Beta | 3 | 78 (10f) | — | 2 | ✓ | ✓ | 14.6 KB | 1.1 KB | 61 |
 | `@jects/react` | Beta | 18 | 8 (2f) | — | — | ✓ | — | 4.4 KB | — | 60 |
 | `@jects/scheduler` | Beta | 4 | 369 (33f) | 46 | 13 | ✓ | ✓ | 44.8 KB | 4.0 KB | 60 |
 | `@jects/spreadsheet` | Beta | 2 | 388 (37f) | — | 7 | ✓ | ✓ | 52.1 KB | 1.8 KB | 112 |
 | `@jects/theme` | Stable | 6 | — | — | — | ✓ | ✓ | 0.6 KB | 1.3 KB | 11 |
 | `@jects/timeline-core` | Beta | — | 136 (11f) | 4 | 2 | ✓ | ✓ | 9.4 KB | 1.0 KB | 32 |
-| `@jects/todo` | Beta | — | 123 (4f) | — | 5 | ✓ | ✓ | 39.7 KB | 4.4 KB | 98 |
+| `@jects/todo` | Beta | 1 | 123 (4f) | — | 5 | ✓ | ✓ | 39.7 KB | 4.4 KB | 98 |
 | `@jects/tokens` | Stable | 3 | — | — | — | — | ✓ | 1.1 KB | — | 13 |
 | `@jects/vue` | Beta | 19 | 8 (2f) | — | — | ✓ | — | 4.3 KB | — | 61 |
 | `@jects/widgets` | Stable | 9 | 588 (54f) | 73 | 86 | ✓ | ✓ | 89.9 KB | 11.0 KB | 250 |
