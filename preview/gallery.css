@@ -1056,3 +1056,340 @@ pre.g-code code {
   outline: 2px solid oklch(var(--jects-ring));
   outline-offset: -2px;
 }
+
+/* ───────────── Reusable proof panel (shell/proof-card.js → proofPanel) ─────
+   A tidy titled key/value summary, dropped above a module's live demo. */
+.g-proof {
+  width: 100%;
+  border: 1px solid oklch(var(--jects-border));
+  border-left: 3px solid oklch(var(--jects-primary));
+  border-radius: var(--jects-radius-md);
+  background: oklch(var(--jects-muted) / 0.45);
+  padding: 0.7rem 0.9rem;
+  margin: 0 0 1rem;
+}
+.g-proof__hd {
+  font-size: var(--jects-font-size-xs);
+  font-weight: var(--jects-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: oklch(var(--jects-muted-foreground));
+  margin-bottom: 0.5rem;
+}
+.g-proof__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.3rem 1.1rem;
+  margin: 0;
+}
+.g-proof__row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.g-proof__k {
+  flex: 0 0 auto;
+  font-size: var(--jects-font-size-xs);
+  font-weight: var(--jects-font-weight-semibold);
+  color: oklch(var(--jects-muted-foreground));
+}
+.g-proof__v {
+  margin: 0;
+  font-size: var(--jects-font-size-sm);
+  color: oklch(var(--jects-foreground));
+}
+
+/* ───────────── Adoption-funnel topbar additions (nav.js buildTopbar) ─────── */
+.g-topbar-spacer { flex: 1 1 auto; }
+.g-funnel {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex-wrap: wrap;
+}
+.g-funnel-link {
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--jects-radius-sm);
+  font-size: var(--jects-font-size-sm);
+  font-weight: var(--jects-font-weight-medium);
+  color: oklch(var(--jects-foreground));
+  text-decoration: none;
+  white-space: nowrap;
+}
+.g-funnel-link:hover { background: oklch(var(--jects-accent)); }
+
+.g-install {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.g-fw-seg button { padding: 0.26rem 0.5rem; font-size: var(--jects-font-size-xs); }
+.g-install-line {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-sm);
+  overflow: hidden;
+  background: oklch(var(--jects-muted) / 0.5);
+}
+.g-install-code {
+  font-family: var(--jects-font-family-mono, ui-monospace, monospace);
+  font-size: var(--jects-font-size-xs);
+  color: oklch(var(--jects-foreground));
+  padding: 0.3rem 0.55rem;
+  white-space: nowrap;
+  align-self: center;
+  max-width: 36ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.g-install-copy {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--jects-font-size-xs);
+  font-weight: var(--jects-font-weight-medium);
+  color: oklch(var(--jects-foreground));
+  background: oklch(var(--jects-card));
+  border: 0;
+  border-left: 1px solid oklch(var(--jects-border));
+  padding: 0.3rem 0.6rem;
+}
+.g-install-copy:hover { background: oklch(var(--jects-accent)); }
+.g-install-copy:focus-visible { outline: 2px solid oklch(var(--jects-ring)); outline-offset: -2px; }
+
+/* Mobile nav toggle (hamburger) — hidden on desktop, shown ≤900px. */
+.g-nav-toggle {
+  display: none;
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: oklch(var(--jects-foreground));
+  background: transparent;
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-sm);
+  padding: 0.25rem 0.55rem;
+}
+.g-nav-toggle:focus-visible { outline: 2px solid oklch(var(--jects-ring)); outline-offset: 2px; }
+
+/* Off-canvas drawer backdrop — only meaningful ≤900px. */
+.g-nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 18;
+  background: oklch(0 0 0 / 0.4);
+  opacity: 0;
+  transition: opacity var(--jects-duration-normal, 0.2s) ease;
+}
+
+/* ───────────── Home / landing page (routes/home.js) ──────────────────────── */
+.g-home-hero {
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-lg);
+  background: linear-gradient(135deg, oklch(var(--jects-card)), oklch(var(--jects-muted)));
+  padding: 1.75rem 1.75rem 1.6rem;
+  margin-bottom: 1.1rem;
+}
+.g-home-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: var(--jects-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: oklch(var(--jects-muted-foreground));
+  margin-bottom: 0.6rem;
+}
+.g-home-eyebrow-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: oklch(var(--jects-primary));
+}
+.g-home-headline {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  font-weight: var(--jects-font-weight-bold);
+  line-height: 1.12;
+  max-width: 24ch;
+}
+.g-home-subhead {
+  margin: 0 0 1.1rem;
+  max-width: 62ch;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: oklch(var(--jects-muted-foreground));
+}
+.g-home-ctas { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.g-home-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.05rem;
+  border-radius: var(--jects-radius-md);
+  font-size: 0.9rem;
+  font-weight: var(--jects-font-weight-semibold);
+  text-decoration: none;
+  border: 1px solid oklch(var(--jects-border));
+  background: oklch(var(--jects-card));
+  color: oklch(var(--jects-foreground));
+}
+.g-home-cta.is-primary {
+  background: oklch(var(--jects-primary));
+  color: oklch(var(--jects-primary-foreground));
+  border-color: oklch(var(--jects-primary));
+}
+
+.g-home-proof {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.4rem;
+}
+.g-home-proof[hidden] { display: none; }
+.g-home-proof-card {
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-md);
+  background: oklch(var(--jects-card));
+  padding: 0.85rem 1rem;
+}
+.g-home-proof-value {
+  font-size: 1.25rem;
+  font-weight: var(--jects-font-weight-bold);
+  line-height: 1.2;
+  color: oklch(var(--jects-foreground));
+}
+.g-home-proof-label {
+  margin-top: 0.2rem;
+  font-size: var(--jects-font-size-xs);
+  color: oklch(var(--jects-muted-foreground));
+}
+
+.g-home-sectionhd {
+  font-size: var(--jects-font-size-xs);
+  font-weight: var(--jects-font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: oklch(var(--jects-muted-foreground));
+  margin-bottom: 0.6rem;
+}
+.g-home-modules {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+.g-home-module {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border: 1px solid oklch(var(--jects-border));
+  border-radius: var(--jects-radius-md);
+  background: oklch(var(--jects-card));
+  padding: 0.8rem 0.9rem;
+  text-decoration: none;
+  color: oklch(var(--jects-foreground));
+  transition: border-color var(--jects-duration-fast, 0.12s) ease, background var(--jects-duration-fast, 0.12s) ease;
+}
+.g-home-module:hover {
+  border-color: oklch(var(--jects-primary));
+  background: oklch(var(--jects-accent));
+}
+.g-home-module-name { font-weight: var(--jects-font-weight-semibold); font-size: 0.95rem; }
+.g-home-module-maturity {
+  font-size: var(--jects-font-size-xs);
+  color: oklch(var(--jects-muted-foreground));
+  min-height: 1em;
+}
+
+/* ───────────── Responsive shell + mobile nav (390 / 768 / 1024 / 1440) ───── */
+@media (max-width: 1024px) {
+  :root { --g-sidebar-w: 210px; }
+  .g-main { padding: 1.25rem 1.25rem 5rem; }
+  .g-install-code { max-width: 24ch; }
+}
+
+@media (max-width: 900px) {
+  /* Single-column shell: brand + topbar stack above main; nav goes off-canvas. */
+  #gallery {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--g-topbar-h) auto 1fr;
+    grid-template-areas:
+      'brand'
+      'topbar'
+      'main';
+  }
+  .g-brand {
+    border-right: 0;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .g-topbar {
+    align-self: start;
+    position: static;
+    gap: 0.6rem 0.75rem;
+    padding: 0.55rem 0.9rem;
+  }
+  .g-nav-toggle { display: inline-flex; }
+  .g-topbar-spacer { display: none; }
+  .g-funnel { order: 3; width: 100%; }
+
+  .g-main {
+    padding: 1rem 0.9rem 4rem;
+  }
+
+  /* Off-canvas drawer. */
+  .g-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(82vw, 300px);
+    max-height: 100vh;
+    z-index: 19;
+    border-right: 1px solid oklch(var(--jects-border));
+    transform: translateX(-100%);
+    transition: transform var(--jects-duration-normal, 0.2s) ease;
+    box-shadow: var(--jects-shadow-lg, 0 12px 32px -8px oklch(0 0 0 / 0.35));
+  }
+  .g-nav.is-open { transform: translateX(0); }
+  .g-nav-backdrop { display: block; pointer-events: none; }
+  .g-nav-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+  /* Tabs become horizontally scrollable rather than wrapping/overflowing. */
+  .g-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .g-tab { white-space: nowrap; }
+
+  /* Keep the page shell from overflowing horizontally; heavy demos scroll
+     internally via their own hosts. */
+  .g-main, .g-page, .g-tabpanel { max-width: 100%; }
+  /* Flex/grid children default to min-width:auto, which lets long content push
+     the page wider than the viewport — reset so they shrink instead. */
+  #gallery, .g-main, .g-page, .g-tabpanel, .g-section, .g-grid,
+  .g-home, .g-home-hero, .g-home-cards, .g-home-modules { min-width: 0; max-width: 100%; }
+  .g-control { flex-wrap: wrap; min-width: 0; }
+  /* The theme-preset segmented control is one wide unit — let it scroll itself. */
+  .g-seg { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+  /* Long hero copy wraps rather than overflowing. */
+  .g-home-hero h1, .g-home-hero p { overflow-wrap: anywhere; }
+  /* Safety net: the page never scrolls horizontally; wide demo hosts scroll
+     within their own containers. */
+  html, body { overflow-x: hidden; }
+}
+
+@media (max-width: 560px) {
+  .g-funnel-link { padding: 0.3rem 0.45rem; }
+  .g-install { width: 100%; }
+  .g-install-code { max-width: none; flex: 1 1 auto; }
+  .g-home-hero { padding: 1.25rem 1.1rem; }
+}

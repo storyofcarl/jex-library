@@ -4,17 +4,19 @@
  * pieces it touches (the nav links + hero element + the <main> scroll target).
  */
 
-import { SIDEBAR_GROUPS } from './registry.js';
 import { PAGES, showTab } from './tabs.js';
 
-export const DEFAULT_ROUTE = SIDEBAR_GROUPS[0].items[0];
+/* The product landing page is the default route. `home` registers its own
+   section (see routes/home.js) and owns its hero content, so the shell no
+   longer renders a separate chrome hero. */
+export const DEFAULT_ROUTE = 'home';
 
 /**
  * Wire the hash router. `navLinks` is the sidebar link list from buildNav();
- * `heroEl` is the landing hero; `main` is the scrollable <main> element.
+ * `main` is the scrollable <main> element.
  * Returns the `route` function (also registers the hashchange listener).
  */
-export function createRouter({ navLinks, heroEl, main }) {
+export function createRouter({ navLinks, main }) {
   function route() {
     // Strip any `?query` suffix (the customizer encodes shared state as
     // `#customizer?cz=…`) before resolving the route id, so shared links still
@@ -30,8 +32,6 @@ export function createRouter({ navLinks, heroEl, main }) {
     if (!entry.hasDemo) tab = 'docs';
     for (const [pid, e] of PAGES) e.page.classList.toggle('is-active', pid === id);
     for (const { a } of navLinks) a.classList.toggle('is-active', a.getAttribute('data-route') === id);
-    // The flagship hero is part of the landing/home view only (default route).
-    heroEl.style.display = (id === DEFAULT_ROUTE && tab === 'demo') ? '' : 'none';
     main.scrollTop = 0;
     showTab(entry, tab);
   }

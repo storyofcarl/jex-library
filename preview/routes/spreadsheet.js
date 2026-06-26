@@ -1,5 +1,6 @@
 /** Route: spreadsheet. */
 import { el, card } from '../shell/dom.js';
+import { proofPanel } from '../shell/proof-card.js';
 import { enterpriseSwap } from '../shell/enterprise.js';
 import { genBudgetSheet } from '../shell/data.js';
 import { section, Button, Spreadsheet } from '../shell/registry.js';
@@ -10,6 +11,16 @@ export function register() {
     'Spreadsheet',
     'A formula-driven spreadsheet with live recalc — data validation, conditional formatting, real OOXML XLSX export, named ranges, sort/filter, comments, an embedded chart and cell protection.',
     (grid) => {
+      grid.appendChild(el('p', { class: 'g-lede', style: 'margin-top:0',
+        text: 'Scenario: a budget workbook that recalculates live — formulas, validation, conditional formats, then a real .xlsx out the door.' }));
+      grid.appendChild(proofPanel({ title: 'Spreadsheet — at a glance', items: [
+        ['Engine', 'live formula recalc'],
+        ['Cells', 'validation + conditional formatting'],
+        ['Structure', 'multi-sheet + named ranges'],
+        ['Collab', 'comments + cell protection'],
+        ['Export', 'real OOXML XLSX'],
+      ] }));
+
       grid.appendChild(card('Spreadsheet — full enterprise workbook (validation · conditional formats · XLSX · named ranges · sort/filter · comments · embedded chart · protection)', (h) => {
         const wrap = el('div', { style: 'display:flex;flex-direction:column;gap:.5rem;width:100%' });
         const bar = el('div', { class: 'g-host-toolbar', style: 'display:flex;gap:.4rem;flex-wrap:wrap;align-items:center' });

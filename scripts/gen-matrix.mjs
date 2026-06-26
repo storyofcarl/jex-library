@@ -208,10 +208,10 @@ Totals: **${rows.length} packages**, ~**${totalUnit} unit test cases** across th
 `;
 
 writeFileSync(join(ROOT, 'docs/MATRIX.md'), out);
-writeFileSync(
-  join(ROOT, 'docs/matrix.json'),
-  JSON.stringify({ generatedFrom: 'scripts/gen-matrix.mjs', packages: rows, totals: { packages: rows.length, unitCases: totalUnit } }, null, 2) + '\n',
-);
+const matrixJson = JSON.stringify({ generatedFrom: 'scripts/gen-matrix.mjs', packages: rows, totals: { packages: rows.length, unitCases: totalUnit } }, null, 2) + '\n';
+writeFileSync(join(ROOT, 'docs/matrix.json'), matrixJson);
+// Mirror into the gallery so the site (landing proof cards) can fetch real numbers.
+if (existsSync(join(ROOT, 'preview'))) writeFileSync(join(ROOT, 'preview/matrix.json'), matrixJson);
 console.log(`Wrote docs/MATRIX.md + docs/matrix.json (${rows.length} packages, ~${totalUnit} unit cases)`);
 if (noDist.length) {
   console.warn(`WARNING: no dist (source or deploy) for: ${noDist.join(', ')} — bundle columns blank for these. Run "pnpm build" first.`);

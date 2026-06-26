@@ -254,6 +254,8 @@ export function activateSection(sec) {
 
 /* ── route metadata: title · search blurb · which markdown doc it shows ──── */
 export const ROUTE_META = {
+  // Start
+  home: { title: 'Home', doc: 'core', desc: 'Overview — what Jects UI is, why it is credible, and where to start: one zero-dependency core, one OKLCH design language, the whole planning-and-data surface.' },
   // Foundation
   foundations: { title: 'Foundations', doc: 'tokens', desc: 'Design tokens — semantic colors, the Calm CMYK palette, the chart data ramp, radius and type.' },
   core: { title: 'Core', doc: 'core', desc: 'Widget base class, reactive store, TreeStore, event bus, DOM helpers and the HTML sanitizer.', docsOnly: true },
@@ -299,6 +301,7 @@ export const ROUTE_META = {
 
 /* ── sidebar grouping (the product taxonomy) ──────────────────────────── */
 export const SIDEBAR_GROUPS = [
+  { label: 'Start', items: ['home'] },
   { label: 'Foundation', items: ['foundations', 'core', 'theme', 'icons', 'timeline-core'] },
   { label: 'Theme', items: ['customizer'] },
   { label: 'Data', items: ['grid', 'pivot', 'spreadsheet'] },

@@ -1,5 +1,6 @@
 /** Route: kanban. */
 import { el, card } from '../shell/dom.js';
+import { proofPanel } from '../shell/proof-card.js';
 import { exportMenu } from '../shell/export-menu.js';
 import { enterpriseSwap } from '../shell/enterprise.js';
 import { genKanbanCards } from '../shell/data.js';
@@ -11,6 +12,16 @@ export function register() {
     'Kanban',
     'A TaskBoard — columns + swimlanes, WIP limits, rich cards (cover/tags/assignee/attachments/comments/votes/links), drag-and-drop, undo/redo, sort, filter and export.',
     (grid) => {
+      grid.appendChild(el('p', { class: 'g-lede', style: 'margin-top:0',
+        text: 'Scenario: a delivery board — drag rich cards across columns and swimlanes, respect WIP limits, undo a mistake, export the state.' }));
+      grid.appendChild(proofPanel({ title: 'Kanban — at a glance', items: [
+        ['Structure', 'columns + swimlanes + WIP limits'],
+        ['Cards', 'cover · tags · assignee · attachments · comments'],
+        ['Interaction', 'drag & drop + sort + filter'],
+        ['History', 'undo / redo'],
+        ['Export', 'board state'],
+      ] }));
+
       grid.appendChild(card('Kanban board — rich cards, WIP + swimlanes, undo/sort/filter/export', (h) => {
         const host = el('div', { style: 'height:var(--g-page-host);width:100%' });
         const cover = (a, b) =>

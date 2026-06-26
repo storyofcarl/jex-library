@@ -63,8 +63,67 @@ export function buildNav() {
   return { nav, navLinks };
 }
 
-/* ── topbar: theme switcher + live primary-color + radius controls ──────── */
+/* The framework switch → the import line it produces for @jects/grid. */
+const INSTALL_CMD = 'pnpm add @jects/grid @jects/theme';
+const FRAMEWORK_IMPORTS = [
+  ['Vanilla', "import { Grid } from '@jects/grid';"],
+  ['React', "import { JectsGrid } from '@jects/react/grid';"],
+  ['Vue', "import { JectsGrid } from '@jects/vue/grid';"],
+  ['Angular', "import { JectsGridComponent } from '@jects/angular/grid';"],
+  ['Web Component', "import '@jects/elements/grid'; // <jects-grid>"],
+];
+
+/* ── topbar: adoption funnel + install affordance + theme/primary/radius ─── */
 export function buildTopbar() {
+  /* Mobile nav toggle (hamburger) — shown ≤900px via CSS; wired in app.js. */
+  const navToggle = el('button', {
+    type: 'button', class: 'g-nav-toggle', 'aria-label': 'Toggle navigation',
+    'aria-expanded': 'false', text: '☰',
+  });
+
+  /* Adoption-funnel primary navigation. */
+  const FUNNEL = [
+    ['Start', '#home'],
+    ['Docs', '#grid/docs'],
+    ['Examples', '#flow-analytics'],
+    ['Performance', '#performance'],
+    ['Comparison', '#compare'],
+  ];
+  const funnel = el('nav', { class: 'g-funnel', 'aria-label': 'Primary' },
+    FUNNEL.map(([label, href]) => el('a', { class: 'g-funnel-link', href, text: label })));
+
+  /* "Copy install" affordance with a framework switch that rewrites the line. */
+  const fwSeg = el('div', { class: 'g-seg g-fw-seg' });
+  const installCode = el('code', { class: 'g-install-code', text: INSTALL_CMD });
+  let copiedTimer = null;
+  const copyBtn = el('button', { type: 'button', class: 'g-install-copy', 'aria-label': 'Copy install command', text: 'Copy' });
+  copyBtn.addEventListener('click', () => {
+    const text = installCode.textContent;
+    const done = () => {
+      copyBtn.textContent = 'Copied';
+      clearTimeout(copiedTimer);
+      copiedTimer = setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1400);
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, () => {});
+      } else { done(); }
+    } catch (_) { /* clipboard unavailable — ignore */ }
+  });
+  FRAMEWORK_IMPORTS.forEach(([label, imp], i) => {
+    const b = el('button', { type: 'button', text: label, 'aria-pressed': i === 0 ? 'true' : 'false', title: label });
+    b.addEventListener('click', () => {
+      fwSeg.querySelectorAll('button').forEach((n) => n.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      installCode.textContent = i === 0 ? INSTALL_CMD : imp;
+    });
+    fwSeg.appendChild(b);
+  });
+  const install = el('div', { class: 'g-install' }, [
+    fwSeg,
+    el('span', { class: 'g-install-line' }, [installCode, copyBtn]),
+  ]);
+
   /* Theme switcher (Light / Dark / Light HC / Dark HC) via @jects/theme setTheme. */
   const THEMES = [
     ['light', 'Light'],
@@ -105,11 +164,15 @@ export function buildTopbar() {
   });
 
   const topbar = el('div', { class: 'g-topbar' }, [
+    navToggle,
+    funnel,
+    install,
+    el('div', { class: 'g-topbar-spacer' }),
     el('div', { class: 'g-control' }, [el('label', { text: 'Theme' }), seg]),
     el('div', { class: 'g-control' }, [el('label', { text: 'Primary' }), el('span', { class: 'g-colorwrap' }, [colorInput, colorHex])]),
     el('div', { class: 'g-control' }, [el('label', { text: 'Radius' }), radiusInput]),
   ]);
-  return topbar;
+  return { topbar, navToggle };
 }
 
 export function buildBrand() {
@@ -117,54 +180,4 @@ export function buildBrand() {
     el('span', { class: 'g-dot' }),
     el('span', { text: 'Jects UI' }),
   ]);
-}
-
-/* ── flagship landing hero (home/landing view only) ─────────────────────── */
-export function buildHero() {
-  const hero = el('div', { class: 'g-hero', style:
-    'border:1px solid oklch(var(--jects-border));border-radius:var(--jects-radius-lg,12px);background:linear-gradient(135deg, oklch(var(--jects-card)), oklch(var(--jects-muted)));padding:2rem 2rem 1.75rem;margin-bottom:1.5rem' });
-
-  hero.appendChild(el('div', {
-    style: 'display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:oklch(var(--jects-muted-foreground));margin-bottom:.6rem' }, [
-    el('span', { style: 'width:.55rem;height:.55rem;border-radius:50%;background:oklch(var(--jects-primary))' }),
-    el('span', { text: 'Jects UI — the planning-and-data suite' }),
-  ]));
-
-  hero.appendChild(el('h1', {
-    style: 'margin:0 0 .5rem;font-size:clamp(1.6rem,3.2vw,2.4rem);font-weight:800;line-height:1.12;max-width:22ch',
-    text: 'One core. One design language. The whole planning-and-data surface.' }));
-
-  hero.appendChild(el('p', {
-    style: 'margin:0 0 1.25rem;max-width:62ch;font-size:1.02rem;line-height:1.6;color:oklch(var(--jects-muted-foreground))',
-    text: 'A framework-agnostic, zero-dependency suite — grid, gantt, scheduler, calendar, spreadsheet, pivot, charts, diagrams, boards and more — built on one @jects/core and themed by one OKLCH token system.' }));
-
-  // CTA row.
-  const ctaRow = el('div', { style: 'display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem' });
-  const cta = (href, label, primary) => el('a', {
-    href, style:
-      'display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.05rem;border-radius:var(--jects-radius-md,8px);font-size:.9rem;font-weight:600;text-decoration:none;border:1px solid oklch(var(--jects-border));'
-      + (primary
-        ? 'background:oklch(var(--jects-primary));color:oklch(var(--jects-primary-foreground));border-color:oklch(var(--jects-primary))'
-        : 'background:oklch(var(--jects-card));color:oklch(var(--jects-foreground))'),
-    text: label });
-  ctaRow.appendChild(cta('#performance', 'See it perform', true));
-  ctaRow.appendChild(cta('#compare', 'How it compares', false));
-  ctaRow.appendChild(cta('#grid', 'Explore the Grid', false));
-  hero.appendChild(ctaRow);
-
-  // Differentiator cards.
-  const diffs = [
-    ['One zero-dependency core', 'Every module sits on a single @jects/core — Widget, Store/TreeStore, signals, virtualization, factory.'],
-    ['One OKLCH token system', 'A 3-tier OKLCH token contract as CSS variables, plus a live customizer that themes the entire suite.'],
-    ['Framework-agnostic API', 'Light-DOM imperative classes with thin official React/Vue/Angular/Web-Component wrappers over the same API.'],
-    ['Per-component subpath exports', 'Stable new Ctor(host, cfg) packaging — install and ship only what you import.'],
-  ];
-  const cards = el('div', { class: 'g-grid', style: 'gap:.75rem' },
-    diffs.map(([t, d]) => el('div', {
-      style: 'border:1px solid oklch(var(--jects-border));border-radius:var(--jects-radius-md,8px);background:oklch(var(--jects-card));padding:.85rem 1rem' }, [
-      el('div', { style: 'font-weight:700;font-size:.92rem;margin-bottom:.3rem', text: t }),
-      el('div', { style: 'font-size:.82rem;line-height:1.5;color:oklch(var(--jects-muted-foreground))', text: d }),
-    ])));
-  hero.appendChild(cards);
-  return hero;
 }

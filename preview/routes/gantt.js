@@ -1,5 +1,6 @@
 /** Route: gantt. */
 import { el, card } from '../shell/dom.js';
+import { proofPanel } from '../shell/proof-card.js';
 import { exportMenu } from '../shell/export-menu.js';
 import { enterpriseSwap } from '../shell/enterprise.js';
 import { DAY, HOUR, genGanttProject } from '../shell/data.js';
@@ -17,6 +18,16 @@ export function register() {
     'Gantt',
     'A full enterprise project plan — WBS task tree, critical path, baselines, dependencies, resource histogram & utilization, undo/redo, PERT view, rollups, a progress line, and PDF/PNG/Excel/MS-Project export.',
     (grid) => {
+      grid.appendChild(el('p', { class: 'g-lede', style: 'margin-top:0',
+        text: 'Scenario: a multi-phase delivery plan with dependencies, baselines and resource load — schedule it, find the critical path, then export it to MS-Project.' }));
+      grid.appendChild(proofPanel({ title: 'Gantt — at a glance', items: [
+        ['Structure', 'WBS task tree + dependencies'],
+        ['Scheduling', 'critical path + baselines'],
+        ['Resources', 'histogram + utilization'],
+        ['History', 'undo / redo'],
+        ['Export', 'PDF · PNG · XLSX · MS-Project (MSPDI)'],
+      ] }));
+
       grid.appendChild(card('Gantt — full enterprise project plan (critical path · resources · histogram · undo · PERT · exports)', (h) => {
         const wrap = el('div', { style: 'display:flex;flex-direction:column;gap:.5rem;width:100%' });
         const bar = el('div', { class: 'g-host-toolbar', style: 'display:flex;gap:.4rem;flex-wrap:wrap;align-items:center' });

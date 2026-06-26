@@ -81,35 +81,44 @@ export function register() {
           items: ['Virtualized rows + columns', 'Typed columns, sort, multi-filter', 'Grouping / aggregation',
             'Inline editing', 'Master-detail + tree', 'Cell / row / range selection',
             'CSV / Excel / PDF export', 'Server-side data source'],
+          proof: [['#grid', 'Grid'], ['#server-data', 'Server-side data'], ['#performance', 'Performance']],
           note: 'AG Grid is exceptionally deep on grid-only depth; Jects’s edge is the shared core + suite theming.' },
         { name: 'Gantt', against: 'Bryntum Gantt, DHTMLX Gantt, Syncfusion Gantt',
           items: ['Task tree + dependencies', 'Baselines + critical path', 'Resource histogram', 'Undo/redo',
             'Scheduling engine', 'PDF/PNG/CSV/XLSX/ICS export', 'MS-Project (MSPDI) import/export'],
+          proof: [['#gantt', 'Gantt']],
           note: 'Bryntum Gantt is the depth leader; Jects covers the enterprise spine on the shared core.' },
         { name: 'Resource scheduling', against: 'Bryntum Scheduler, DHTMLX Scheduler',
           items: ['Multi-resource time grid', 'Time ranges + recurrence', 'Travel-time / buffers (Pro)',
-            'Pan / infinite scroll', 'Export'] },
+            'Pan / infinite scroll', 'Export'],
+          proof: [['#scheduler', 'Scheduler']] },
         { name: 'Calendar', against: 'FullCalendar',
           items: ['Day/week/month/year/agenda/resource/timeline views', 'RRULE recurrence + timezones',
-            'Modal editor + undo/redo', 'ICS / Excel / print export'] },
+            'Modal editor + undo/redo', 'ICS / Excel / print export'],
+          proof: [['#calendar', 'Calendar']] },
         { name: 'Spreadsheet', against: 'Handsontable, Univer, SheetJS (IO)',
           items: ['Formula engine', 'Validation + dropdowns', 'Conditional formatting',
             'Named ranges / comments / protection', 'Embedded charts + fill-handle',
-            'Multi-sheet', 'XLSX import/export'] },
+            'Multi-sheet', 'XLSX import/export'],
+          proof: [['#spreadsheet', 'Spreadsheet']] },
         { name: 'Pivot', against: 'Flexmonster, WebDataRocks',
           items: ['Dimensions / measures / aggregations', 'Conditional formatting',
-            'Collapsible headers', 'OOXML XLSX export'] },
+            'Collapsible headers', 'OOXML XLSX export'],
+          proof: [['#pivot', 'Pivot']] },
         { name: 'Boards & tasks', against: 'Bryntum TaskBoard (kanban) and Asana/ClickUp/Monday/Jira-class tools (task manager)',
           items: ['Columns + swimlanes + WIP limits (kanban)', 'Rich cards + DnD + undo/redo (kanban)',
             'List/Board/Calendar/Timeline/Table views (todo)', 'Workflow statuses, dependencies, subtasks (todo)',
-            'Comments, time tracking, recurrence (todo)', 'Import/export (todo)'] },
+            'Comments, time tracking, recurrence (todo)', 'Import/export (todo)'],
+          proof: [['#kanban', 'Kanban'], ['#todo', 'To-Do']] },
         { name: 'Charts', against: 'Highcharts, ECharts, Chart.js',
           items: ['Line/bar/area/pie/scatter/bubble (+more)', 'Numeric/time/category axes',
             'Zoom/pan + crosshair + annotations', 'Data labels + streaming', 'Export'],
+          proof: [['#charts', 'Charts']],
           note: 'Highcharts/ECharts have a wider exotic-chart catalog; Jects covers the mainstream business set integrated with the suite.' },
         { name: 'Diagramming', against: 'GoJS, yFiles, draw.io/mxGraph, JointJS',
           items: ['Built-in/custom/HTML/image shapes', 'A*-routed connectors',
             'Auto-layout (orthogonal/radial)', 'Swimlanes + groups', 'Undo/redo', 'JSON/PNG/PDF export'],
+          proof: [['#diagram', 'Diagram']],
           note: 'yFiles leads on large-graph layout; Jects targets common flowchart/org/mind/PERT needs.' },
       ];
       const catWrap = el('div', { class: 'g-grid', style: 'width:100%;margin-top:.25rem' });
@@ -124,6 +133,16 @@ export function register() {
             html: '<strong>Benchmarked against:</strong> ' + cat.against }),
           checklist,
         ];
+        if (cat.proof && cat.proof.length) {
+          const proofLine = el('p', { class: 'g-note', style: 'text-transform:none;font-size:.78rem' }, [
+            el('strong', { text: 'Proof: ' }),
+          ]);
+          cat.proof.forEach(([href, label], i) => {
+            if (i) proofLine.appendChild(document.createTextNode(' · '));
+            proofLine.appendChild(el('a', { href, text: label }));
+          });
+          body.push(proofLine);
+        }
         if (cat.note) body.push(el('p', { class: 'g-note', style: 'font-style:italic', text: cat.note }));
         catWrap.appendChild(el('div', { class: 'g-card', style: 'padding:0' }, [
           el('div', { class: 'g-card__hd', text: cat.name }),

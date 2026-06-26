@@ -1,5 +1,6 @@
 /** Route: pivot. */
 import { el, card } from '../shell/dom.js';
+import { proofPanel } from '../shell/proof-card.js';
 import { exportMenu } from '../shell/export-menu.js';
 import { enterpriseSwap } from '../shell/enterprise.js';
 import { sales, genPivotRecords } from '../shell/data.js';
@@ -11,6 +12,16 @@ export function register() {
     'Pivot',
     'A drag-and-drop pivot table that aggregates a flat dataset into a cross-tab — conditional formatting, collapsible groups, filter operator editor, custom aggregators, tree/flat modes and OOXML XLSX export.',
     (grid) => {
+      grid.appendChild(el('p', { class: 'g-lede', style: 'margin-top:0',
+        text: 'Scenario: a flat sales feed collapsed into a cross-tab — drag dimensions and measures, format the cells, then export the cube.' }));
+      grid.appendChild(proofPanel({ title: 'Pivot — at a glance', items: [
+        ['Model', 'dimensions · measures · aggregations'],
+        ['Aggregators', 'built-in + custom'],
+        ['Layout', 'tree / flat + collapsible groups'],
+        ['Cells', 'conditional formatting + filter editor'],
+        ['Export', 'OOXML XLSX'],
+      ] }));
+
       grid.appendChild(card('PivotTable — enterprise (data-bar conditional format · collapsible groups · filter operator editor · multi-value + custom aggregator · tree/flat · OOXML XLSX export)', (h) => {
         const wrap = el('div', { style: 'display:flex;flex-direction:column;gap:.5rem;width:100%' });
         const bar = el('div', { class: 'g-host-toolbar', style: 'display:flex;gap:.4rem;flex-wrap:wrap;align-items:center' });

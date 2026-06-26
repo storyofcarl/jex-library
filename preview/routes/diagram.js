@@ -1,5 +1,6 @@
 /** Route: diagram. */
 import { el, card } from '../shell/dom.js';
+import { proofPanel } from '../shell/proof-card.js';
 import { enterpriseSwap } from '../shell/enterprise.js';
 import { genDiagramGraph } from '../shell/data.js';
 import { section, Button, Diagram, documentToJson, downloadBlob } from '../shell/registry.js';
@@ -10,6 +11,16 @@ export function register() {
     'Diagram',
     'A no-code diagram editor — flowchart/org/mind/PERT modes, custom/HTML/image shapes, orthogonal A* routing, auto-layout, swimlanes, groups, a properties panel, undo/redo and export.',
     (grid) => {
+      grid.appendChild(el('p', { class: 'g-lede', style: 'margin-top:0',
+        text: 'Scenario: a no-code process map — drop shapes, let connectors auto-route, auto-layout the graph, then export it.' }));
+      grid.appendChild(proofPanel({ title: 'Diagram — at a glance', items: [
+        ['Modes', 'flowchart · org · mind · PERT'],
+        ['Shapes', 'built-in · custom · HTML · image'],
+        ['Routing', 'orthogonal A* connectors'],
+        ['Layout', 'auto-layout + swimlanes + groups'],
+        ['Export', 'JSON · PNG · PDF'],
+      ] }));
+
       grid.appendChild(card('Diagram (full editor)', (h) => {
         const warn = (label, e) => console.warn('DIAGRAM-DEMO feature failed:', label, e && e.message);
 

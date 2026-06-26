@@ -1,11 +1,22 @@
 /** Route: charts. */
 import { el, card } from '../shell/dom.js';
+import { proofPanel } from '../shell/proof-card.js';
 import { triggerBtn } from '../shell/export-menu.js';
 import { months } from '../shell/data.js';
 import { section, Chart } from '../shell/registry.js';
 
 export function register() {
   section('charts', 'Charts', 'Thirteen chart types rendered with the house CMYK data ramp (data-1 … data-8), plus interactive zoom/pan/crosshair, numeric & bubble axes, gradients, a live streaming feed, and PDF export.', (grid) => {
+    grid.appendChild(el('p', { class: 'g-lede', style: 'margin-top:0',
+      text: 'Scenario: a dashboard’s worth of business charts on one themed data ramp — interactive, streaming-capable, exportable.' }));
+    grid.appendChild(proofPanel({ title: 'Charts — at a glance', items: [
+      ['Types', 'line · bar · area · pie · scatter · bubble (+more)'],
+      ['Axes', 'numeric · time · category'],
+      ['Interaction', 'zoom · pan · crosshair · annotations'],
+      ['Live', 'streaming data feed'],
+      ['Export', 'PDF'],
+    ] }));
+
     const chartHost = () => el('div', { class: 'g-host-chart' });
     const make = (label, config) => card(label, (h) => {
       const host = chartHost();

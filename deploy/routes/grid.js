@@ -1,5 +1,6 @@
 /** Route: data grid. */
 import { el, card } from '../shell/dom.js';
+import { proofPanel } from '../shell/proof-card.js';
 import { exportMenu } from '../shell/export-menu.js';
 import { enterpriseSwap } from '../shell/enterprise.js';
 import { genGridRows } from '../shell/data.js';
@@ -13,6 +14,16 @@ import {
 
 export function register() {
   section('grid', 'Data Grid', 'Virtualized grid with sortable / filterable columns, inline editing, selection, and tree mode.', (grid) => {
+    grid.appendChild(el('p', { class: 'g-lede', style: 'margin-top:0',
+      text: 'Scenario: an HR roster that has to stay smooth from a few hundred rows to a hundred thousand — sortable, filterable, editable, exportable, accessible.' }));
+    grid.appendChild(proofPanel({ title: 'Grid — at a glance', items: [
+      ['Rows', '100,000'],
+      ['DOM', 'virtual rows + cols'],
+      ['Server mode', 'remote sort / filter / page'],
+      ['Export', 'CSV · XLSX · PDF'],
+      ['A11y', 'keyboard + axe'],
+    ] }));
+
     const firsts = ['Ada', 'Alan', 'Grace', 'Linus', 'Margaret', 'Dennis', 'Barbara', 'Ken'];
     const lasts = ['Lovelace', 'Turing', 'Hopper', 'Torvalds', 'Hamilton', 'Ritchie', 'Liskov', 'Thompson'];
     const depts = ['Engineering', 'Design', 'Product', 'Research'];

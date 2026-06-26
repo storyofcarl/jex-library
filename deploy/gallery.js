@@ -25,6 +25,8 @@ import { start } from './shell/app.js';
    (core, theme, icons, widgets, timeline-core) have no section and are handled
    by ROUTE_META alone in the page builder. */
 const ROUTES = {
+  // Start
+  home: () => import('./routes/home.js'),
   // Foundation / theme
   foundations: () => import('./routes/foundations.js'),
   customizer: () => import('./routes/customizer.js'),

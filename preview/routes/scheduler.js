@@ -1,5 +1,6 @@
 /** Route: scheduler. */
 import { el, card } from '../shell/dom.js';
+import { proofPanel } from '../shell/proof-card.js';
 import { enterpriseSwap } from '../shell/enterprise.js';
 import { DAY, HOUR, genSchedulerData } from '../shell/data.js';
 import { section, Button, Scheduler, SchedulerStm, HOUR_AND_DAY } from '../shell/registry.js';
@@ -10,6 +11,16 @@ export function register() {
     'Scheduler',
     'A resource scheduler on a shared timeline engine — non-working-time shading, multi-assignment, visual + editable dependencies, global & per-resource time ranges, RRULE recurrence, travel time, the event editor, undo/redo and orientation + zoom controls.',
     (grid) => {
+      grid.appendChild(el('p', { class: 'g-lede', style: 'margin-top:0',
+        text: 'Scenario: a field team’s week — assign jobs across resources on a shared timeline, honour working hours and recurrence, drag to reschedule.' }));
+      grid.appendChild(proofPanel({ title: 'Scheduler — at a glance', items: [
+        ['Layout', 'multi-resource time grid'],
+        ['Time', 'global + per-resource ranges'],
+        ['Recurrence', 'RRULE + travel time'],
+        ['Editing', 'event editor + undo / redo'],
+        ['View', 'orientation + zoom, infinite scroll'],
+      ] }));
+
       grid.appendChild(card('Scheduler — non-working shading · multi-assignment · editable deps · editor · undo/redo · orientation + zoom', (h) => {
         const bar = el('div', { class: 'g-host-toolbar', style: 'display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem' });
         h.appendChild(bar);
