@@ -1,14 +1,16 @@
 {
   "name": "@jects/tokens",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI design tokens — the OKLCH 3-tier source of truth (primitive → semantic → component) emitted to CSS variables, SCSS maps, and TypeScript types.",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -26,5 +28,28 @@
     "test": "node scripts/build-tokens.mjs && node --test test/tokens.test.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint scripts"
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/tokens"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "design-tokens",
+    "oklch",
+    "theming",
+    "css-variables"
+  ],
+  "engines": {
+    "node": ">=20.17"
   }
 }

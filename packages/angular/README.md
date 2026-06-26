@@ -1,111 +1,142 @@
-# @jects/angular
+# @jects/angular — typed Angular (17+) bindings for the Jects UI suite
 
-Typed **Angular (17+)** standalone bindings for the [Jects UI](../../README.md) suite.
+## What it is
 
-Every Jects component is a framework-agnostic engine that follows one uniform
-imperative contract (`new Ctor(host, config)` extending the `@jects/core` `Widget`:
-`.on()` / `.off()` / `.update()` / `.getConfig()` / `.destroy()` / `.el`). This
-package wraps that contract in a single generic factory and ships a typed standalone
-component per engine — config in via a signal `[config]` input, events out via a typed
-`(jectsEvent)` output, and the live engine instance via the `instance` getter.
+`@jects/angular` provides thin, fully typed Angular standalone components over the framework-agnostic `@jects/*` engines. Every wrapper is generated from one shared factory and behaves identically: you pass engine config through a `[config]` signal input, name the engine events you want on `[events]` and receive them on a single typed `(jectsEvent)` output, and reach the live engine instance through the component's `instance` getter for imperative access. Engines are constructed outside the Angular zone so their internal DOM churn never thrashes change detection.
 
 ## Install
 
 ```bash
-pnpm add @jects/angular @angular/core
-# plus the engines you use:
-pnpm add @jects/grid @jects/gantt @jects/widgets
+pnpm add @jects/angular @jects/theme
 ```
 
-`@angular/core` and every `@jects/*` engine are **peer dependencies** — the host app
-owns those versions. Import each engine's stylesheet once (e.g.
-`import '@jects/grid/style.css'`).
+`@jects/angular` is a wrapper. Each component needs its matching engine peer installed alongside it — for example `@jects/angular/grid` needs `@jects/grid`, `@jects/angular/gantt` needs `@jects/gantt`, and so on. `@jects/core` and `@angular/core` (`>=17.1.0`) are also peers. The engine peers are declared optional, so install only the ones whose components you actually use.
 
-## How wrappers behave
+```bash
+# example: just the grid
+pnpm add @jects/angular @jects/grid @jects/core @jects/theme
+```
 
-- **Config in via `[config]`.** A signal `input<Partial<Config>>()`. On change it is
-  shallow-diffed and pushed through `inst.update(patch)` — there is **no recreate on
-  every change**. A recreate happens only when a key you mark `nonUpdatableKeys`
-  changes.
-- **Outside the Angular zone.** The engine is constructed with
-  `NgZone.runOutsideAngular(...)`, so the engine's internal DOM churn never thrashes
-  Angular change detection. `update()`/recreate also run outside the zone.
-- **Events out via `(jectsEvent)`.** List the engine event names you want on the
-  `[events]` input; each is forwarded to the single typed `(jectsEvent)` output as a
-  discriminated `{ type, payload }` union. The zone is re-entered (`NgZone.run`) only to
-  emit. The bound set is reconciled when `[events]` changes.
-- **`instance` is the engine.** The `instance` getter resolves to the live engine, so
-  you can call any imperative method (reach it via `@ViewChild`).
-- **Cleanup.** `inst.destroy()` runs in `ngOnDestroy`.
+## CSS
 
-## Grid example
+This package ships no stylesheet of its own (there is no `@jects/angular/style.css` export). Component visuals come from the underlying engine packages — import the engine's stylesheet where it provides one, and pull theming tokens from `@jects/theme`.
+
+## Minimal example
+
+Each subpath exports a standalone component. Import the one you need, drop it in a template, and bind `[config]`, `[events]`, and `(jectsEvent)`:
 
 ```ts
-import { Component, ViewChild } from '@angular/core';
-import { JectsGrid, type GridEvents } from '@jects/angular';
-import type { Grid } from '@jects/grid';
-import '@jects/grid/style.css';
+import { Component } from '@angular/core';
+import { JectsGrid, type GridEvents } from '@jects/angular/grid';
+import type { JectsEventOf } from '@jects/angular';
 
 @Component({
-  selector: 'app-people',
+  selector: 'app-root',
   standalone: true,
   imports: [JectsGrid],
   template: `
     <jects-grid
-      [config]="{
-        data: [
-          { id: 1, name: 'Ada Lovelace' },
-          { id: 2, name: 'Grace Hopper' }
-        ],
-        columns: [{ field: 'name', header: 'Name', flex: 1 }],
-        selection: 'row'
-      }"
+      [config]="gridConfig"
       [events]="['selectionChange']"
       (jectsEvent)="onEvent($event)"
-      style="display:block;height:400px"
     ></jects-grid>
   `,
 })
-export class PeopleComponent {
-  @ViewChild(JectsGrid) grid?: JectsGrid;
+export class AppComponent {
+  gridConfig = {
+    columns: [{ field: 'name', text: 'Name' }],
+    data: [{ id: 1, name: 'Ada' }],
+  };
 
-  onEvent(e: { type: keyof GridEvents; payload: GridEvents[keyof GridEvents] }) {
-    if (e.type === 'selectionChange') console.log('selected', e.payload);
+  onEvent(e: JectsEventOf<GridEvents>) {
+    // e is a discriminated union: narrow on e.type to type e.payload
+    if (e.type === 'selectionChange') {
+      console.log(e.payload);
+    }
   }
-
-  // Imperative access: this.grid?.instance?.update({ ... }) / .getConfig() / etc.
 }
 ```
 
-## Components
+The component constructs the engine into its own host element on init and calls `instance.destroy()` automatically in `ngOnDestroy` — no manual teardown required.
 
-Engines: `JectsGrid`, `JectsGantt`, `JectsScheduler`, `JectsCalendar`, `JectsKanban`,
-`JectsTodo`, `JectsChart`, `JectsDiagram`, `JectsSpreadsheet`, `JectsPivot`,
-`JectsBooking`, `JectsChatbot`.
+## Subpath exports
 
-Widgets: `JectsButton`, `JectsForm`, `JectsWindow`, `JectsTextField`, `JectsSelect`,
-`JectsRichText`.
+Each per-component subpath pulls in only the shared factory plus that one engine, so your bundle stays lean. Importing the root `.` re-exports everything and will resolve every `@jects/*` engine — prefer subpaths in app code.
 
-## Wrap any other engine
+- `@jects/angular/grid` — `JectsGrid` standalone component (data grid; needs `@jects/grid`)
+- `@jects/angular/gantt` — `JectsGantt` standalone component (Gantt chart; needs `@jects/gantt`)
+- `@jects/angular/scheduler` — `JectsScheduler` standalone component (resource scheduler; needs `@jects/scheduler`)
+- `@jects/angular/calendar` — `JectsCalendar` standalone component (calendar; needs `@jects/calendar`)
+- `@jects/angular/booking` — `JectsBooking` standalone component (booking view; needs `@jects/booking`)
+- `@jects/angular/kanban` — `JectsKanban` standalone component (task board; needs `@jects/kanban`)
+- `@jects/angular/todo` — `JectsTodo` standalone component (todo list; needs `@jects/todo`)
+- `@jects/angular/charts` — `JectsChart` standalone component (charts; needs `@jects/charts`)
+- `@jects/angular/diagram` — `JectsDiagram` standalone component (diagram; needs `@jects/diagram`)
+- `@jects/angular/spreadsheet` — `JectsSpreadsheet` standalone component (spreadsheet; needs `@jects/spreadsheet`)
+- `@jects/angular/pivot` — `JectsPivot` standalone component (pivot table; needs `@jects/pivot`)
+- `@jects/angular/chatbot` — `JectsChatbot` standalone component (chatbot; needs `@jects/chatbot`)
+- `@jects/angular/button` — `JectsButton` standalone component (button; from `@jects/widgets`)
+- `@jects/angular/form` — `JectsForm` standalone component (form; from `@jects/widgets`)
+- `@jects/angular/window` — `JectsWindow` standalone component (window; from `@jects/widgets`)
+- `@jects/angular/textfield` — `JectsTextField` standalone component (text field; from `@jects/widgets`)
+- `@jects/angular/select` — `JectsSelect` standalone component (select; from `@jects/widgets`)
+- `@jects/angular/richtext` — `JectsRichText` standalone component (rich text editor; from `@jects/widgets`)
+
+## Common recipes
+
+**Reach the engine imperatively via `@ViewChild`.** The `instance` getter returns the live engine (or `null` before init / after destroy):
 
 ```ts
-import { createComponent } from '@jects/angular';
-import { SomeWidget, type SomeConfig, type SomeEvents } from '@jects/somewhere';
+import { Component, ViewChild } from '@angular/core';
+import { JectsGrid } from '@jects/angular/grid';
 
-export const JectsSomeWidget = createComponent<SomeWidget, SomeConfig, SomeEvents>(
-  SomeWidget,
-  { selector: 'jects-some-widget', nonUpdatableKeys: ['renderer'] },
-);
+@Component({
+  standalone: true,
+  imports: [JectsGrid],
+  template: `<jects-grid [config]="cfg"></jects-grid>`,
+})
+export class GridHost {
+  @ViewChild(JectsGrid) grid!: JectsGrid;
+  cfg = { columns: [], data: [] };
+
+  refresh() {
+    this.grid.instance?.update({ data: this.nextRows() });
+  }
+
+  nextRows() {
+    return [{ id: 1, name: 'Ada' }];
+  }
+}
 ```
 
-## Build & test
+**Update config reactively.** Changing the `[config]` input shallow-diffs and pushes a patch through `instance.update(patch)` rather than recreating the engine — bind it to a component field and update that field to drive the engine.
 
-- `pnpm --filter @jects/angular run build` — `tsc` emits ESM JS + `.d.ts` into `dist/`.
-  The wrappers are emitted as standard decorated classes and are AOT-compatible in a
-  consuming Angular app.
-- `pnpm --filter @jects/angular exec tsc --noEmit` — strict type-check of the source.
-- `pnpm --filter @jects/angular run test` — type-level smoke verification of the
-  wrappers + spec.
-- `pnpm --filter @jects/angular run test:runtime` — Angular TestBed smoke suite under
-  jsdom via `@analogjs/vite-plugin-angular`. See the package notes: this currently
-  needs a vitest/vite alignment beyond the repo's pinned versions.
+**Forward several events.** List every engine event name you care about on `[events]`; they all arrive on the one `(jectsEvent)` output as `{ type, payload }`, where `type` is the event name and `payload` is fully typed:
+
+```html
+<jects-scheduler
+  [config]="cfg"
+  [events]="['eventClick', 'eventDrop']"
+  (jectsEvent)="handle($event)"
+></jects-scheduler>
+```
+
+**Build a wrapper for a custom engine.** `createComponent(Ctor, opts?)` generates a typed standalone component from any engine that follows the `new Ctor(host, config)` contract. Use `opts.nonUpdatableKeys` to force a destroy-and-recreate when those config keys change, and `opts.selector` to set the element selector.
+
+## Events
+
+Engine events are not subscribed individually. You declare the event names on the `[events]` input and consume them through the single `(jectsEvent)` output. Its value is a discriminated union, `JectsEventOf<Events>` — `{ type: K; payload: Events[K] }` keyed by event name — so narrowing on `type` gives you a fully typed `payload`. The available event names per component come from each engine's typed events map (e.g. `GridEvents`, `SchedulerEvents`, `CalendarEvents`), all re-exported from this package.
+
+## Theming
+
+Components are themed with CSS custom properties (`--jects-*`). Install `@jects/theme` for the token set and default themes. See [docs/modules/theme.md](https://github.com/storyofcarl/jex-library/blob/main/docs/modules/theme.md).
+
+## Accessibility
+
+Keyboard and ARIA behavior is provided by the underlying `@jects/*` engines; the Angular wrapper forwards host, config, and events without altering it. Refer to each engine package for its accessibility coverage.
+
+## Stability & support
+
+Beta. The wrapper layer is a thin, uniform binding over the engines and is type-checked across all components; individual engine maturity varies by module.
+
+Part of the Jects UI suite. Live demo: https://jexlibrary.vercel.app. Source: https://github.com/storyofcarl/jex-library. Commercial terms: see LICENSE.md.

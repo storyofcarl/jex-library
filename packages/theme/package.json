@@ -1,14 +1,16 @@
 {
   "name": "@jects/theme",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI theming — shippable CSS themes (light/dark/high-contrast/branded) and the runtime theming API (applyTheme/setTheme/exportThemeCss).",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -41,5 +43,29 @@
     "@jects/vite-config": "workspace:*",
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0"
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/theme"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "theme",
+    "theming",
+    "css-variables",
+    "dark-mode",
+    "high-contrast"
+  ],
+  "engines": {
+    "node": ">=20.17"
   }
 }

@@ -1,12 +1,14 @@
 {
   "name": "@jects/core",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI core — the zero-dependency engine powering the suite: signals, Widget base, Store/TreeStore, typed EventEmitter, DOM utilities, virtualization, and the component factory. Framework-free.",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -32,5 +34,29 @@
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
     "vitest": "^2.1.8"
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "widget",
+    "store",
+    "signals",
+    "virtualization",
+    "zero-dependency"
+  ],
+  "engines": {
+    "node": ">=20.17"
   }
 }

@@ -1,14 +1,16 @@
 {
   "name": "@jects/widgets",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI widgets — the enterprise widget kit: fields, choice, date/time, pickers, display, feedback, forms, layout, navigation, overlays, windows, rich text, tabs, and data views.",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -81,5 +83,29 @@
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
     "vitest": "^2.1.8"
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/widgets"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "widgets",
+    "forms",
+    "overlays",
+    "rich-text",
+    "ui-kit"
+  ],
+  "engines": {
+    "node": ">=20.17"
   }
 }

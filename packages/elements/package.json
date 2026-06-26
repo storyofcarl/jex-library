@@ -1,11 +1,13 @@
 {
   "name": "@jects/elements",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI Web Components — light-DOM custom elements over the framework-agnostic @jects/* engines. One generic factory, per-component typed element classes (config in, engine events out as CustomEvents, .instance for imperative access).",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -131,19 +133,45 @@
     "@jects/widgets": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@jects/grid": { "optional": true },
-    "@jects/gantt": { "optional": true },
-    "@jects/scheduler": { "optional": true },
-    "@jects/calendar": { "optional": true },
-    "@jects/kanban": { "optional": true },
-    "@jects/todo": { "optional": true },
-    "@jects/charts": { "optional": true },
-    "@jects/diagram": { "optional": true },
-    "@jects/spreadsheet": { "optional": true },
-    "@jects/pivot": { "optional": true },
-    "@jects/booking": { "optional": true },
-    "@jects/chatbot": { "optional": true },
-    "@jects/widgets": { "optional": true }
+    "@jects/grid": {
+      "optional": true
+    },
+    "@jects/gantt": {
+      "optional": true
+    },
+    "@jects/scheduler": {
+      "optional": true
+    },
+    "@jects/calendar": {
+      "optional": true
+    },
+    "@jects/kanban": {
+      "optional": true
+    },
+    "@jects/todo": {
+      "optional": true
+    },
+    "@jects/charts": {
+      "optional": true
+    },
+    "@jects/diagram": {
+      "optional": true
+    },
+    "@jects/spreadsheet": {
+      "optional": true
+    },
+    "@jects/pivot": {
+      "optional": true
+    },
+    "@jects/booking": {
+      "optional": true
+    },
+    "@jects/chatbot": {
+      "optional": true
+    },
+    "@jects/widgets": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@jects/core": "workspace:*",
@@ -165,5 +193,30 @@
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
     "vitest": "^2.1.8"
-  }
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/elements"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "web-components",
+    "custom-elements",
+    "wrapper"
+  ],
+  "engines": {
+    "node": ">=20.17"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ]
 }

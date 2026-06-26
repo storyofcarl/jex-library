@@ -1,14 +1,16 @@
 {
   "name": "@jects/calendar",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI calendar — day/week/month/year/agenda/resource/timeline views with RRULE recurrence, timezones, a modal event editor, undo/redo, and ICS/Excel/print export.",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -45,5 +47,29 @@
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
     "vitest": "^2.1.8"
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/calendar"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "calendar",
+    "fullcalendar",
+    "events",
+    "recurrence",
+    "rrule"
+  ],
+  "engines": {
+    "node": ">=20.17"
   }
 }

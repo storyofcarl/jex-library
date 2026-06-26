@@ -1,44 +1,38 @@
-# @jects/react
+# @jects/react — typed React bindings for the Jects UI suite
 
-Typed **React** bindings for the [Jects UI](../../README.md) suite.
+## What it is
 
-Every Jects component is a framework-agnostic engine that follows one uniform
-imperative contract (`new Ctor(host, config)` extending the `@jects/core` `Widget`:
-`.on()` / `.off()` / `.update()` / `.getConfig()` / `.destroy()` / `.el`). This
-package wraps that contract in a single generic factory and ships a typed React
-component per engine — props in, `on<Event>` callbacks out, and a `ref` to the live
-engine instance for imperative calls.
+`@jects/react` ships a typed React component for every framework-agnostic `@jects/*` engine. Each engine follows one uniform imperative contract (`new Ctor(host, config)` extending the `@jects/core` `Widget`: `.on()` / `.off()` / `.update()` / `.getConfig()` / `.destroy()` / `.el`), and this package wraps that contract in a single generic factory — props in, `on<Event>` callbacks out, and a `ref` to the live engine instance for imperative calls. Per-component subpaths let you import only the one engine each wrapper needs, keeping bundles lean.
 
 ## Install
 
 ```bash
-pnpm add @jects/react react react-dom
-# plus the engines you use:
-pnpm add @jects/grid @jects/gantt @jects/widgets
+pnpm add @jects/react @jects/theme react react-dom
 ```
 
-`react`, `react-dom`, and every `@jects/*` engine are **peer dependencies** — the host
-app owns those versions. Import each engine's stylesheet once (e.g.
-`import '@jects/grid/style.css'`).
+`react` and `react-dom` (`>=18`) are required peers. The `@jects/*` engines are **optional** peers — install only those a wrapper needs, since the host app owns those versions. For example, `@jects/react/grid` needs `@jects/grid`, `@jects/react/gantt` needs `@jects/gantt`, and the widget wrappers (button, form, window, textfield, select, richtext) need `@jects/widgets`:
 
-## How wrappers behave
+```bash
+pnpm add @jects/grid          # to use @jects/react/grid
+pnpm add @jects/widgets       # to use @jects/react/button, /form, /window, ...
+```
 
-- **Config in via props.** Any prop that isn't `className`, `style`, or an
-  `on<Event>` handler is treated as engine config. On change it is shallow-diffed and
-  pushed through `inst.update(patch)` — there is **no remount on every render**. A
-  remount happens only when a key you mark `nonUpdatableKeys` changes.
-- **Events out via `on<Event>` props.** `onClick` wires `inst.on('click', …)`,
-  `onSelectionChange` wires `inst.on('selectionChange', …)`, etc. Handlers are kept
-  current through refs, so swapping a handler never remounts or rebinds.
-- **`ref` is the engine.** The forwarded ref resolves to the live engine instance, so
-  you can call any imperative method.
-- **Cleanup + SSR.** `inst.destroy()` runs on unmount; no DOM is touched during render.
+## CSS
 
-## Grid example
+This package ships **no stylesheet** of its own. Import each engine's stylesheet once in your app, e.g.:
+
+```ts
+import '@jects/grid/style.css';
+import '@jects/gantt/style.css';
+```
+
+## Minimal example
+
+A wrapper takes the engine's config as props and forwards a `ref` to the live engine instance:
 
 ```tsx
 import { useRef } from 'react';
-import { JectsGrid } from '@jects/react';
+import { JectsGrid } from '@jects/react/grid';
 import type { Grid } from '@jects/grid';
 import '@jects/grid/style.css';
 
@@ -53,48 +47,62 @@ export function People() {
         { id: 1, name: 'Ada Lovelace' },
         { id: 2, name: 'Grace Hopper' },
       ]}
-      columns={[
-        { field: 'name', header: 'Name', flex: 1 },
-      ]}
+      columns={[{ field: 'name', header: 'Name', flex: 1 }]}
       selection="row"
-      onSelectionChange={(e) => console.log('selected', e.selectedIds)}
+      onSelectionChange={(e) => console.log('selected', e)}
     />
   );
 }
 
-// Imperative access: gridRef.current?.update({ ... }) / .getConfig() / etc.
+// Imperative access: gridRef.current?.update({ ... }) / .getConfig() / .destroy()
 ```
 
-## Gantt example
+The factory mounts `new Grid(host, config)` into a wrapper element in a layout effect, shallow-diffs prop changes and pushes them through `inst.update(patch)` (no remount per render), bridges `on*` props to `inst.on(...)`, exposes the engine via the forwarded ref, and calls `inst.destroy()` on unmount. It is SSR-safe — no DOM is touched during render.
+
+## Subpath exports
+
+Import a single wrapper from its subpath to pull in only its engine:
+
+- `@jects/react/grid` — `JectsGrid` (`GridOptions`, `GridEvents`); wraps `@jects/grid`.
+- `@jects/react/gantt` — `JectsGantt` (`GanttOptions`, `GanttEvents`); wraps `@jects/gantt`.
+- `@jects/react/scheduler` — `JectsScheduler` (`SchedulerConfig`, `SchedulerEvents`); wraps `@jects/scheduler`.
+- `@jects/react/calendar` — `JectsCalendar` (`CalendarConfig`, `CalendarEvents`); wraps `@jects/calendar`.
+- `@jects/react/booking` — `JectsBooking` (`BookingConfig`, `BookingEvents`); wraps `@jects/booking`.
+- `@jects/react/kanban` — `JectsKanban` (`TaskBoardConfig`, `TaskBoardEvents`); wraps `@jects/kanban`.
+- `@jects/react/todo` — `JectsTodo` (`TodoListConfig`, `TodoListEvents`); wraps `@jects/todo`.
+- `@jects/react/charts` — `JectsChart` (`ChartConfig`, `ChartEvents`); wraps `@jects/charts`.
+- `@jects/react/diagram` — `JectsDiagram` (`DiagramConfig`, `DiagramEvents`); wraps `@jects/diagram`.
+- `@jects/react/spreadsheet` — `JectsSpreadsheet` (`SpreadsheetConfig`, `SpreadsheetEvents`); wraps `@jects/spreadsheet`.
+- `@jects/react/pivot` — `JectsPivot` (`PivotTableConfig`, `PivotTableEvents`); wraps `@jects/pivot`.
+- `@jects/react/chatbot` — `JectsChatbot` (`ChatbotConfig`, `ChatbotEvents`); wraps `@jects/chatbot`.
+- `@jects/react/button` — `JectsButton` (`ButtonConfig`, `ButtonEvents`); wraps the `@jects/widgets` Button.
+- `@jects/react/form` — `JectsForm` (`FormConfig`, `FormEvents`); wraps the `@jects/widgets` Form.
+- `@jects/react/window` — `JectsWindow` (`WindowConfig`, `WindowEvents`); wraps the `@jects/widgets` Window.
+- `@jects/react/textfield` — `JectsTextField` (`TextFieldConfig`, `TextFieldEvents`); wraps the `@jects/widgets` TextField.
+- `@jects/react/select` — `JectsSelect` (`SelectConfig`, `SelectEvents`); wraps the `@jects/widgets` Select.
+- `@jects/react/richtext` — `JectsRichText` (`RichTextConfig`, `RichTextEvents`); wraps the `@jects/widgets` RichText editor.
+
+The root entry (`@jects/react`) re-exports every wrapper plus `createComponent` for convenience, but pulls all sibling engines into your dependency graph — prefer subpaths for production bundles.
+
+## Common recipes
+
+**Imperative access via `ref`.** The forwarded ref resolves to the live engine, so any method on the engine is available:
 
 ```tsx
-import { JectsGantt } from '@jects/react';
-import '@jects/gantt/style.css';
+import { useRef, useEffect } from 'react';
+import { JectsScheduler } from '@jects/react/scheduler';
 
-export function Plan() {
-  return (
-    <JectsGantt
-      style={{ height: 500 }}
-      tasks={[
-        { id: 1, name: 'Design', percentDone: 0.5 },
-        { id: 2, name: 'Build', parentId: 1 },
-      ]}
-      onTaskClick={(e) => console.log('task', e)}
-    />
-  );
+function Board() {
+  const ref = useRef(null);
+  useEffect(() => {
+    // ref.current is the live @jects/scheduler engine
+    console.log(ref.current?.getConfig());
+  }, []);
+  return <JectsScheduler ref={ref} /* ...SchedulerConfig props */ />;
 }
 ```
 
-## Components
-
-Engines: `JectsGrid`, `JectsGantt`, `JectsScheduler`, `JectsCalendar`, `JectsKanban`,
-`JectsTodo`, `JectsChart`, `JectsDiagram`, `JectsSpreadsheet`, `JectsPivot`,
-`JectsBooking`, `JectsChatbot`.
-
-Widgets: `JectsButton`, `JectsForm`, `JectsWindow`, `JectsTextField`, `JectsSelect`,
-`JectsRichText`.
-
-## Wrap any other engine
+**Wrap any other engine** with the same factory the shipped wrappers use:
 
 ```tsx
 import { createComponent } from '@jects/react';
@@ -102,6 +110,39 @@ import { SomeWidget, type SomeConfig, type SomeEvents } from '@jects/somewhere';
 
 export const JectsSomeWidget = createComponent<SomeWidget, SomeConfig, SomeEvents>(
   SomeWidget,
-  { nonUpdatableKeys: ['renderer'] }, // optional: keys that force a remount
+  { nonUpdatableKeys: ['renderer'] }, // optional: keys that force destroy + recreate
 );
 ```
+
+`createComponent(Ctor, opts?)` returns a `forwardRef` component. `CreateComponentOptions` accepts `nonUpdatableKeys` (config keys the engine cannot apply via `update()`, so a change triggers a full remount instead of an in-place patch) and `displayName` (React devtools name).
+
+**Swap handlers freely.** `on*` handlers are kept current through refs, so changing a handler never remounts or rebinds the engine listener:
+
+```tsx
+import { JectsKanban } from '@jects/react/kanban';
+
+<JectsKanban onTaskMove={(e) => save(e)} onTaskClick={(e) => open(e)} />;
+```
+
+## Events
+
+Each wrapper maps its engine's events to `on<Event>` props, typed by `JectsEventHandlers<Events>`: a `selectionChange` event becomes the `onSelectionChange` prop, `click` becomes `onClick`, and so on. Each handler receives the engine's typed event payload. The available events per component are defined by that wrapper's `*Events` type (e.g. `GridEvents`, `SchedulerEvents`, `KanbanEvents`); consult the underlying engine for its full event surface.
+
+## Theming
+
+Components inherit the Jects design system via CSS custom properties (`--jects-*`). Install `@jects/theme` to provide the token defaults. See [docs/modules/theme.md](../../docs/modules/theme.md).
+
+## Accessibility
+
+Keyboard navigation and ARIA semantics are provided by the underlying `@jects/*` engines; these React bindings forward configuration and `ref` access through to them without altering their interactive behavior.
+
+## Stability & support
+
+**Beta.** The factory and the per-component bindings are typed and covered by the package test suite, but the API may still evolve.
+
+Part of the Jects UI suite. Commercial terms: see LICENSE.md.
+
+---
+
+- Repository: https://github.com/storyofcarl/jex-library
+- Live demo: https://jexlibrary.vercel.app

@@ -24,9 +24,9 @@ CSS token prefix `--jects-` · custom elements `<jects-*>`.
 
 Per-module developer docs live in [`docs/modules/`](docs/modules/README.md). See also the
 [capability & readiness matrix](docs/MATRIX.md) (generated — `pnpm matrix`),
-[`docs/PLAN.md`](docs/PLAN.md) for the locked architectural decisions (D1–D12),
-[`docs/ROADMAP.md`](docs/ROADMAP.md) for the commercial-readiness roadmap,
-[`docs/SECURITY.md`](docs/SECURITY.md) for the HTML/injection contract, and
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the architectural decisions (D1–D12),
+[`docs/STATUS.md`](docs/STATUS.md) for per-module maturity, [`docs/ROADMAP.md`](docs/ROADMAP.md)
+for direction, [`docs/SECURITY.md`](docs/SECURITY.md) for the HTML/injection contract, and
 [`docs/CONTRIBUTING-COMPONENTS.md`](docs/CONTRIBUTING-COMPONENTS.md) for the component-author brief.
 
 ## Monorepo layout

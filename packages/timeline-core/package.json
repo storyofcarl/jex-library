@@ -1,14 +1,16 @@
 {
   "name": "@jects/timeline-core",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI timeline engine — the shared time-axis, viewport, row-virtualization, and dependency-routing foundation that Gantt and Scheduler render on.",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -43,5 +45,27 @@
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
     "vitest": "^2.1.8"
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/timeline-core"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "timeline",
+    "time-axis",
+    "scheduling-engine"
+  ],
+  "engines": {
+    "node": ">=20.17"
   }
 }

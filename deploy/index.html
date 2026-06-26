@@ -10,20 +10,10 @@
     />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
 
-    <!-- Theme + token contract (light + dark + high-contrast + branded). all.css
-         @imports base/dark/high-contrast/branded. Theme fonts fall back to the
-         system-ui stack, so no external font CDN is required. -->
     <link rel="stylesheet" href="./packages/theme/dist/css/all.css" />
-    <!-- The theme tokens + the gallery shell stay EAGER so the chrome is never
-         unstyled. Every per-component stylesheet (widgets/grid/charts/pivot/…)
-         is now lazy-loaded PER ROUTE via ensureCss() in gallery.js — injected
-         into <head> the first time a route that needs it is visited, so the
-         initial page load no longer downloads ~14 component stylesheets. -->
-    <!-- Gallery chrome (uses house tokens itself). -->
+
     <link rel="stylesheet" href="./gallery.css" />
 
-    <!-- Resolve the bare @jects/* specifiers the built ESM dist files import
-         from each other to the already-built dist ESM entries. -->
     <script type="importmap">
       {
         "imports": {

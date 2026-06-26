@@ -1,11 +1,13 @@
 {
   "name": "@jects/react",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI React wrapper — thin, typed React bindings over the framework-agnostic @jects/* engines. One generic factory, per-component typed exports (props in, on* events out, ref for imperative access).",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -113,19 +115,45 @@
     "@jects/widgets": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@jects/grid": { "optional": true },
-    "@jects/gantt": { "optional": true },
-    "@jects/scheduler": { "optional": true },
-    "@jects/calendar": { "optional": true },
-    "@jects/kanban": { "optional": true },
-    "@jects/todo": { "optional": true },
-    "@jects/charts": { "optional": true },
-    "@jects/diagram": { "optional": true },
-    "@jects/spreadsheet": { "optional": true },
-    "@jects/pivot": { "optional": true },
-    "@jects/booking": { "optional": true },
-    "@jects/chatbot": { "optional": true },
-    "@jects/widgets": { "optional": true }
+    "@jects/grid": {
+      "optional": true
+    },
+    "@jects/gantt": {
+      "optional": true
+    },
+    "@jects/scheduler": {
+      "optional": true
+    },
+    "@jects/calendar": {
+      "optional": true
+    },
+    "@jects/kanban": {
+      "optional": true
+    },
+    "@jects/todo": {
+      "optional": true
+    },
+    "@jects/charts": {
+      "optional": true
+    },
+    "@jects/diagram": {
+      "optional": true
+    },
+    "@jects/spreadsheet": {
+      "optional": true
+    },
+    "@jects/pivot": {
+      "optional": true
+    },
+    "@jects/booking": {
+      "optional": true
+    },
+    "@jects/chatbot": {
+      "optional": true
+    },
+    "@jects/widgets": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@jects/core": "workspace:*",
@@ -153,5 +181,30 @@
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
     "vitest": "^2.1.8"
-  }
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/react"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "react",
+    "react-components",
+    "wrapper"
+  ],
+  "engines": {
+    "node": ">=20.17"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ]
 }

@@ -1,14 +1,16 @@
 {
   "name": "@jects/grid",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI data grid — a virtualized, enterprise-grade grid with typed columns, sort/filter, grouping, selection, inline editing, master-detail, tree mode, and CSV/Excel/PDF export.",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -61,5 +63,29 @@
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
     "vitest": "^2.1.8"
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/grid"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "data-grid",
+    "grid",
+    "table",
+    "virtual-scroll",
+    "datagrid"
+  ],
+  "engines": {
+    "node": ">=20.17"
   }
 }

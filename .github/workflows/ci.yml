@@ -24,7 +24,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: No derivative/replica framing
         run: |
-          if grep -rniE "replica|replicates|combined surface of|bryntum [+] dhtmlx" \
+          if grep -rniE "replica|replicates|combined surface of|merged surface|covers everything (that )?(bryntum|dhtmlx)|=(bryntum|dhtmlx) origin|\[(b|d)\]\[(b|d)\]|bryntum [+] dhtmlx" \
                --include='*.md' --include='*.json' --include='*.html' --include='*.ts' --include='*.js' \
                --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git . \
                | grep -vE "do not frame|forbidding derivative|derivative framing" ; then
@@ -39,8 +39,8 @@ jobs:
       - name: Capability matrix is up to date
         run: |
           pnpm matrix
-          git diff --exit-code docs/MATRIX.md \
-            || (echo "::error::docs/MATRIX.md is stale — run 'pnpm matrix' and commit." && exit 1)
+          git diff --exit-code docs/MATRIX.md docs/matrix.json \
+            || (echo "::error::docs/MATRIX.md / matrix.json is stale — run 'pnpm build && pnpm matrix' and commit." && exit 1)
 
   browser-a11y:
     name: browser + a11y (Chromium)

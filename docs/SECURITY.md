@@ -56,7 +56,7 @@ A small, dependency-free, allow-list sanitizer in `@jects/core`:
 | 11 | Chatbot message rendering (markdown) | chatbot | message text → markdown → HTML | markdown renderer must escape raw HTML in source | verify markdown renderer escapes embedded HTML |
 | 12 | Charts labels / tooltips | charts | series names, axis labels, tooltip | escaped | confirm via test |
 
-## 4. Test plan (Phase 2.5 deliverable)
+## 4. Test plan
 
 A dedicated XSS suite (one spec per surface, run in the existing vitest browser/jsdom harness):
 
@@ -72,9 +72,20 @@ A dedicated XSS suite (one spec per surface, run in the existing vitest browser/
   `sanitizeHtml`/`escape` (allow an inline `// jects-safe-html: <reason>` annotation for vetted
   internal-only template literals).
 
-## 5. Acceptance (Gate 2.5)
+## 5. Acceptance criteria
 
 - `sanitizeHtml` + `escape` exported from `@jects/core`; RichText + all rich surfaces route through it.
-- XSS suite green across all 12 surfaces.
+- XSS suite green across all rich surfaces.
 - CI grep guard passes (no unguarded `innerHTML` from untrusted input).
 - Public `html`-typed APIs documented with their trust/sanitization behavior.
+
+## 6. Reporting a vulnerability
+
+Please report security issues privately — do not open a public GitHub issue for a vulnerability.
+
+- Open a [GitHub security advisory](https://github.com/storyofcarl/jex-library/security/advisories/new),
+  or file a regular issue marked `security` that contains only a request to be contacted (no details).
+- Include affected package + version, a description, impact, and a reproduction if possible.
+- We acknowledge reports within 2 business days, work with you on a fix and disclosure timeline, and
+  credit reporters who wish to be credited. Security fixes ship as a priority patch (see
+  [`RELEASE-POLICY.md`](./RELEASE-POLICY.md)).

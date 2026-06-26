@@ -1,14 +1,16 @@
 {
   "name": "@jects/todo",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI tasks — an enterprise task manager with List/Board/Calendar/Timeline/Table views, workflow statuses, comments, time tracking, dependencies, subtasks, recurrence, and import/export.",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -47,5 +49,28 @@
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
     "vitest": "^2.1.8"
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/todo"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "todo",
+    "task-manager",
+    "project-management",
+    "workflow"
+  ],
+  "engines": {
+    "node": ">=20.17"
   }
 }

@@ -1,11 +1,13 @@
 {
   "name": "@jects/angular",
-  "version": "0.0.0",
+  "version": "0.8.0",
   "description": "Jects UI Angular wrapper — thin, typed Angular 17+ standalone bindings over the framework-agnostic @jects/* engines. One generic factory, per-component typed exports (config in, typed jectsEvent out, instance getter for imperative access). Engines run outside the Angular zone.",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": {
@@ -180,5 +182,30 @@
     "rxjs": "^7.8.1",
     "typescript": "^5.7.2",
     "zone.js": "^0.15.0"
-  }
+  },
+  "homepage": "https://jexlibrary.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storyofcarl/jex-library.git",
+    "directory": "packages/angular"
+  },
+  "bugs": {
+    "url": "https://github.com/storyofcarl/jex-library/issues"
+  },
+  "keywords": [
+    "jects",
+    "jects-ui",
+    "typescript",
+    "enterprise-ui",
+    "framework-agnostic",
+    "angular",
+    "angular-components",
+    "wrapper"
+  ],
+  "engines": {
+    "node": ">=20.17"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ]
 }
