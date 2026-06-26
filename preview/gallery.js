@@ -664,7 +664,8 @@ const CZ_EXPORT_TOKENS = [
   'muted', 'muted-foreground', 'accent', 'accent-foreground',
   'destructive', 'destructive-foreground', 'success', 'success-foreground',
   'warning', 'warning-foreground', 'border', 'input', 'ring',
-  'radius', 'font-family', 'font-size-md',
+  'radius', 'font-family',
+  'font-size-xs', 'font-size-sm', 'font-size-md', 'font-size-lg', 'font-size-xl', 'font-size-2xl',
   'space-1', 'space-2', 'space-3', 'space-4', 'space-5', 'space-6',
   'space-7', 'space-8', 'space-9', 'space-10', 'space-11', 'space-12',
 ];
@@ -784,8 +785,15 @@ main.appendChild(
       });
       controls.appendChild(controlRow('Font family', fontSel));
 
+      // "Base font size" maps to font-size-md; scale the WHOLE type scale by the
+      // same ratios the tokens use (md=1rem baseline) so every component — which
+      // may use xs/sm/lg/xl — visibly scales, not just elements using md.
+      const FS_RATIOS = { 'font-size-xs': 0.75, 'font-size-sm': 0.875, 'font-size-md': 1, 'font-size-lg': 1.125, 'font-size-xl': 1.25, 'font-size-2xl': 1.5 };
       const fontSizeInp = rangeControl('Base font size', 'fontSize', 12, 20, 1, (v) => {
-        applyTheme(scope, { 'font-size-md': v + 'px' });
+        const base = Number(v) || 16;
+        const o = {};
+        for (const k in FS_RATIOS) o[k] = +(FS_RATIOS[k] * base).toFixed(2) + 'px';
+        applyTheme(scope, o);
       }, 'px');
 
       const applySpacing = (stepPx) => {
