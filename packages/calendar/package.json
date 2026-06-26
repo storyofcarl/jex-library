@@ -18,13 +18,29 @@
       "import": "./dist/calendar.js",
       "require": "./dist/calendar.umd.cjs"
     },
+    "./recurrence": {
+      "types": "./dist/recurrence/index.d.ts",
+      "import": "./dist/recurrence.js"
+    },
+    "./timezone": {
+      "types": "./dist/timezone/index.d.ts",
+      "import": "./dist/timezone.js"
+    },
+    "./export": {
+      "types": "./dist/export/index.d.ts",
+      "import": "./dist/export.js"
+    },
+    "./editor": {
+      "types": "./dist/editor/index.d.ts",
+      "import": "./dist/editor.js"
+    },
     "./style.css": "./dist/style.css"
   },
   "types": "./dist/index.d.ts",
   "module": "./dist/calendar.js",
   "main": "./dist/calendar.umd.cjs",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.subpaths.config.ts",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",

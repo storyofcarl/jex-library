@@ -18,13 +18,25 @@
       "import": "./dist/booking.js",
       "require": "./dist/booking.umd.cjs"
     },
+    "./availability": {
+      "types": "./dist/subpaths/availability.d.ts",
+      "import": "./dist/availability.js"
+    },
+    "./timezone": {
+      "types": "./dist/subpaths/timezone.d.ts",
+      "import": "./dist/timezone.js"
+    },
+    "./ics": {
+      "types": "./dist/subpaths/ics.d.ts",
+      "import": "./dist/ics.js"
+    },
     "./style.css": "./dist/style.css"
   },
   "types": "./dist/index.d.ts",
   "module": "./dist/booking.js",
   "main": "./dist/booking.umd.cjs",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.subpaths.config.ts",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",

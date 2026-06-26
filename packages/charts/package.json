@@ -18,13 +18,29 @@
       "import": "./dist/charts.js",
       "require": "./dist/charts.umd.cjs"
     },
+    "./renderer": {
+      "types": "./dist/renderer/index.d.ts",
+      "import": "./dist/renderer.js"
+    },
+    "./scales": {
+      "types": "./dist/scale/index.d.ts",
+      "import": "./dist/scales.js"
+    },
+    "./series": {
+      "types": "./dist/series/index.d.ts",
+      "import": "./dist/series.js"
+    },
+    "./export": {
+      "types": "./dist/export/index.d.ts",
+      "import": "./dist/export.js"
+    },
     "./style.css": "./dist/style.css"
   },
   "types": "./dist/index.d.ts",
   "module": "./dist/charts.js",
   "main": "./dist/charts.umd.cjs",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.subpaths.config.ts",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",

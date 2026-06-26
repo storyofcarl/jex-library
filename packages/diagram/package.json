@@ -18,13 +18,29 @@
       "import": "./dist/diagram.js",
       "require": "./dist/diagram.umd.cjs"
     },
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "import": "./dist/engine.js"
+    },
+    "./export": {
+      "types": "./dist/ui/export.d.ts",
+      "import": "./dist/export.js"
+    },
+    "./layout": {
+      "types": "./dist/engine/layout.d.ts",
+      "import": "./dist/layout.js"
+    },
+    "./shapes": {
+      "types": "./dist/engine/shapes.d.ts",
+      "import": "./dist/shapes.js"
+    },
     "./style.css": "./dist/style.css"
   },
   "types": "./dist/index.d.ts",
   "module": "./dist/diagram.js",
   "main": "./dist/diagram.umd.cjs",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.subpaths.config.ts",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",

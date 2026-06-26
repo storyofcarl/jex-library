@@ -18,13 +18,25 @@
       "import": "./dist/pivot.js",
       "require": "./dist/pivot.umd.cjs"
     },
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "import": "./dist/engine.js"
+    },
+    "./table": {
+      "types": "./dist/table/index.d.ts",
+      "import": "./dist/table.js"
+    },
+    "./export": {
+      "types": "./dist/export/index.d.ts",
+      "import": "./dist/export.js"
+    },
     "./style.css": "./dist/style.css"
   },
   "types": "./dist/index.d.ts",
   "module": "./dist/pivot.js",
   "main": "./dist/pivot.umd.cjs",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.subpaths.config.ts",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",

@@ -18,13 +18,21 @@
       "import": "./dist/kanban.js",
       "require": "./dist/kanban.umd.cjs"
     },
+    "./editor": {
+      "types": "./dist/editor/index.d.ts",
+      "import": "./dist/editor.js"
+    },
+    "./data-provider": {
+      "types": "./dist/data-provider/index.d.ts",
+      "import": "./dist/data-provider.js"
+    },
     "./style.css": "./dist/style.css"
   },
   "types": "./dist/index.d.ts",
   "module": "./dist/kanban.js",
   "main": "./dist/kanban.umd.cjs",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.subpaths.config.ts",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",
