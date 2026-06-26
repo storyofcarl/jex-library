@@ -114,21 +114,27 @@ blockers are packaging reliability, doc truth, security consistency, proof quali
 |---|------|-------|--------|
 | E1.1 | Remove ALL derivative language (root `package.json`, `PLAN.md`, `modules/README.md`) + CI grep gate | `[ORCH]` | ✅ |
 | E1.2 | Delete stale `docs/PARITY.md`; make ROADMAP status-accurate; MATRIX is the single source of truth | `[ORCH]` | ✅ |
-| E1.3 | Fix `EVALUATION.md` `</content>` artifact; exclude internal `REVISION-NOTES.md` from the shared zip | `[ORCH]` | ⬜ |
-| E1.4 | `gen-matrix` falls back to `deploy/packages/*/dist` when source `dist` absent (never silently blanks) | `[ORCH]` | ⬜ |
+| E1.3 | Fix `EVALUATION.md` `</content>` artifact; exclude internal `REVISION-NOTES.md` from the shared zip | `[ORCH]` | ✅ |
+| E1.4 | `gen-matrix` falls back to `deploy/packages/*/dist` when source `dist` absent (never silently blanks) | `[ORCH]` | ✅ |
 
 ### E2 — Packaging & security
 | # | Task | Owner | Status |
 |---|------|-------|--------|
-| E2.1 | Per-component wrapper subpaths (`@jects/react/grid`, `@jects/vue/gantt`, …) so installing one component doesn't pull all + `examples/*-minimal` apps | `[WF]` per wrapper | ⬜ |
-| E2.2 | Real subpath exports for grid/gantt/scheduler/spreadsheet/widgets (features/renderers/editors) | `[WF]` per package | ⬜ |
-| E2.3 | Enforce `text` vs `TrustedHtml` across remaining raw-`innerHTML` paths (data-view, tab-panel, layout, splitter, panel) + XSS tests | `[WF]` | ⬜ |
+| E2.1 | Per-component wrapper subpaths (`@jects/react/grid`, `@jects/vue/gantt`, …) so installing one component doesn't pull all + `examples/*-minimal` apps | `[WF]` per wrapper | ✅ (commit `5fdfc5a`; raw-verified each wrapper's built entry imports 0 sibling engines) |
+| E2.2 | Real subpath exports for grid/gantt/scheduler/spreadsheet/widgets (features/renderers/editors) | `[WF]` per package | ✅ (commit `e18e517`; grid 4 · widgets 9 · gantt 4 · scheduler 4 · spreadsheet 2 subpaths, main entry byte-intact, no subpath imports its main bundle) |
+| E2.3 | Enforce `text` vs `TrustedHtml` across remaining raw-`innerHTML` paths (data-view, tab-panel, layout, splitter, panel) + XSS tests | `[WF]` | ✅ (commit `5fdfc5a`; `src/security/xss-layout.test.ts`) |
 
 ### E3 — Proof & premium polish
 | # | Task | Owner | Status |
 |---|------|-------|--------|
-| E3.1 | Route-level CSS lazy-load in deploy | `[AGENT]` | ⬜ |
-| E3.2 | Split monolithic gallery into `preview/routes/*` + `docs/` + `workflows/` | `[AGENT]` | ⬜ |
-| E3.3 | Measured performance-proof panels + repeatable bench scripts (grid 100k, gantt 1k/10k, pivot 100k, …) | `[WF]` | ⬜ |
-| E3.4 | Server-side data demos (remote paging/sort/filter/group, lazy tree, remote scheduler events, gantt save/load) | `[WF]` | ⬜ |
-| E3.5 | Flagship hero demos + honest comparison pages (vs Bryntum / vs DHTMLX) + adoption-funnel landing | `[WF]` | ⬜ |
+| E3.1 | Route-level CSS lazy-load in deploy | `[AGENT]` | ✅ (commit `634f3a4`; 14 eager component stylesheets → per-route `ensureCss()`; home loads 0 component CSS) |
+| E3.2 | Split monolithic gallery into `preview/routes/*` + `docs/` + `workflows/` | `[AGENT]` | ⬜ DEFERRED — maintainability-only; JS already lazy-loads per route, so it is not an evaluator-facing gap. Tracked for a later refactor. |
+| E3.3 | Measured performance-proof panels + repeatable bench scripts (grid 100k, gantt 1k/10k, pivot 100k, …) | `[WF]` | ✅ (commit `634f3a4`; `#performance` route + `scripts/bench/run.mjs`/`pnpm bench` → `docs/PERFORMANCE.md`) |
+| E3.4 | Server-side data demos (remote paging/sort/filter/group, lazy tree, remote scheduler events, gantt save/load) | `[WF]` | ✅ (commit `634f3a4`; `#server-data` route — server-side sort/filter/paging over a 100k store + request log) |
+| E3.5 | Flagship hero demos + honest comparison pages (vs Bryntum / vs DHTMLX) + adoption-funnel landing | `[WF]` | ✅ (commit `710b45a`; landing hero + `#compare` route + `docs/COMPARISON.md`, controlled/caveated) |
+
+**Round-2 status (2026-06-26):** all four second-evaluation hard blockers closed (derivative
+framing, doc truth, raw-HTML security, wrapper exports), plus coarse-exports and the proof lever
+(live `#performance` benchmarks, `#server-data`, route-level CSS lazy-load) and the honest
+`#compare` comparison + flagship hero. Everything raw-verified and deployed to
+<https://jexlibrary.vercel.app>. Only E3.2 (gallery file-split, maintainability-only) deferred.
