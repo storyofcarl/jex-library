@@ -16,13 +16,21 @@
       "import": "./dist/spreadsheet.js",
       "require": "./dist/spreadsheet.umd.cjs"
     },
+    "./engine": {
+      "types": "./dist/entry-engine.d.ts",
+      "import": "./dist/engine.js"
+    },
+    "./io": {
+      "types": "./dist/entry-io.d.ts",
+      "import": "./dist/io.js"
+    },
     "./style.css": "./dist/style.css"
   },
   "types": "./dist/index.d.ts",
   "module": "./dist/spreadsheet.js",
   "main": "./dist/spreadsheet.umd.cjs",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && vite build --mode subpaths",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",

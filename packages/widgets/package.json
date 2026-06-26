@@ -16,13 +16,49 @@
       "import": "./dist/widgets.js",
       "require": "./dist/widgets.umd.cjs"
     },
+    "./forms": {
+      "types": "./dist/forms.d.ts",
+      "import": "./dist/forms.js"
+    },
+    "./overlays": {
+      "types": "./dist/overlays.d.ts",
+      "import": "./dist/overlays.js"
+    },
+    "./rich-text": {
+      "types": "./dist/rich-text.d.ts",
+      "import": "./dist/rich-text.js"
+    },
+    "./fields": {
+      "types": "./dist/fields.d.ts",
+      "import": "./dist/fields.js"
+    },
+    "./nav": {
+      "types": "./dist/nav.d.ts",
+      "import": "./dist/nav.js"
+    },
+    "./layout": {
+      "types": "./dist/layout.d.ts",
+      "import": "./dist/layout.js"
+    },
+    "./datetime": {
+      "types": "./dist/datetime.d.ts",
+      "import": "./dist/datetime.js"
+    },
+    "./pickers": {
+      "types": "./dist/pickers.d.ts",
+      "import": "./dist/pickers.js"
+    },
+    "./data-views": {
+      "types": "./dist/data-views.d.ts",
+      "import": "./dist/data-views.js"
+    },
     "./style.css": "./dist/style.css"
   },
   "types": "./dist/index.d.ts",
   "module": "./dist/widgets.js",
   "main": "./dist/widgets.umd.cjs",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build --config vite.config.umd.ts && vite build",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",
