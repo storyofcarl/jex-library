@@ -1,0 +1,82 @@
+/* @jects/diagram — engine-level SVG/canvas defaults.
+   Token-pure: references ONLY --jects-* tokens (no hardcoded color literals).
+   Lives inside @layer jects.components per house style. The UI layer aggregates
+   this into the package stylesheet.
+
+   These classes describe the headless engine's *default rendering contract*
+   (the renderer applies them to SVG nodes it creates from the model graph). The
+   engine itself is DOM-free; this file only defines how its output should be
+   themed so colors recolor live with the theme. */
+
+@layer jects.components {
+  .jects-diagram__canvas {
+    background-color: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* Shapes */
+  .jects-diagram__shape {
+    fill: oklch(var(--jects-card));
+    stroke: oklch(var(--jects-border));
+    stroke-width: 1.5;
+  }
+  .jects-diagram__shape--selected {
+    stroke: oklch(var(--jects-ring));
+    stroke-width: 2;
+  }
+  .jects-diagram__shape-label {
+    fill: oklch(var(--jects-card-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+  }
+
+  /* Connectors */
+  .jects-diagram__connector {
+    fill: none;
+    stroke: oklch(var(--jects-foreground));
+    stroke-width: 1.5;
+  }
+  .jects-diagram__connector--selected {
+    stroke: oklch(var(--jects-ring));
+    stroke-width: 2;
+  }
+  .jects-diagram__arrow {
+    fill: oklch(var(--jects-foreground));
+    stroke: oklch(var(--jects-foreground));
+  }
+  .jects-diagram__connector-label {
+    fill: oklch(var(--jects-muted-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  /* Ports */
+  .jects-diagram__port {
+    fill: oklch(var(--jects-background));
+    stroke: oklch(var(--jects-ring));
+    stroke-width: 1.5;
+  }
+
+  /* Swimlanes */
+  .jects-diagram__lane {
+    fill: oklch(var(--jects-muted) / 0.4);
+    stroke: oklch(var(--jects-border));
+    stroke-width: 1;
+  }
+  .jects-diagram__lane-header {
+    fill: oklch(var(--jects-muted));
+    stroke: oklch(var(--jects-border));
+  }
+  .jects-diagram__lane-title {
+    fill: oklch(var(--jects-muted-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  /* Grid backdrop */
+  .jects-diagram__grid-line {
+    stroke: oklch(var(--jects-border) / 0.5);
+    stroke-width: 1;
+  }
+}

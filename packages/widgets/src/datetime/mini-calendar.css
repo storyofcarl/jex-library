@@ -1,0 +1,144 @@
+/* MiniCalendar styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-minical {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-popover-foreground));
+    background: oklch(var(--jects-popover));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-minical__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jects-space-2);
+    margin-bottom: var(--jects-space-2);
+  }
+
+  .jects-minical__title {
+    flex: 1;
+    text-align: center;
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  .jects-minical__nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    cursor: pointer;
+    color: oklch(var(--jects-foreground));
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    font-size: var(--jects-font-size-md);
+    line-height: 1;
+    transition: background-color var(--jects-duration-fast) ease;
+  }
+  .jects-minical__nav:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-minical__nav:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-minical__weekdays,
+  .jects-minical__row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--jects-space-1);
+  }
+  .jects-minical__row {
+    margin-top: var(--jects-space-1);
+  }
+
+  .jects-minical__weekday {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.75rem;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-minical__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .jects-minical__day {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    cursor: pointer;
+    color: oklch(var(--jects-foreground));
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    line-height: 1;
+    transition:
+      background-color var(--jects-duration-fast) ease,
+      color var(--jects-duration-fast) ease;
+  }
+  .jects-minical__day:hover:not(.jects-minical__day--disabled) {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-minical__day:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-minical__day--outside {
+    color: oklch(var(--jects-muted-foreground) / 0.6);
+  }
+
+  .jects-minical__day--today {
+    font-weight: var(--jects-font-weight-semibold);
+    border-color: oklch(var(--jects-border));
+  }
+
+  .jects-minical__day--selected,
+  .jects-minical__day--selected:hover {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border-color: transparent;
+  }
+
+  .jects-minical__day--disabled {
+    cursor: not-allowed;
+    color: oklch(var(--jects-muted-foreground) / 0.4);
+    pointer-events: none;
+  }
+
+  /* Shared popover panel used by DatePicker / DateTimeField.
+     Portaled to document.body while open and positioned `fixed` by JS so it
+     escapes any clipping/overflow ancestor; JS owns top/left, CSS owns chrome. */
+  .jects-dt-popover {
+    position: fixed;
+    z-index: var(--jects-z-popover);
+    background: oklch(var(--jects-popover));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-lg);
+  }
+  .jects-dt-popover[hidden] {
+    display: none;
+  }
+}

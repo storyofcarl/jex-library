@@ -1,0 +1,320 @@
+/* Scheduler styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-scheduler {
+    --_sch-resource-width: 160px;
+    --_sch-header-height: 3rem;
+
+    display: grid;
+    grid-template-columns: var(--_sch-resource-width) 1fr;
+    grid-template-rows: var(--_sch-header-height) 1fr;
+    position: relative;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 240px;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    overflow: hidden;
+  }
+
+  .jects-scheduler:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ── corner + headers ── */
+  .jects-scheduler__corner {
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    align-items: stretch;
+    border-inline-end: 1px solid oklch(var(--jects-border));
+    border-block-end: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted));
+  }
+  .jects-scheduler__resource-header {
+    display: flex;
+    inline-size: 100%;
+  }
+  .jects-scheduler__time-header {
+    grid-row: 1;
+    grid-column: 2;
+    position: relative;
+    overflow: hidden;
+    border-block-end: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted));
+  }
+  .jects-scheduler__header-band {
+    position: relative;
+    block-size: calc(var(--_sch-header-height) / 2);
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+  }
+  .jects-scheduler__header-cell {
+    position: absolute;
+    inset-block: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    /* Use the high-contrast foreground token so header labels clear the 4.5:1
+       contrast bar against the muted header background (axe Q2). */
+    color: oklch(var(--jects-foreground));
+    border-inline-start: 1px solid oklch(var(--jects-border) / 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .jects-scheduler__header-cell--major {
+    color: oklch(var(--jects-foreground));
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  /* ── locked resource columns ── */
+  .jects-scheduler__resources {
+    grid-row: 2;
+    grid-column: 1;
+    position: relative;
+    overflow: hidden;
+    border-inline-end: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-card));
+  }
+  .jects-scheduler__resource-row {
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.5);
+    box-sizing: border-box;
+  }
+  .jects-scheduler__resource-cell {
+    display: flex;
+    align-items: center;
+    block-size: 100%;
+    padding-inline: var(--jects-space-3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jects-scheduler__resource-cell--head {
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+    font-size: var(--jects-font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── scrollable time grid ── */
+  .jects-scheduler__scroller {
+    grid-row: 2;
+    grid-column: 2;
+    position: relative;
+    overflow: auto;
+  }
+  .jects-scheduler__content {
+    position: relative;
+  }
+  .jects-scheduler__backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .jects-scheduler__gridline {
+    position: absolute;
+    inset-block: 0;
+    inline-size: 1px;
+    background: oklch(var(--jects-border) / 0.4);
+  }
+  .jects-scheduler__gridline--major {
+    background: oklch(var(--jects-border));
+  }
+  .jects-scheduler__nonworking {
+    position: absolute;
+    inset-block: 0;
+    background: oklch(var(--jects-muted) / 0.6);
+  }
+  .jects-scheduler__now {
+    position: absolute;
+    inset-block: 0;
+    inline-size: 2px;
+    background: oklch(var(--jects-destructive));
+    z-index: var(--jects-z-sticky);
+  }
+
+  /* ── global time ranges (shaded bands / marker lines across the grid) ── */
+  .jects-scheduler__timerange {
+    position: absolute;
+    inset-block: 0;
+    background: oklch(var(--jects-accent) / 0.18);
+    border-inline: 1px solid oklch(var(--jects-accent) / 0.4);
+    box-sizing: border-box;
+  }
+  .jects-scheduler__timerange--marker {
+    inline-size: 0;
+    border-inline: 0;
+    border-inline-start: 2px dashed oklch(var(--jects-accent));
+  }
+  .jects-scheduler__timerange-label {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: var(--jects-space-1);
+    padding-block: 1px;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-accent-foreground, var(--jects-foreground)));
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* ── resource-scoped time ranges (shaded within one row band) ── */
+  .jects-scheduler__resource-timerange {
+    position: absolute;
+    background: oklch(var(--jects-warning, var(--jects-muted)) / 0.22);
+    border: 1px solid oklch(var(--jects-warning, var(--jects-border)) / 0.4);
+    box-sizing: border-box;
+  }
+  .jects-scheduler__resource-timerange--marker {
+    inline-size: 0;
+    border: 0;
+    border-inline-start: 2px dashed oklch(var(--jects-warning, var(--jects-foreground)));
+  }
+  .jects-scheduler__resource-timerange-label {
+    position: absolute;
+    inset-block-start: 1px;
+    inset-inline-start: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* ── drag-to-pan ── */
+  .jects-scheduler--panning .jects-scheduler__scroller {
+    cursor: grabbing;
+  }
+  .jects-scheduler--panning {
+    user-select: none;
+  }
+
+  /* ── dependency lines ── */
+  .jects-scheduler__deps {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .jects-scheduler__dep-line {
+    fill: none;
+    stroke: oklch(var(--jects-muted-foreground));
+    stroke-width: 1.5;
+  }
+  .jects-scheduler__dep-arrow {
+    fill: oklch(var(--jects-muted-foreground));
+    stroke: none;
+  }
+
+  /* ── event bars ── */
+  .jects-scheduler__bars {
+    position: absolute;
+    inset: 0;
+  }
+  .jects-scheduler__bar {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding-inline: var(--jects-space-2);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border: 1px solid oklch(var(--jects-primary) / 0.7);
+    cursor: grab;
+    overflow: hidden;
+    user-select: none;
+    font-size: var(--jects-font-size-xs);
+    transition: box-shadow var(--jects-duration-fast) ease;
+  }
+  .jects-scheduler__bar:hover {
+    box-shadow: var(--jects-shadow-sm);
+  }
+  .jects-scheduler__bar:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-scheduler__bar--dragging {
+    cursor: grabbing;
+    box-shadow: var(--jects-shadow-md);
+    opacity: 0.9;
+  }
+  .jects-scheduler__bar--locked {
+    cursor: default;
+    opacity: 0.85;
+  }
+  .jects-scheduler__bar--ghost {
+    background: oklch(var(--jects-primary) / 0.4);
+    border-style: dashed;
+    pointer-events: none;
+  }
+  .jects-scheduler__bar[data-color='cyan'] {
+    background: oklch(var(--jects-cmyk-cyan));
+    border-color: oklch(var(--jects-cmyk-cyan) / 0.7);
+  }
+  .jects-scheduler__bar[data-color='magenta'] {
+    background: oklch(var(--jects-cmyk-magenta));
+    border-color: oklch(var(--jects-cmyk-magenta) / 0.7);
+  }
+  .jects-scheduler__bar[data-color='yellow'] {
+    background: oklch(var(--jects-cmyk-yellow));
+    border-color: oklch(var(--jects-cmyk-yellow) / 0.7);
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-scheduler__bar[data-color='success'] {
+    background: oklch(var(--jects-success));
+    border-color: oklch(var(--jects-success) / 0.7);
+  }
+  .jects-scheduler__bar-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .jects-scheduler__bar-progress {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    block-size: 3px;
+    background: oklch(var(--jects-primary-foreground) / 0.8);
+    pointer-events: none;
+  }
+
+  /* ── empty state ── */
+  .jects-scheduler__empty {
+    grid-row: 2;
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: oklch(var(--jects-muted-foreground));
+    font-size: var(--jects-font-size-sm);
+  }
+
+  /* ── vertical mode (resources become columns) ── */
+  .jects-scheduler--vertical .jects-scheduler__bar {
+    cursor: ns-resize;
+  }
+
+  /* ── visually-hidden live region (screen-reader announcements) ── */
+  .jects-scheduler__live {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}

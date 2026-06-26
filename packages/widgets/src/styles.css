@@ -1,3 +1,82 @@
 /* Aggregated component styles — bundled into dist/style.css.
    Each component's CSS lives next to its source and is imported here. */
+
+/* button */
 @import './button/button.css';
+
+/* fields */
+@import './fields/text-field.css';
+@import './fields/number-field.css';
+@import './fields/text-area.css';
+@import './fields/display-field.css';
+@import './fields/label.css';
+@import './fields/link.css';
+
+/* choice */
+@import './choice/select.css';
+@import './choice/combobox.css';
+@import './choice/checkbox.css';
+@import './choice/checkbox-group.css';
+@import './choice/radio.css';
+@import './choice/radio-group.css';
+@import './choice/switch.css';
+
+/* display */
+@import './display/slider.css';
+@import './display/range-slider.css';
+@import './display/rating.css';
+@import './display/progress-bar.css';
+@import './display/badge.css';
+@import './display/avatar.css';
+@import './display/spacer.css';
+
+/* datetime */
+@import './datetime/date-picker.css';
+@import './datetime/time-picker.css';
+@import './datetime/date-time-field.css';
+@import './datetime/mini-calendar.css';
+
+/* pickers */
+@import './pickers/color-picker.css';
+@import './pickers/file-picker.css';
+
+/* overlays */
+@import './overlays/tooltip.css';
+@import './overlays/popup.css';
+@import './overlays/mask.css';
+
+/* feedback */
+@import './feedback/message-manager.css';
+
+/* forms */
+@import './forms/form.css';
+
+/* layout */
+@import './layout/layout.css';
+@import './layout/splitter.css';
+@import './layout/panel.css';
+@import './layout/container.css';
+
+/* nav */
+@import './nav/toolbar.css';
+@import './nav/menu.css';
+@import './nav/context-menu.css';
+@import './nav/sidebar.css';
+@import './nav/ribbon.css';
+
+/* tabs */
+@import './tabs/tabbar.css';
+@import './tabs/tab-panel.css';
+@import './tabs/pagination.css';
+
+/* windows */
+@import './windows/window.css';
+@import './windows/dialog.css';
+
+/* richtext */
+@import './richtext/rich-text.css';
+
+/* data-views */
+@import './data-views/tree.css';
+@import './data-views/list.css';
+@import './data-views/data-view.css';

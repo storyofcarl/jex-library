@@ -1,0 +1,211 @@
+/* Grid columns / cells / editing / selection — token-pure styles.
+   All rules live inside @layer jects.components and reference ONLY --jects-*
+   tokens (no hardcoded color literals). The layer order is declared by
+   @jects/theme: reset, tokens, base, components, utilities. */
+
+@layer jects.components {
+  /* ── cell content variants ─────────────────────────────────────────── */
+  .jects-grid-cell--number {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+    font-family: var(--jects-font-family-mono);
+  }
+
+  .jects-grid-cell--action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    justify-content: center;
+  }
+
+  .jects-grid-cell__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--jects-space-1);
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: var(--jects-muted-foreground);
+    cursor: pointer;
+    transition: background-color var(--jects-duration-fast),
+      color var(--jects-duration-fast);
+  }
+
+  .jects-grid-cell__action:hover {
+    background: var(--jects-accent);
+    color: var(--jects-accent-foreground);
+  }
+
+  .jects-grid-cell__action:focus-visible {
+    outline: 2px solid var(--jects-ring);
+    outline-offset: 1px;
+  }
+
+  /* ── boolean check cell ────────────────────────────────────────────── */
+  .jects-grid-cell__check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1rem;
+    block-size: 1rem;
+    border: 1px solid var(--jects-border);
+    border-radius: var(--jects-radius-sm);
+    color: var(--jects-primary-foreground);
+  }
+
+  .jects-grid-cell__check--on {
+    background: var(--jects-primary);
+    border-color: var(--jects-primary);
+  }
+
+  /* ── rating cell (★ stars, editable) ───────────────────────────────── */
+  .jects-grid-cell--rating {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .jects-grid-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    line-height: 1;
+  }
+
+  .jects-grid-rating__star {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--jects-muted-foreground);
+    font-size: 1em;
+    line-height: 1;
+  }
+
+  .jects-grid-rating--editable .jects-grid-rating__star {
+    cursor: pointer;
+    transition: color var(--jects-duration-fast),
+      transform var(--jects-duration-fast);
+  }
+
+  .jects-grid-rating__star--on {
+    color: var(--jects-warning);
+  }
+
+  .jects-grid-rating--editable .jects-grid-rating__star:hover {
+    transform: scale(1.15);
+  }
+
+  .jects-grid-rating__star:focus-visible {
+    outline: 2px solid var(--jects-ring);
+    outline-offset: 1px;
+    border-radius: var(--jects-radius-sm);
+  }
+
+  /* ── widget cell (arbitrary mounted control) ───────────────────────── */
+  .jects-grid-cell--widget {
+    display: flex;
+    align-items: center;
+    min-inline-size: 0;
+  }
+
+  .jects-grid-widget {
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  /* ── row-number cell (auto sequential index) ───────────────────────── */
+  .jects-grid-cell--rownumber {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+    color: var(--jects-muted-foreground);
+    user-select: none;
+  }
+
+  /* ── inline editor host ────────────────────────────────────────────── */
+  .jects-grid-editor {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  /* ── selection visuals ─────────────────────────────────────────────── */
+  .jects-grid-cell--selected {
+    background: oklch(var(--jects-primary) / 0.12);
+    box-shadow: inset 0 0 0 1px oklch(var(--jects-primary) / 0.35);
+  }
+
+  .jects-grid-cell--focused {
+    box-shadow: inset 0 0 0 2px var(--jects-ring);
+  }
+
+  .jects-grid-row--selected {
+    background: oklch(var(--jects-primary) / 0.08);
+  }
+
+  /* ── frozen regions ────────────────────────────────────────────────── */
+  .jects-grid-col--frozen-left {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: var(--jects-z-sticky);
+    background: var(--jects-card);
+    box-shadow: 1px 0 0 0 var(--jects-border);
+  }
+
+  .jects-grid-col--frozen-right {
+    position: sticky;
+    inset-inline-end: 0;
+    z-index: var(--jects-z-sticky);
+    background: var(--jects-card);
+    box-shadow: -1px 0 0 0 var(--jects-border);
+  }
+
+  /* RTL: the frozen-start/-end sticky bands already mirror via inset-inline-*,
+     but the physical divider shadows must flip so the divider stays on the band's
+     inner (scrolling-content-facing) edge. */
+  [dir='rtl'] .jects-grid-col--frozen-left,
+  .jects-grid--rtl .jects-grid-col--frozen-left {
+    box-shadow: -1px 0 0 0 var(--jects-border);
+  }
+  [dir='rtl'] .jects-grid-col--frozen-right,
+  .jects-grid--rtl .jects-grid-col--frozen-right {
+    box-shadow: 1px 0 0 0 var(--jects-border);
+  }
+
+  /* ── column resize handle ──────────────────────────────────────────── */
+  .jects-grid-col__resizer {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: var(--jects-space-1);
+    cursor: col-resize;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .jects-grid-col__resizer:hover,
+  .jects-grid-col__resizer--active {
+    background: var(--jects-ring);
+  }
+
+  /* ── reorder drag affordance ───────────────────────────────────────── */
+  .jects-grid-col--dragging {
+    opacity: 0.6;
+    background: var(--jects-muted);
+  }
+
+  .jects-grid-col--drop-target {
+    box-shadow: inset 2px 0 0 0 var(--jects-primary);
+  }
+
+  /* ── spanned cells ─────────────────────────────────────────────────── */
+  .jects-grid-cell--span {
+    z-index: 1;
+    background: var(--jects-background);
+  }
+
+  .jects-grid-cell--covered {
+    display: none;
+  }
+}

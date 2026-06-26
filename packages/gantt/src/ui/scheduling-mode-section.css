@@ -1,0 +1,124 @@
+/* Gantt Advanced scheduling-mode section — the per-task scheduling mode
+   (Auto / Manual radiogroup), the constraint / direction (ASAP/ALAP) select with
+   its conditional constraint-date row, and the effort + effort-driven controls.
+
+   Token-pure: every colour is `oklch(var(--jects-*))`; spacing / radius / type use
+   the --jects-* scales. All rules live inside @layer jects.components so they
+   compose with the rest of the Gantt component layer (and drop cleanly into the
+   task editor's tab panel / form). No hardcoded colour literals. */
+@layer jects.components {
+  .jects-gantt__sched-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    padding: var(--jects-space-3);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+  }
+
+  .jects-gantt__sched-heading {
+    margin: 0;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* ── rows ──────────────────────────────────────────────────────────────── */
+  .jects-gantt__sched-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+
+  /* A `display:flex` row would otherwise override the UA `[hidden]` rule
+     (`display:none`), leaving the conditional constraint-date row laid out even
+     when `.hidden = true`. Re-assert the collapse for hidden rows. */
+  .jects-gantt__sched-row[hidden] {
+    display: none;
+  }
+
+  .jects-gantt__sched-row--check {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+
+  .jects-gantt__sched-row--radiogroup {
+    gap: var(--jects-space-2);
+  }
+
+  .jects-gantt__sched-label {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-gantt__sched-input {
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding: var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-gantt__sched-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    border-color: oklch(var(--jects-ring));
+  }
+
+  .jects-gantt__sched-input:disabled {
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted) / 0.5);
+    cursor: not-allowed;
+  }
+
+  /* ── scheduling-mode radios ────────────────────────────────────────────── */
+  .jects-gantt__sched-radio {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+
+  .jects-gantt__sched-radio-input {
+    accent-color: oklch(var(--jects-primary));
+    inline-size: 1rem;
+    block-size: 1rem;
+  }
+
+  .jects-gantt__sched-radio-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-gantt__sched-radio-label {
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* ── effort-driven checkbox ────────────────────────────────────────────── */
+  .jects-gantt__sched-check {
+    accent-color: oklch(var(--jects-primary));
+    inline-size: 1rem;
+    block-size: 1rem;
+  }
+
+  .jects-gantt__sched-check:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* While manually scheduled, the direction/constraint controls are disabled;
+     dim the label of any row whose input is disabled so the section reads as
+     "dates are pinned" (the radiogroup + effort labels stay full strength). */
+  .jects-gantt__sched-row:has(.jects-gantt__sched-input:disabled)
+    > .jects-gantt__sched-label {
+    color: oklch(var(--jects-muted-foreground));
+  }
+}

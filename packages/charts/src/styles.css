@@ -1,0 +1,5 @@
+/* Aggregated component styles — bundled into dist/style.css.
+   Each component's CSS lives next to its source and is imported here.
+   All rules MUST live inside @layer jects.components and reference only
+   --jects-* tokens (no hardcoded color literals). */
+@import './chart/chart.css';

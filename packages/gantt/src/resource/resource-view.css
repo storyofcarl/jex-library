@@ -1,0 +1,226 @@
+/* Gantt resources pane — rendered by `ResourceView`.
+
+   A flat, group-bucketed list of project resources (avatar/image, name, type,
+   capacity, hourly cost, allocation bar). Token-pure: every color is
+   `oklch(var(--jects-*))` and sizing uses the --jects-* space/radius/font scales.
+   All rules live inside @layer jects.components so they compose with the rest of
+   the Gantt component layer. */
+@layer jects.components {
+  .jects-resource-view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    padding: var(--jects-space-2);
+    overflow: auto;
+  }
+
+  .jects-resource-view__empty {
+    color: oklch(var(--jects-muted-foreground));
+    font-style: italic;
+    padding: var(--jects-space-2);
+    text-align: center;
+  }
+
+  /* ── group bucket ──────────────────────────────────────────────────────── */
+  .jects-resource-view__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-resource-view__group + .jects-resource-view__group {
+    margin-block-start: var(--jects-space-2);
+  }
+
+  .jects-resource-view__group-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-resource-view__group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jects-space-2);
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: oklch(var(--jects-muted-foreground));
+    padding-inline: var(--jects-space-1);
+    padding-block: var(--jects-space-1);
+    border-block-end: 1px solid oklch(var(--jects-border));
+  }
+
+  .jects-resource-view__group-count {
+    font-variant-numeric: tabular-nums;
+    background: oklch(var(--jects-muted));
+    color: oklch(var(--jects-muted-foreground));
+    border-radius: var(--jects-radius-xl);
+    padding-inline: var(--jects-space-2);
+    padding-block: 0;
+    min-inline-size: var(--jects-space-5);
+    text-align: center;
+  }
+
+  /* ── resource row ──────────────────────────────────────────────────────── */
+  .jects-resource-view__row {
+    display: grid;
+    grid-template-columns: auto 1fr minmax(5rem, auto);
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding-inline: var(--jects-space-2);
+    padding-block: var(--jects-space-2);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    cursor: grab;
+    user-select: none;
+  }
+
+  .jects-resource-view__row:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-resource-view__row:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-resource-view__row--dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+  }
+
+  .jects-resource-view__row--over {
+    border-color: oklch(var(--jects-destructive) / 0.6);
+    background: oklch(var(--jects-destructive) / 0.08);
+  }
+
+  /* ── avatar ────────────────────────────────────────────────────────────── */
+  .jects-resource-view__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-8);
+    block-size: var(--jects-space-8);
+    border-radius: var(--jects-radius-xl);
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    flex: 0 0 auto;
+    object-fit: cover;
+  }
+
+  .jects-resource-view__avatar--img {
+    background: oklch(var(--jects-muted));
+  }
+
+  .jects-resource-view__row--over .jects-resource-view__avatar {
+    background: oklch(var(--jects-destructive));
+    color: oklch(var(--jects-destructive-foreground));
+  }
+
+  /* ── main column ───────────────────────────────────────────────────────── */
+  .jects-resource-view__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    min-inline-size: 0;
+  }
+
+  .jects-resource-view__name {
+    font-weight: var(--jects-font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-resource-view__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-2);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-resource-view__type {
+    border-radius: var(--jects-radius-sm);
+    padding-inline: var(--jects-space-1);
+    border: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-secondary));
+    color: oklch(var(--jects-secondary-foreground));
+  }
+
+  .jects-resource-view__type--equipment {
+    background: oklch(var(--jects-cmyk-cyan-soft));
+    color: oklch(var(--jects-cmyk-key));
+  }
+
+  .jects-resource-view__type--material {
+    background: oklch(var(--jects-cmyk-yellow-soft));
+    color: oklch(var(--jects-cmyk-key));
+  }
+
+  .jects-resource-view__type--cost {
+    background: oklch(var(--jects-cmyk-magenta-soft));
+    color: oklch(var(--jects-cmyk-key));
+  }
+
+  .jects-resource-view__capacity,
+  .jects-resource-view__cost {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── allocation bar ────────────────────────────────────────────────────── */
+  .jects-resource-view__alloc {
+    position: relative;
+    inline-size: 100%;
+    min-inline-size: 4rem;
+    block-size: var(--jects-space-5);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-muted));
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .jects-resource-view__alloc-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: oklch(var(--jects-success));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-resource-view__alloc--over .jects-resource-view__alloc-fill {
+    background: oklch(var(--jects-destructive));
+  }
+
+  .jects-resource-view__alloc-label {
+    position: relative;
+    z-index: 1;
+    margin-inline: auto;
+    font-size: var(--jects-font-size-xs);
+    font-variant-numeric: tabular-nums;
+    color: oklch(var(--jects-foreground));
+    mix-blend-mode: normal;
+  }
+
+  /* ── drop target highlight (applied to a registered task drop zone) ──────── */
+  .jects-resource-view-drop-over {
+    outline: 2px dashed oklch(var(--jects-ring));
+    outline-offset: 2px;
+    background: oklch(var(--jects-accent) / 0.4);
+  }
+}

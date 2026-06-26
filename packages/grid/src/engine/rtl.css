@@ -1,0 +1,32 @@
+/* Grid RTL (right-to-left) support — token-pure, logical-direction styles.
+   All rules live inside @layer jects.components and reference ONLY --jects-*
+   tokens (no hardcoded color literals).
+
+   The renderer positions cells with logical insets (inset-inline-start/-end)
+   under dir=rtl and adds the `.jects-grid--rtl` marker class to the scroll host,
+   so the band layout mirrors automatically. These rules cover the few remaining
+   *physical*-direction affordances (divider shadows, scroll origin hints) that
+   logical properties alone can't express, scoped to either an explicit `dir`
+   attribute anywhere up the chain OR the renderer's marker class. */
+@layer jects.components {
+  /* The header/body/rows containers anchor at the inline-start edge; under RTL
+     that resolves to the RIGHT edge, which is exactly what the logical cell
+     insets are measured against. Keep them logical so no override is needed. */
+  [dir='rtl'] .jects-grid__header,
+  [dir='rtl'] .jects-grid__header-row,
+  [dir='rtl'] .jects-grid__rows,
+  .jects-grid--rtl .jects-grid__header,
+  .jects-grid--rtl .jects-grid__header-row,
+  .jects-grid--rtl .jects-grid__rows {
+    inset-inline-start: 0;
+  }
+
+  /* The frozen group-row lead cell sticks to the inline-start edge; under RTL it
+     should keep sticking to the reading start (visual right). It already uses
+     inset-inline-start via the group-row stylesheet, so nothing physical to flip
+     — this rule documents the contract and guards against a stray physical left. */
+  [dir='rtl'] .jects-grid-group__lead,
+  .jects-grid--rtl .jects-grid-group__lead {
+    inset-inline-start: 0;
+  }
+}

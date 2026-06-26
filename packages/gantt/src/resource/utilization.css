@@ -1,0 +1,192 @@
+/* Gantt **Resource Utilization** grid — rendered by `ResourceUtilizationView`.
+
+   A dense resources(rows) × time-buckets(cols) allocation matrix with expandable
+   per-task drill-down rows. Token-pure: every color is `oklch(var(--jects-*))`;
+   sizing uses the --jects-* space / radius / font scales. Cell allocation
+   intensity is driven by the `--jects-util-ratio` custom property (0..1) the view
+   sets per gridcell, mixed against the accent token — no hardcoded color stops.
+
+   All rules live inside @layer jects.components so they compose with the rest of
+   the Gantt component layer. */
+@layer jects.components {
+  .jects-resource-util {
+    --jects-util-cell-min: 3.5rem;
+    display: grid;
+    grid-auto-rows: min-content;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    overflow: auto;
+    inline-size: 100%;
+  }
+
+  .jects-resource-util__row {
+    display: flex;
+    align-items: stretch;
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+  }
+
+  .jects-resource-util__row:last-child {
+    border-block-end: none;
+  }
+
+  .jects-resource-util__row--header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 2;
+    background: oklch(var(--jects-muted));
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  .jects-resource-util__row--resource:hover {
+    background: oklch(var(--jects-accent) / 0.25);
+  }
+
+  .jects-resource-util__row--task {
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+
+  .jects-resource-util__row--over {
+    box-shadow: inset 3px 0 0 0 oklch(var(--jects-destructive));
+  }
+
+  .jects-resource-util__cell {
+    flex: 1 0 var(--jects-util-cell-min);
+    min-inline-size: var(--jects-util-cell-min);
+    padding-inline: var(--jects-space-2);
+    padding-block: var(--jects-space-1);
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+    border-inline-end: 1px solid oklch(var(--jects-border) / 0.4);
+    box-sizing: border-box;
+  }
+
+  .jects-resource-util__cell:last-child {
+    border-inline-end: none;
+  }
+
+  .jects-resource-util__cell:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-resource-util__cell--header {
+    text-align: center;
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* Leading resource-name column (rowheader + the header corner). */
+  .jects-resource-util__rowhead,
+  .jects-resource-util__corner {
+    flex: 0 0 12rem;
+    min-inline-size: 12rem;
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    text-align: start;
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    background: inherit;
+  }
+
+  .jects-resource-util__row--header .jects-resource-util__corner {
+    background: oklch(var(--jects-muted));
+  }
+
+  .jects-resource-util__row--resource .jects-resource-util__rowhead {
+    background: oklch(var(--jects-background));
+  }
+
+  .jects-resource-util__rowhead--task {
+    padding-inline-start: var(--jects-space-4);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-resource-util__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-resource-util__twisty {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-5);
+    block-size: var(--jects-space-5);
+    padding: 0;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: oklch(var(--jects-foreground));
+    cursor: pointer;
+    font-size: var(--jects-font-size-xs);
+    line-height: 1;
+  }
+
+  .jects-resource-util__twisty:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-resource-util__twisty:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-resource-util__twisty--leaf {
+    cursor: default;
+    visibility: hidden;
+  }
+
+  .jects-resource-util__over-flag {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-4);
+    block-size: var(--jects-space-4);
+    border-radius: var(--jects-radius-xl);
+    background: oklch(var(--jects-destructive));
+    color: oklch(var(--jects-destructive-foreground));
+    font-weight: var(--jects-font-weight-bold);
+    font-size: var(--jects-font-size-xs);
+    line-height: 1;
+  }
+
+  /* ── allocated cell intensity ─────────────────────────────────────────────
+     `--jects-util-ratio` (0..1) is set per cell by the view. We tint the cell
+     background by mixing the accent token toward transparent by that ratio, so a
+     fuller bucket reads darker. Pure token math — no literal colors. */
+  .jects-resource-util__cell--alloc {
+    background: color-mix(
+      in oklch,
+      oklch(var(--jects-primary)) calc(var(--jects-util-ratio, 0) * 55%),
+      transparent
+    );
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-resource-util__cell--idle {
+    color: oklch(var(--jects-muted-foreground) / 0.5);
+  }
+
+  /* A SOLID destructive fill with its paired foreground reads as a strong,
+     unmistakable over-allocation cell and clears WCAG AA (white-on-pale-tint or
+     dark-ink-on-pale-tint both fall short). */
+  .jects-resource-util__cell--over {
+    background: oklch(var(--jects-destructive));
+    color: oklch(var(--jects-destructive-foreground));
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  .jects-resource-util__cell--total {
+    font-weight: var(--jects-font-weight-semibold);
+    background: oklch(var(--jects-muted) / 0.5);
+  }
+}

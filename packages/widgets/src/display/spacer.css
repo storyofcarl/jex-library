@@ -1,0 +1,15 @@
+/* Spacer styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-spacer {
+    display: block;
+    flex: none;
+  }
+
+  .jects-spacer--horizontal {
+    display: inline-block;
+  }
+
+  .jects-spacer--grow {
+    align-self: stretch;
+  }
+}

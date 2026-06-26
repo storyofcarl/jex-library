@@ -1,0 +1,222 @@
+/* Kanban card template — references ONLY --jects-* tokens. */
+@layer jects.components {
+  .jects-kanban-card {
+    --_kb-tag: oklch(var(--jects-muted-foreground));
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    padding: var(--jects-space-3);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-sm);
+    cursor: grab;
+    /* Let the browser own panning until a deliberate long-press lifts the card;
+       this keeps touch scrolling smooth while still allowing drag. */
+    touch-action: pan-y;
+    transition:
+      border-color var(--jects-duration-fast) ease,
+      box-shadow var(--jects-duration-fast) ease,
+      transform var(--jects-duration-fast) ease;
+  }
+  .jects-kanban-card:hover {
+    box-shadow: var(--jects-shadow-md);
+  }
+  .jects-kanban-card:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-kanban-card--selected {
+    border-color: oklch(var(--jects-primary));
+    box-shadow: 0 0 0 2px oklch(var(--jects-primary) / 0.4);
+  }
+
+  .jects-kanban-card__head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--jects-space-2);
+  }
+  .jects-kanban-card__head-main {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .jects-kanban-card__title {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    line-height: 1.3;
+    color: oklch(var(--jects-foreground));
+    overflow-wrap: anywhere;
+  }
+  .jects-kanban-card__desc {
+    font-size: var(--jects-font-size-xs);
+    line-height: 1.4;
+    color: oklch(var(--jects-foreground));
+    overflow-wrap: anywhere;
+  }
+
+  .jects-kanban-card__avatar {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--jects-radius-xl);
+    overflow: hidden;
+    background: oklch(var(--jects-muted));
+    color: oklch(var(--jects-foreground));
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+  }
+  .jects-kanban-card__avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .jects-kanban-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--jects-space-1);
+  }
+  .jects-kanban-card__tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--jects-space-2);
+    height: 1.25rem;
+    font-size: var(--jects-font-size-xs);
+    border-radius: var(--jects-radius-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-muted) / 0.6);
+    border: 1px solid var(--_kb-tag);
+  }
+
+  .jects-kanban-card__progress {
+    height: 0.375rem;
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-muted));
+    overflow: hidden;
+  }
+  .jects-kanban-card__progress-bar {
+    height: 100%;
+    background: oklch(var(--jects-primary));
+    border-radius: inherit;
+    transition: width var(--jects-duration-normal) ease;
+  }
+
+  .jects-kanban-card__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+  .jects-kanban-card__body-item {
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-kanban-card__quick-edit {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-ring));
+    border-radius: var(--jects-radius-sm);
+    padding: var(--jects-space-1) var(--jects-space-2);
+  }
+  .jects-kanban-card__quick-edit:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── rich content: cover ── */
+  .jects-kanban-card__cover {
+    margin: calc(-1 * var(--jects-space-3)) calc(-1 * var(--jects-space-3)) 0;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    overflow: hidden;
+    height: 7rem;
+    background: oklch(var(--jects-muted));
+  }
+  .jects-kanban-card__cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ── rich content: meta badges (attachments / comments / votes) ── */
+  .jects-kanban-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+  .jects-kanban-card__meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    font-variant-numeric: tabular-nums;
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-kanban-card__votes {
+    appearance: none;
+    font: inherit;
+    font-size: var(--jects-font-size-xs);
+    padding: 0 var(--jects-space-2);
+    height: 1.25rem;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-muted) / 0.6);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+  .jects-kanban-card__votes:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-kanban-card__votes:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-kanban-card__votes--on {
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border-color: oklch(var(--jects-primary));
+  }
+
+  /* ── rich content: related-card link chips ── */
+  .jects-kanban-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--jects-space-1);
+  }
+  .jects-kanban-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: 0 var(--jects-space-2);
+    height: 1.25rem;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-accent) / 0.4);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  /* ── touch long-press affordance ── */
+  .jects-kanban-card--press {
+    background: oklch(var(--jects-accent) / 0.5);
+  }
+  .jects-kanban-card--lifted {
+    transform: scale(1.03);
+    box-shadow: var(--jects-shadow-lg);
+    /* While lifted, the browser must NOT pan — the card is being dragged. */
+    touch-action: none;
+  }
+}

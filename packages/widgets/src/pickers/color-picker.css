@@ -1,0 +1,266 @@
+/*
+ * ColorPicker styles — CHROME references ONLY --jects-* tokens (no hard-coded colors).
+ *
+ * Dynamic USER-chosen colors are supplied at runtime via inline custom properties
+ * (--_swatch, --_hue, --_thumb, --_preview, --_alpha-color) set by the JS. Those
+ * `var(--_*)` references carry no hard-coded literal in this stylesheet, so the
+ * chrome stays token-pure per GATE C3/G6.
+ */
+@layer jects.components {
+  .jects-colorpicker {
+    position: relative;
+    display: inline-block;
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* ---- trigger ---- */
+  .jects-colorpicker__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    height: 2.5rem;
+    padding-inline: var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+    font-family: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+    transition:
+      border-color var(--jects-duration-fast) ease,
+      box-shadow var(--jects-duration-fast) ease;
+  }
+  .jects-colorpicker__trigger:hover {
+    border-color: oklch(var(--jects-ring));
+  }
+  .jects-colorpicker__trigger:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-colorpicker__trigger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .jects-colorpicker__trigger-swatch {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: var(--jects-radius-sm);
+    border: 1px solid oklch(var(--jects-border));
+    background-color: var(--_swatch);
+  }
+  .jects-colorpicker__trigger-text {
+    font-family: var(--jects-font-family-mono);
+    font-variant-numeric: tabular-nums;
+    text-transform: uppercase;
+  }
+
+  /* ---- popover ----
+     Portaled to document.body while open and positioned `fixed` by JS so it
+     escapes any clipping/overflow ancestor; JS owns top/left, CSS owns chrome. */
+  .jects-colorpicker__popover {
+    position: fixed;
+    z-index: var(--jects-z-popover);
+    width: 16rem;
+    padding: var(--jects-space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    box-shadow: var(--jects-shadow-lg);
+  }
+  .jects-colorpicker__popover[hidden] {
+    display: none;
+  }
+
+  /* ---- saturation / value area ---- */
+  .jects-colorpicker__sv {
+    position: relative;
+    width: 100%;
+    height: 9rem;
+    border-radius: var(--jects-radius-md);
+    cursor: crosshair;
+    touch-action: none;
+    /* Hue base + white/black overlays are USER/algorithmic colors supplied at runtime
+       via inline custom properties (--_hue, --_white, --_black) set by the JS, so this
+       stylesheet stays free of color literals (GATE C3/G6). The overlays build the
+       standard saturation (→ white) / value (→ black) SV gradient. */
+    background-color: var(--_hue);
+    background-image:
+      linear-gradient(to top, var(--_black), transparent),
+      linear-gradient(to right, var(--_white), transparent);
+  }
+  .jects-colorpicker__sv:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-colorpicker__sv-thumb {
+    position: absolute;
+    width: 0.875rem;
+    height: 0.875rem;
+    transform: translate(-50%, -50%);
+    border-radius: var(--jects-radius-xl);
+    border: 2px solid oklch(var(--jects-background));
+    box-shadow: var(--jects-shadow-sm);
+    background-color: var(--_thumb);
+    pointer-events: none;
+  }
+
+  /* ---- sliders row ---- */
+  .jects-colorpicker__sliders {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-3);
+  }
+  .jects-colorpicker__slider-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+  }
+  .jects-colorpicker__preview {
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+    border-radius: var(--jects-radius-md);
+    border: 1px solid oklch(var(--jects-border));
+    background-color: var(--_preview);
+  }
+
+  .jects-colorpicker__hue,
+  .jects-colorpicker__alpha {
+    width: 100%;
+    height: 0.75rem;
+    margin: 0;
+    border-radius: var(--jects-radius-xl);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+  }
+  .jects-colorpicker__hue {
+    /* Full-spectrum hue rail is supplied at runtime via --_hue-rail (inline gradient set
+       by the JS), keeping the stylesheet literal-free. A token-based fallback covers the
+       no-JS case using the data ramp + cmyk palette. */
+    background-image: var(
+      --_hue-rail,
+      linear-gradient(
+        to right,
+        oklch(var(--jects-destructive)),
+        oklch(var(--jects-cmyk-yellow)),
+        oklch(var(--jects-success)),
+        oklch(var(--jects-cmyk-cyan)),
+        oklch(var(--jects-data-5)),
+        oklch(var(--jects-cmyk-magenta)),
+        oklch(var(--jects-destructive))
+      )
+    );
+  }
+  .jects-colorpicker__alpha {
+    /* live color over a muted track (runtime --_alpha-color) */
+    background-image:
+      linear-gradient(to right, transparent, var(--_alpha-color));
+    background-color: oklch(var(--jects-muted));
+  }
+  .jects-colorpicker__alpha[hidden] {
+    display: none;
+  }
+  .jects-colorpicker__hue::-webkit-slider-thumb,
+  .jects-colorpicker__alpha::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: var(--jects-radius-xl);
+    background: oklch(var(--jects-background));
+    border: 2px solid oklch(var(--jects-foreground));
+    box-shadow: var(--jects-shadow-sm);
+    cursor: pointer;
+  }
+  .jects-colorpicker__hue::-moz-range-thumb,
+  .jects-colorpicker__alpha::-moz-range-thumb {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: var(--jects-radius-xl);
+    background: oklch(var(--jects-background));
+    border: 2px solid oklch(var(--jects-foreground));
+    box-shadow: var(--jects-shadow-sm);
+    cursor: pointer;
+  }
+  .jects-colorpicker__hue:focus-visible,
+  .jects-colorpicker__alpha:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ---- hex + rgb inputs ---- */
+  .jects-colorpicker__inputs {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: var(--jects-space-2);
+  }
+  .jects-colorpicker__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    min-width: 0;
+  }
+  .jects-colorpicker__field-label {
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+    text-align: center;
+  }
+  .jects-colorpicker__hex,
+  .jects-colorpicker__num {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    height: 1.75rem;
+    padding-inline: var(--jects-space-2);
+    font-size: var(--jects-font-size-xs);
+    font-family: var(--jects-font-family-mono);
+    text-align: center;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-sm);
+  }
+  .jects-colorpicker__hex:focus-visible,
+  .jects-colorpicker__num:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ---- swatches ---- */
+  .jects-colorpicker__swatches {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: var(--jects-space-1);
+  }
+  .jects-colorpicker__swatch {
+    aspect-ratio: 1;
+    padding: 0;
+    border-radius: var(--jects-radius-sm);
+    border: 1px solid oklch(var(--jects-border));
+    background-color: var(--_swatch);
+    cursor: pointer;
+    transition: transform var(--jects-duration-fast) ease;
+  }
+  .jects-colorpicker__swatch:hover {
+    transform: scale(1.1);
+  }
+  .jects-colorpicker__swatch:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-colorpicker--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}

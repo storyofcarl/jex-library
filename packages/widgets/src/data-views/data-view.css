@@ -1,0 +1,79 @@
+/* DataView styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-dataview {
+    display: block;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    outline: none;
+  }
+
+  .jects-dataview:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-dataview__grid {
+    display: grid;
+    box-sizing: border-box;
+  }
+
+  .jects-dataview__grid--empty {
+    display: block;
+  }
+
+  .jects-dataview__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    padding: var(--jects-space-4);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    box-shadow: var(--jects-shadow-sm);
+    cursor: pointer;
+    user-select: none;
+    transition:
+      border-color var(--jects-duration-fast) ease,
+      box-shadow var(--jects-duration-fast) ease,
+      background-color var(--jects-duration-fast) ease;
+  }
+
+  .jects-dataview__card:hover {
+    border-color: oklch(var(--jects-ring));
+    box-shadow: var(--jects-shadow-md);
+  }
+
+  .jects-dataview__card--selected {
+    border-color: oklch(var(--jects-primary));
+    background: oklch(var(--jects-primary) / 0.08);
+  }
+
+  .jects-dataview__card--active {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-dataview__title {
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-dataview__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--jects-space-8);
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted) / 0.3);
+    border: 1px dashed oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+}

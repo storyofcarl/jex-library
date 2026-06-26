@@ -1,0 +1,87 @@
+{
+  "name": "@jects/react",
+  "version": "0.0.0",
+  "description": "Jects UI React wrapper — thin, typed React bindings over the framework-agnostic @jects/* engines. One generic factory, per-component typed exports (props in, on* events out, ref for imperative access).",
+  "license": "UNLICENSED",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/react.js",
+      "require": "./dist/react.umd.cjs"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "module": "./dist/react.js",
+  "main": "./dist/react.umd.cjs",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "@jects/core": "workspace:*",
+    "@jects/grid": "workspace:*",
+    "@jects/gantt": "workspace:*",
+    "@jects/scheduler": "workspace:*",
+    "@jects/calendar": "workspace:*",
+    "@jects/kanban": "workspace:*",
+    "@jects/todo": "workspace:*",
+    "@jects/charts": "workspace:*",
+    "@jects/diagram": "workspace:*",
+    "@jects/spreadsheet": "workspace:*",
+    "@jects/pivot": "workspace:*",
+    "@jects/booking": "workspace:*",
+    "@jects/chatbot": "workspace:*",
+    "@jects/widgets": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@jects/grid": { "optional": true },
+    "@jects/gantt": { "optional": true },
+    "@jects/scheduler": { "optional": true },
+    "@jects/calendar": { "optional": true },
+    "@jects/kanban": { "optional": true },
+    "@jects/todo": { "optional": true },
+    "@jects/charts": { "optional": true },
+    "@jects/diagram": { "optional": true },
+    "@jects/spreadsheet": { "optional": true },
+    "@jects/pivot": { "optional": true },
+    "@jects/booking": { "optional": true },
+    "@jects/chatbot": { "optional": true },
+    "@jects/widgets": { "optional": true }
+  },
+  "devDependencies": {
+    "@jects/core": "workspace:*",
+    "@jects/grid": "workspace:*",
+    "@jects/gantt": "workspace:*",
+    "@jects/scheduler": "workspace:*",
+    "@jects/calendar": "workspace:*",
+    "@jects/kanban": "workspace:*",
+    "@jects/todo": "workspace:*",
+    "@jects/charts": "workspace:*",
+    "@jects/diagram": "workspace:*",
+    "@jects/spreadsheet": "workspace:*",
+    "@jects/pivot": "workspace:*",
+    "@jects/booking": "workspace:*",
+    "@jects/chatbot": "workspace:*",
+    "@jects/widgets": "workspace:*",
+    "@jects/vite-config": "workspace:*",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "jsdom": "^25.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.4.0",
+    "vitest": "^2.1.8"
+  }
+}

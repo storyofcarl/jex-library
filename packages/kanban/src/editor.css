@@ -1,0 +1,83 @@
+/* Card editor form (rendered inside a reused Window) — token-only. */
+@layer jects.components {
+  .jects-kanban-editor__host {
+    overflow: auto;
+  }
+  .jects-kanban-editor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-kanban-editor__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+  .jects-kanban-editor__label {
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-kanban-editor__input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 2.25rem;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    font: inherit;
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+  }
+  .jects-kanban-editor__input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-kanban-editor__textarea {
+    resize: vertical;
+    min-height: 4rem;
+  }
+
+  .jects-kanban-editor__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--jects-space-2);
+    margin-top: var(--jects-space-2);
+  }
+  .jects-kanban-editor__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.25rem;
+    padding-inline: var(--jects-space-4);
+    font: inherit;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+  }
+  .jects-kanban-editor__btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-kanban-editor__btn--cancel {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border-color: oklch(var(--jects-border));
+  }
+  .jects-kanban-editor__btn--cancel:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-kanban-editor__btn--save {
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+  }
+  .jects-kanban-editor__btn--save:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+}

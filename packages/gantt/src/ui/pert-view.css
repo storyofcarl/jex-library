@@ -1,0 +1,145 @@
+/* Gantt PERT / network-diagram view — an activity-on-node graph of the same
+   tasks the bars render, laid out by topological rank with the critical path
+   emphasised, plus basic pan/zoom.
+
+   House style "Cool Zinc + Calm CMYK": node boxes are calm cards
+   (--jects-card / --jects-border); the critical path is drawn in
+   --jects-destructive (the universal "this is the bottleneck" accent, matching
+   the critical-path bars in the timeline pane); milestones reuse the calm
+   magenta milestone accent. All rules live inside @layer jects.components and
+   reference ONLY --jects-* tokens — no hardcoded colour literals. */
+
+@layer jects.components {
+  .jects-pert {
+    position: relative;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: hidden;
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    /* Pan affordance. */
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .jects-pert:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-pert--panning {
+    cursor: grabbing;
+  }
+
+  .jects-pert__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    /* Faint network-diagram grid backdrop in the neutral muted tint. */
+    background-image:
+      linear-gradient(oklch(var(--jects-muted) / 0.5) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(var(--jects-muted) / 0.5) 1px, transparent 1px);
+    background-size: var(--jects-space-8) var(--jects-space-8);
+  }
+
+  /* ── Edges ─────────────────────────────────────────────────────────────── */
+  .jects-pert__edge {
+    stroke: oklch(var(--jects-muted-foreground));
+    stroke-width: 1.5;
+    fill: none;
+  }
+
+  .jects-pert__edge--critical {
+    stroke: oklch(var(--jects-destructive));
+    stroke-width: 2.25;
+  }
+
+  .jects-pert__arrow {
+    fill: oklch(var(--jects-muted-foreground));
+    stroke: none;
+  }
+
+  .jects-pert__arrow--critical {
+    fill: oklch(var(--jects-destructive));
+    stroke: none;
+  }
+
+  /* ── Node boxes ────────────────────────────────────────────────────────── */
+  .jects-pert__node {
+    cursor: pointer;
+  }
+
+  .jects-pert__box {
+    fill: oklch(var(--jects-card));
+    stroke: oklch(var(--jects-border));
+    stroke-width: 1.5;
+  }
+
+  .jects-pert__node:hover .jects-pert__box {
+    stroke: oklch(var(--jects-ring));
+  }
+
+  .jects-pert__node:focus-visible {
+    outline: none;
+  }
+
+  .jects-pert__node:focus-visible .jects-pert__box {
+    stroke: oklch(var(--jects-ring));
+    stroke-width: 2.5;
+  }
+
+  /* Critical-path nodes: destructive-tinted slab + accent border. */
+  .jects-pert__node--critical .jects-pert__box {
+    fill: oklch(var(--jects-destructive) / 0.08);
+    stroke: oklch(var(--jects-destructive));
+    stroke-width: 2;
+  }
+
+  /* Milestones: magenta accent border (zero-duration). */
+  .jects-pert__node--milestone .jects-pert__box {
+    stroke: oklch(var(--jects-cmyk-magenta));
+    stroke-dasharray: 4 3;
+  }
+
+  /* ── Node text ─────────────────────────────────────────────────────────── */
+  .jects-pert__title {
+    fill: oklch(var(--jects-card-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  .jects-pert__id {
+    fill: oklch(var(--jects-muted-foreground));
+    font-family: var(--jects-font-family-mono);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-pert__dates {
+    fill: oklch(var(--jects-foreground));
+    font-family: var(--jects-font-family-mono);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-pert__meta {
+    fill: oklch(var(--jects-muted-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-pert__node--critical .jects-pert__title {
+    fill: oklch(var(--jects-destructive));
+  }
+
+  /* High-contrast: thicken strokes so the graph survives forced-colours mode. */
+  @media (prefers-contrast: more) {
+    .jects-pert__box {
+      stroke-width: 2.5;
+    }
+
+    .jects-pert__edge {
+      stroke-width: 2;
+    }
+  }
+}

@@ -1,171 +1,103 @@
-# Jects UI — Roadmap & Orchestration Plan
+# Jects UI — Commercial Readiness Roadmap
 
-How we build the v1 of the suite with a fleet of concurrent agents, while keeping a single coherent
-architecture. Read `PLAN.md` first for the locked decisions and component inventory.
+> The v1 **feature build** (original Waves 0–6, see `PLAN.md` for locked architecture) is essentially
+> complete: all ~18 packages are implemented, themed, tested, and deployed to the live gallery
+> (<https://jexlibrary.vercel.app>). This roadmap is the next chapter — turning a credible codebase into
+> a **credible commercial product**. It supersedes the old build plan as the active roadmap.
 
-Time is measured in **waves** (a wave = a batch of agents running concurrently), not calendar dates,
-since the work is AI-parallelized. Each wave ends with an **integration gate**: the orchestrator
-(me) reviews, runs build/tests, resolves contract drift, and only then opens the next wave.
+## Positioning (the north star)
 
----
+Jects UI is **a framework-agnostic enterprise planning & data UI suite** — grids, scheduling, Gantt,
+dashboards, diagrams, spreadsheets, forms, and productivity workflows, built on one engine, one design
+system, one theming model, with clean TypeScript APIs, accessible defaults, and no framework lock-in.
 
-## Guiding Principles
+We **do not** describe it as a "replica" of any competitor. Competitor names appear only inside
+controlled feature-comparison matrices.
 
-1. **Contracts before components.** Nothing fans out until Wave 0 freezes the core APIs + token contract.
-2. **One agent owns one package** (or one cohesive cluster). No two agents edit the same file.
-3. **Every agent gets the same brief preamble:** the locked decisions (D1–D12), the `Widget`/`Store`/event
-   contracts, the token list, the reference Button implementation, and the package/test conventions.
-4. **Integration gate after each wave:** `pnpm build && pnpm typecheck && pnpm test` must be green;
-   visual-regression snapshots reviewed; API drift reconciled before the next wave opens.
-5. **Docs + tests are part of "done"** for every component, not a later phase.
-6. **Orchestrator reserves context** — agents return concise structured summaries (files created, public
-   API, deviations), not full file dumps.
+## The core problem (from the audit)
 
----
+The **code is ahead of the public product.** The implementation depth is real; the gap is
+**positioning, proof, documentation, demos at scale, security formalization, and integration storytelling.**
+Most per-module "feature upgrades" the audit asked for already exist in source — so this roadmap is
+weighted toward **proving and presenting**, not re-building.
 
-## Wave 0 — Foundation (NOT parallelized; one coherent build) ★ blocking
+## How we execute
 
-Goal: a buildable monorepo where `Button` works, is themed, is tested, and documented — the template
-every other component copies.
+- **Orchestrator + workflows.** I (the orchestrator) keep context lean and run the fleet. **Use the
+  Workflow tool wherever the work fans out** (per-package / per-surface / per-demo); use single subagents
+  for one-off cohesive tasks. I personally handle only **auditing, setup, and menial tasks**.
+- **Raw-verify everything.** Workflow/agent self-reports are not trusted — every output is independently
+  gated (tsc 0 · capped tests · build · live Playwright check) before it's "done." (Agents have twice
+  reported "done" on broken/incomplete work this program.)
+- **Deploy per cohesive batch** to the live gallery and re-verify live.
+- **Wrappers are LAST.** No `@jects/react|vue|angular|elements` work until the **core is finished**
+  (Phases 1–2 complete and gated). Building wrappers over a still-moving API wastes effort.
 
-- **0.1 Monorepo scaffold:** pnpm workspaces, Turborepo, `tsconfig.base`, shared Vite lib preset,
-  ESLint/Prettier, Changesets, CI skeleton, `exports`-map + CSS-layer conventions.
-- **0.2 `@jects/core`:** signals/reactivity · `Widget` base + lifecycle · `Store` (DataCollection) ·
-  `TreeStore` · typed `EventEmitter` + delegated DOM events · DOM utils (measure/focus/a11y/RTL) ·
-  virtualization math (windowing + offset index) · factory/type registry.
-- **0.3 `@jects/tokens`:** OKLCH 3-tier tokens, Style Dictionary build → CSS vars + SCSS + TS types.
-- **0.4 `@jects/theme`:** `base.css`, `dark.css`, high-contrast, 1–2 branded presets; `@layer` structure.
-- **0.5 `@jects/icons`:** icon set + delivery (SVG sprite / inline).
-- **0.6 Reference component `Button`** (in `@jects/widgets`) end-to-end: imperative API, themed CSS using
-  only tokens, Vitest browser test, Storybook/playground story, docs page.
-- **0.7 App skeletons:** `apps/docs` shell, `apps/customizer` shell (reads the token contract live).
-- **0.8 The "Component Author's Guide"** (`docs/CONTRIBUTING-COMPONENTS.md`) — the canonical brief handed
-  to every Wave 1+ agent.
-
-**Gate 0:** repo builds; Button renders, themes (light/dark), passes tests; customizer can recolor Button live.
+**Legend** — Owner: `[WF]` workflow fan-out · `[AGENT]` single subagent · `[ORCH]` orchestrator does it.
+Status: ✅ done · 🟡 partial · ⬜ todo.
 
 ---
 
-## Wave 1 — Primitives & Form Controls (high parallelism — ~8 agents)
+## Phase 1 — Trust, Positioning & Hygiene  *(fast, prerequisite-free, no feature work)*
 
-All extend `Widget`, theme via tokens, reuse Button patterns. Clustered so each agent owns a coherent set.
+| # | Task | Owner | Status | Acceptance |
+|---|------|-------|--------|-----------|
+| 1.1 | **De-"replica" positioning** — rewrite README hero + the new identity statement; update all 18 `package.json` `description` fields; update gallery hero/landing copy. | `[ORCH]` README/gallery · `[WF]` 18 descriptions | ⬜ | No "replica/clone" in repo or deploy; identity statement consistent. |
+| 1.2 | **Generated capability matrix** — a script that scans every package for features × {demo, unit test, browser test, a11y test, doc} and emits `docs/MATRIX.md`. Replaces the rot-prone `PARITY.md`. | `[ORCH]` author script · `[AGENT]` fill gaps | ⬜ | `pnpm matrix` regenerates; no stale "missing" rows for shipped features. |
+| 1.3 | **Correct `.mpp` wording** — code comments + gantt docs state MSPDI-XML-in-OLE2 round-trip honestly (not native binary parsing). | `[AGENT]` | ⬜ | No overstated `.mpp` claims anywhere. |
+| 1.4 | **Deploy/site hygiene** — strip dev comments from `deploy/index.html`; add favicon + app icons; self-host or system-stack fonts; **lazy-load gallery modules by route** (stop importing all 14 packages upfront). | `[AGENT]` | ⬜ | No dev comments/CDN-font dependency; favicon present; route loads only its module. |
+| 1.5 | **Per-module docs** (Overview/Install/Integration/Features/Quickstart/Config/Methods/Events/Examples/Theming). | `[WF]` | ✅ | 18 docs + index under `docs/modules/` (done this session). |
+| 1.6 | **Security spec** — author the `text` (always escaped) vs `html`/`TrustedHtml` (explicit, sanitized) API contract + the surface inventory to harden. | `[ORCH]` | ⬜ | Spec doc that Phase 2.5 implements against. |
 
-| Agent | Cluster |
-|-------|---------|
-| 1A | Text inputs: TextField, NumberField, TextArea, DisplayField, Label, Link |
-| 1B | Choice: Select, ComboBox (autocomplete/multiselect), Checkbox(Group), Radio(Group), Toggle/Switch |
-| 1C | Range/visual: Slider, RangeSlider, Rating, ProgressBar, Badge, Avatar, Spacer |
-| 1D | Date/time: DatePicker, TimePicker, DateTimeField, Calendar (mini/date-picker) |
-| 1E | ColorPicker, FilePicker/Vault (upload) |
-| 1F | Overlays: Tooltip, Popup, Mask/Overlay |
-| 1G | Message/Toast + alert/confirm/prompt dialogs |
-| 1H | Tree, List (virtual), DataView (templated) — data-bound primitives on `Store`/`TreeStore` |
-
-**Gate 1:** all primitives build/test/theme; added to docs + customizer preview grid.
+**Gate 1:** positioning clean across repo + deploy; matrix generates and is accurate; `.mpp` honest;
+deploy hygiene shipped; security spec written.
 
 ---
 
-## Wave 2 — Composites & Navigation (parallel — ~6 agents)
+## Phase 2 — Prove & Polish the CORE  *("finishing the core")*
 
-Depend on Wave 1 primitives.
+Mostly **workflows** (fan-out per module / surface / scenario).
 
-| Agent | Component |
-|-------|-----------|
-| 2A | **Form** (builder + validation engine; composes all Wave-1 controls) |
-| 2B | **Layout** (resizable/collapsible cells) + Splitter + Panel + Container |
-| 2C | Nav family: Toolbar, Menu, ContextMenu, Sidebar, Ribbon (shared TreeStore core) |
-| 2D | Tabbar/TabPanel + Pagination |
-| 2E | **Window**/Dialog (movable/resizable/modal) |
-| 2F | RichText editor (independent leaf) |
+| # | Task | Owner | Status | Acceptance |
+|---|------|-------|--------|-----------|
+| 2.1 | **Docs/product site shell** — replace the gallery harness with a real docs site: global search, grouped sidebar, and per-component tabs (Overview · Live demo · Code · API · Events · Theming · A11y · Perf · Recipes). Vanilla-first; framework code tabs stubbed until wrappers exist. | `[AGENT]` shell · `[WF]` per-component pages from the 18 docs | ⬜ | Every component has a tabbed page with a live demo + API table + recipe; search works. |
 
-**Gate 2:** composites build/test/theme; a "kitchen-sink" demo page assembles them.
+> **2.1 build approach (decided):** (a) FIRST modularize the gallery — extract each section's `build()` into its own `preview/sections/<id>.js` lazily imported by the router (keeps current behavior, unlocks parallel per-component work without `gallery.js` collisions). Blocked while the large-data-demos agent owns `gallery.js`; run right after it lands. (b) Then `[AGENT]` builds the tabbed shell (sidebar + search + the per-component page template wiring the existing demo into the **Demo** tab and the `docs/modules/*.md` into **Overview/API/Events/Theming**). (c) Then `[WF]` fans out per component to fill **Code/Recipes/Perf** tabs (each its own section file → no collision).
+| 2.2 | **Large-data demos** — 100k-row grid · 1k-task/2k-dep gantt · 100-resource/2k-event scheduler · 100k-record pivot · 10k-cell spreadsheet · 200-node diagram · 500-card kanban. Lazy "load big dataset" mode. | `[WF]` one agent per module | ⬜ | Each renders smoothly (perf smoke); visible from the component page. |
+| 2.3 | **Integrated cross-module demos** — Gantt↔Scheduler↔Grid↔Calendar; Pivot→Chart dashboard; Kanban→Gantt; Spreadsheet budget→Gantt cost; Calendar→Scheduler. The "one coherent suite" differentiator. | `[WF]` one agent per scenario | ⬜ | Each integrated demo is live and shows two+ modules sharing a model. |
+| 2.4 | **Visual/density polish** of heavy modules — diagram contrast, scheduler/gantt enterprise look, compact density mode. | `[WF]` per module | 🟡 | Headless visual review; "looks like a real app," not a harness. |
+| 2.5 | **Security hardening** — implement the 1.6 contract: sanitizer + consistent `text`/`html` APIs + a dedicated XSS test suite across grid renderers, richtext paste/import, tooltips/templates, diagram labels, kanban/todo comments, spreadsheet cells. | `[WF]` per surface | 🟡 | XSS suite green; no unsanitized user-HTML path. (Spot-verified XSS-safe earlier; needs formal suite.) |
+| 2.6 | **Real subpath exports** — per package, split feature/renderer/editor entry points with build config so imports tree-shake. | `[WF]` per package | 🟡 | **Honest interim done:** removed grid's misleading `./features` entry (it re-pointed to the main bundle; unused). The ESM main entry is tree-shakeable by modern bundlers. **Full multi-entry splitting deferred to a post-v1 enhancement** — high build-system effort/risk, low visibility vs the product-facing Gate-2 items; tracked, not blocking "core finished." |
+| 2.7 | **Generated bundle-size + a11y matrices** (published on the site). | `[AGENT]`/script | 🟡 | Auto-generated tables; sizes + axe status per package. |
+| 2.8 | **Theme customizer** as a first-class docs feature (exists as `apps/customizer` skeleton) — live token editing → `theme.css` export. | `[AGENT]` | 🟡 | Customizer recolors every component live and exports valid CSS. |
+| 2.9 | **Correctness fixtures** — recurrence/timezone tests, MSPDI round-trip gallery, XLSX import/export compat fixtures. | `[WF]` per area | ⬜ | Fixture suites green and shown as proof. |
+| 2.10 | **CI + public badges** — `install --frozen-lockfile → typecheck → lint → test → build → test:browser → test:a11y`. | `[ORCH]`/`[AGENT]` | ⬜ | Green pipeline + badges in README. |
+| 2.11 | **Real-time provider demo** (kanban/scheduler over a mock WS) to beat static demos. | `[AGENT]` | ⬜ | Live updates visible across two sessions/tabs. |
 
----
-
-## Wave 3 — Data Keystone (Grid first, sub-divided; then dependents)
-
-Grid is the largest single component — split across coordinated agents against a shared GridEngine spec
-authored by the orchestrator at the start of the wave.
-
-- **3-Grid (3 agents, tight coordination):**
-  - 3A GridEngine + viewport + row/col virtualization + DOM-recycling renderer (pluggable renderer iface)
-  - 3B Columns, typed cell renderers, cell/row editing, selection/range/clipboard, frozen/split regions, spans
-  - 3C Features as plugins: sort/filter/filter-bar/group+summary/tree-grid mode/search/menus/export/state
-- **Then (parallel, after Grid API freezes):**
-  - 3D **TreeGrid** (increment on Grid) · 3E **Charts** (independent) · 3F **Pivot** · 3G **Spreadsheet** (formula engine)
-
-**Gate 3:** Grid handles 50k rows at 60fps (Playwright perf gate); TreeGrid/Charts/Pivot/Spreadsheet green.
+**Gate 2 ("core finished"):** positioning + matrix + CI green; docs site live with every component
+(tabs + live demo + API); large-data and integrated demos live; security suite green; exports
+tree-shakeable; customizer first-class. **Only when Gate 2 passes do we open Phase 3.**
 
 ---
 
-## Wave 4 — Scheduling Family (timeline-core first, then parallel)
+## Phase 3 — Framework Wrappers  *(blocked on Gate 2 — "core finished")*
 
-- **4.0 `@jects/timeline-core`** (orchestrator-coordinated, blocking for this wave): time axis, view presets,
-  zoom, virtualized rows, dependency-line rendering, bar drag/resize/create.
-- **Then parallel:**
-  - 4A **Scheduler** · 4B **Scheduler Pro** (scheduling engine: auto-schedule, constraints, calendars, histogram)
-  - 4C **Gantt** + scheduling/critical-path engine (largest effort — may take 2 agents: engine vs UI)
-  - 4D **Calendar (event)** multi-view · 4E **Kanban/TaskBoard**
+| # | Task | Owner | Status | Acceptance |
+|---|------|-------|--------|-----------|
+| 3.1 | **Component manifest** — typed names/props/events/methods for every component, from the now-stable APIs (drives codegen). | `[ORCH]`/`[AGENT]` | ⬜ | Manifest covers the full surface. |
+| 3.2 | **`@jects/react`** (priority) — memoized engine instance, props/events bridged via refs. | `[WF]` codegen + finish | ⬜ | Wraps every component; smoke suite green. |
+| 3.3 | **`@jects/vue`** (shallowRef/markRaw), **`@jects/angular`** (engine outside NgZone; signal I/O), **`@jects/elements`** (light-DOM custom elements for simple widgets). | `[WF]` per framework | ⬜ | Each wraps the full set; smoke suite green. |
+| 3.4 | **Docs site framework code tabs** — fill the React/Vue/Angular tabs stubbed in 2.1. | `[WF]` per component | ⬜ | Every component page shows working code in all frameworks. |
 
-**Gate 4:** scheduler/gantt render + interact on large datasets; gantt dependency solver + critical path verified.
-
----
-
-## Wave 5 — Diagram & Extras (parallel — ~4 agents)
-
-| Agent | Component |
-|-------|-----------|
-| 5A | **Diagram** (flowchart/org/mind/PERT, connector routing, auto-layout, no-code editor) |
-| 5B | To Do List |
-| 5C | Booking |
-| 5D | Chatbot UI |
-
-**Gate 5:** all extras build/test/theme.
+**Gate 3 (v1 commercial-ready):** Playwright smoke suites mount every wrapper in React/Vue/Angular;
+prop→engine + event→output verified; honest comparison pages published.
 
 ---
 
-## Wave 6 — Framework Adapters (parallel, codegen-driven)
+## Sequencing summary
 
-After imperative APIs are stable. Build a typed **component manifest** (names, props, events) and codegen
-the bulk of each wrapper.
+1. **Phase 1** (now) — trust/positioning/hygiene. Quick wins; unblocks everything; safe.
+2. **Phase 2** — prove & polish the core (docs site, scale demos, integrated demos, security, exports, CI). This is "finishing the core."
+3. **Phase 3** — wrappers, **only after Gate 2**.
 
-| Agent | Adapter |
-|-------|---------|
-| 6A | `@jects/react` (memoized engine instance, props/events bridged via refs — the priority wrapper) |
-| 6B | `@jects/vue` (shallowRef/markRaw for large data) |
-| 6C | `@jects/angular` (engine outside NgZone; signal inputs/outputs) |
-| 6D | `@jects/elements` (optional light-DOM custom elements for simple widgets) |
-
-**Gate 6:** React + Vue + Angular smoke suites (Playwright) mount every wrapper; prop→engine + event→output verified.
-
----
-
-## Cross-Cutting (continuous, runs every wave)
-
-- **Docs site** grows per component (live playgrounds, vanilla-first + framework tabs).
-- **Customizer** gains every new component's preview automatically.
-- **Visual-regression** snapshots per component × theme (light/dark/contrast).
-- **A11y** (axe) + **perf** gates on data components.
-- **Changesets** version bumps per package.
-
----
-
-## v1 "Definition of Done"
-
-**Scope decision: FULL surface in v1** (Waves 0–6, everything in the inventory — no deferrals).
-- Foundation + all primitives + composites + **Grid/TreeGrid + Pivot + Spreadsheet + Charts**
-  + **Gantt + Scheduler + Scheduler Pro + Kanban + event Calendar** + **Diagram** + **RichText, ToDo, Booking, Chatbot**
-  — every component building, themed (all shipped themes), tested (unit + browser + a11y), documented, in the customizer.
-- React + Angular + Vue wrappers for the **full** set (React prioritized).
-
----
-
-## Orchestration Mechanics (how I run the fleet)
-
-1. I author/maintain `docs/CONTRIBUTING-COMPONENTS.md` (the shared brief) and the per-wave specs.
-2. Each wave, I launch its agents **concurrently in one message**, each with: the shared brief, its package
-   scope, its public-API spec, and a "return a concise summary, not file dumps" instruction.
-3. Agents work in the monorepo; isolation by package boundary (worktree isolation only if two must touch
-   shared files — generally avoided by design).
-4. I run the integration gate, reconcile drift, update the manifest/contracts, then open the next wave.
-5. I keep context lean by delegating; agents return structured summaries only.
+Cross-cutting every phase: deploy per batch + live re-verify; raw-verify all agent output; keep `docs/MATRIX.md` regenerated so docs never go stale.

@@ -1,0 +1,41 @@
+/* Dialog styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-dialog {
+    /* A dialog is a fixed surface; layout flows header → body → footer. */
+    box-shadow: var(--jects-shadow-lg);
+  }
+
+  .jects-dialog .jects-window__body {
+    flex: 1 1 auto;
+    color: oklch(var(--jects-card-foreground));
+  }
+
+  .jects-dialog__footer {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    padding: var(--jects-space-3) var(--jects-space-4);
+    background: oklch(var(--jects-muted) / 0.4);
+    border-top: 1px solid oklch(var(--jects-border));
+  }
+
+  .jects-dialog__footer[hidden] {
+    display: none;
+  }
+
+  .jects-dialog__action {
+    display: inline-flex;
+  }
+
+  /* Destructive tone: tint the header to signal a dangerous action. */
+  .jects-dialog--destructive .jects-window__header {
+    color: oklch(var(--jects-destructive));
+  }
+
+  .jects-dialog--destructive .jects-window__title {
+    color: oklch(var(--jects-destructive));
+  }
+}

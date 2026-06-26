@@ -1,0 +1,36 @@
+/* Scheduler — Undo / Redo highlight. Token-pure (--jects-* only). */
+@layer jects.components {
+  /*
+   * A bar touched by an undo/redo gets this class briefly so the reverted /
+   * re-applied change is visibly flagged (the move would otherwise read as an
+   * instantaneous, unexplained jump). A ring + subtle accent fade draws the eye.
+   * Colour comes only from semantic tokens.
+   */
+  .jects-scheduler__bar--reverted {
+    animation: jects-scheduler-revert var(--jects-duration-normal) ease-out;
+    box-shadow: 0 0 0 2px oklch(var(--jects-accent) / 0.85);
+    z-index: var(--jects-z-sticky);
+  }
+
+  @keyframes jects-scheduler-revert {
+    0% {
+      box-shadow: 0 0 0 0 oklch(var(--jects-accent) / 0.55);
+      transform: translateY(-2px);
+    }
+    60% {
+      box-shadow: 0 0 0 5px oklch(var(--jects-accent) / 0.3);
+      transform: translateY(0);
+    }
+    100% {
+      box-shadow: 0 0 0 2px oklch(var(--jects-accent) / 0.85);
+      transform: translateY(0);
+    }
+  }
+
+  /* Respect reduced-motion: keep the (static) ring indicator, drop the motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .jects-scheduler__bar--reverted {
+      animation: none;
+    }
+  }
+}

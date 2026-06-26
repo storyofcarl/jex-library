@@ -1,0 +1,42 @@
+/* DisplayField styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-display {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+    box-sizing: border-box;
+  }
+
+  .jects-display--inline {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--jects-space-2);
+  }
+
+  .jects-display__label {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-display__value {
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-display__value--empty {
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  /* ---- sizes ---- */
+  .jects-display--sm .jects-display__value {
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-display--md .jects-display__value {
+    font-size: var(--jects-font-size-md);
+  }
+  .jects-display--lg .jects-display__value {
+    font-size: var(--jects-font-size-lg);
+  }
+}

@@ -1,0 +1,129 @@
+/* Gantt ProjectLines — configurable named vertical marker lines drawn full-height
+   across the timeline (project start/finish, deadlines, custom milestones), each
+   with a styleable label, plus the screen-only/print presentation hooks.
+
+   House style "Cool Zinc + Calm CMYK": neutral semantic tokens for chrome; the
+   CMYK ramp + semantic accents used sparingly to distinguish marker kinds
+   (start = cyan, finish = key, deadline = warning, today = cyan, milestone =
+   magenta). All rules live inside @layer jects.components and reference ONLY
+   --jects-* tokens — no hardcoded color literals. */
+
+@layer jects.components {
+  /* The layer is a non-interactive backdrop of markers spanning the full content
+     height; it must not intercept pointer events meant for the bars beneath. */
+  .jects-gantt__project-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: var(--jects-z-sticky);
+  }
+
+  /* One vertical rule per marker. Coloured per kind below. */
+  .jects-gantt__project-line {
+    position: absolute;
+    inset-block: 0;
+    inline-size: 2px;
+    transform: translateX(-1px);
+    background: oklch(var(--jects-accent-foreground) / 0.55);
+  }
+
+  /* Interactive markers (a click handler was supplied) opt back into pointer
+     events along the rule so labels/lines are clickable. */
+  .jects-gantt__project-line--interactive {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .jects-gantt__project-line--interactive:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── kinds ─────────────────────────────────────────────────────────── */
+  .jects-gantt__project-line--start {
+    background: oklch(var(--jects-cmyk-cyan));
+  }
+
+  .jects-gantt__project-line--end {
+    background: oklch(var(--jects-cmyk-key));
+  }
+
+  .jects-gantt__project-line--deadline {
+    background: oklch(var(--jects-destructive));
+    /* Dashed to read as a hard limit even in monochrome / print. */
+    background-image: repeating-linear-gradient(
+      to bottom,
+      oklch(var(--jects-destructive)) 0,
+      oklch(var(--jects-destructive)) 6px,
+      transparent 6px,
+      transparent 11px
+    );
+    background-color: transparent;
+  }
+
+  .jects-gantt__project-line--milestone {
+    background: oklch(var(--jects-cmyk-magenta));
+  }
+
+  .jects-gantt__project-line--today {
+    background: oklch(var(--jects-cmyk-cyan));
+  }
+
+  .jects-gantt__project-line--custom {
+    background: oklch(var(--jects-accent-foreground) / 0.55);
+  }
+
+  /* ── labels ────────────────────────────────────────────────────────── */
+  .jects-gantt__project-line-label {
+    position: absolute;
+    inset-inline-start: 4px;
+    display: inline-block;
+    max-inline-size: 16ch;
+    padding: 1px 6px;
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+
+  .jects-gantt__project-line-label--top {
+    inset-block-start: 2px;
+  }
+
+  .jects-gantt__project-line-label--bottom {
+    inset-block-end: 2px;
+  }
+
+  /* ── print ─────────────────────────────────────────────────────────────
+     When the document is being printed, the markers must stay crisp at print
+     DPI: force full-opacity rules and ensure background colours are honoured by
+     the print engine (most browsers strip backgrounds by default). Colours are
+     still token-driven — no literals. The structural isolation (hiding the rest
+     of the page, expanding scrollers) is injected at runtime by
+     GanttPrintController; this block only fixes the marker presentation. */
+  @media print {
+    .jects-gantt__project-lines,
+    .jects-gantt__project-line,
+    .jects-gantt__project-line-label {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .jects-gantt__project-line {
+      inline-size: 1.5px;
+    }
+
+    /* The whole chart prints, so the markers must not be clipped by a scroller. */
+    .jects-gantt__project-lines {
+      overflow: visible;
+    }
+  }
+}

@@ -1,0 +1,110 @@
+/* Tree styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-tree {
+    display: block;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    padding: var(--jects-space-1);
+    outline: none;
+    overflow: auto;
+  }
+
+  .jects-tree:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-tree__node {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    min-height: 2rem;
+    padding-block: var(--jects-space-1);
+    padding-inline-end: var(--jects-space-2);
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+    user-select: none;
+    color: oklch(var(--jects-foreground));
+    transition: background-color var(--jects-duration-fast) ease;
+  }
+
+  .jects-tree__node:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-tree__node--active {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-tree__node--selected {
+    background: oklch(var(--jects-primary) / 0.12);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-tree__node--selected:hover {
+    background: oklch(var(--jects-primary) / 0.18);
+  }
+
+  .jects-tree__twisty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+    padding: 0;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: oklch(var(--jects-muted-foreground));
+    cursor: pointer;
+    font-size: var(--jects-font-size-xs);
+    line-height: 1;
+  }
+
+  .jects-tree__twisty:hover {
+    background: oklch(var(--jects-muted));
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-tree__twisty--leaf {
+    cursor: default;
+    background: transparent;
+  }
+
+  .jects-tree__checkbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-primary-foreground));
+    font-size: var(--jects-font-size-xs);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .jects-tree__checkbox--checked {
+    background: oklch(var(--jects-primary));
+    border-color: oklch(var(--jects-primary));
+  }
+
+  .jects-tree__label {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

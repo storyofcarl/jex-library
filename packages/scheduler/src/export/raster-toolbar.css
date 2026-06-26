@@ -1,0 +1,58 @@
+/* Scheduler PDF/PNG raster-export toolbar.
+
+   A themed, accessible surface for the canvas/PDF export feature: two export
+   buttons, a polite status line, and an optional live PNG preview. It reuses the
+   shared `.jects-scheduler-export` toolbar/button base (excel.css) and adds the
+   raster-specific parts here. All rules live in @layer jects.components and
+   reference only --jects-* tokens (no hardcoded color literals). */
+@layer jects.components {
+  .jects-scheduler-raster {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    color: oklch(var(--jects-foreground));
+    font-family: var(--jects-font-family);
+  }
+
+  .jects-scheduler-raster__toolbar {
+    display: flex;
+    gap: var(--jects-space-2);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* PNG export reads as a secondary action next to the primary PDF button. */
+  .jects-scheduler-raster__btn--png {
+    background: oklch(var(--jects-secondary));
+    color: oklch(var(--jects-secondary-foreground));
+    border-color: oklch(var(--jects-border));
+  }
+
+  .jects-scheduler-raster__btn--png:hover {
+    background: oklch(var(--jects-secondary) / 0.9);
+  }
+
+  .jects-scheduler-raster__status {
+    margin: 0;
+    min-height: var(--jects-space-5);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-scheduler-raster__preview {
+    margin: 0;
+    padding: var(--jects-space-2);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-card));
+    overflow: auto;
+  }
+
+  .jects-scheduler-raster__preview-img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-background));
+  }
+}

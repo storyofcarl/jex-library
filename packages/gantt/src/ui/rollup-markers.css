@@ -1,0 +1,54 @@
+/* Gantt child-task ROLLUP markers — thin markers projected onto a collapsed
+   summary bar so the summary still shows where its children sit in time.
+
+   House style "Cool Zinc + Calm CMYK": the summary bar paints in --jects-foreground
+   (a dark slab), so rollup markers read against it in the inverse --jects-background
+   tint; child milestones reuse the calm magenta milestone accent for consistency
+   with the milestone diamonds drawn on real rows. All rules live inside
+   @layer jects.components and reference ONLY --jects-* tokens — no hardcoded
+   colour literals. */
+
+@layer jects.components {
+  /* The overlay layer fills the summary bar and never intercepts the bar's own
+     drag/click gestures (it is a read-only rollup readout). */
+  .jects-gantt__rollups {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* A rolled-up child task: a thin segment hugging the lower edge of the summary
+     bar, in the inverse tint so it stays legible against the dark summary slab. */
+  .jects-gantt__rollup {
+    position: absolute;
+    inset-block-end: 1px;
+    block-size: var(--jects-space-1);
+    background: oklch(var(--jects-background) / 0.85);
+    border-radius: var(--jects-radius-sm);
+  }
+
+  /* A rolled-up child milestone: a small diamond at its instant. */
+  .jects-gantt__rollup--milestone {
+    inset-block-end: 0;
+    block-size: var(--jects-space-2);
+    border-radius: 1px;
+    background: oklch(var(--jects-cmyk-magenta));
+    transform: rotate(45deg);
+    transform-origin: center;
+  }
+
+  /* When a summary carries rollups, lift the bottom border a touch so the markers
+     ride a visible rail rather than the bar edge. */
+  .jects-gantt__bar--summary[data-rollup] {
+    padding-block-end: var(--jects-space-1);
+  }
+
+  /* High-contrast: give the task markers a hairline outline so they survive
+     forced-colours mode against the summary slab. */
+  @media (prefers-contrast: more) {
+    .jects-gantt__rollup {
+      outline: 1px solid oklch(var(--jects-foreground));
+    }
+  }
+}

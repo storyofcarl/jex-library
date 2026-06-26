@@ -1,0 +1,93 @@
+/* @jects/gantt — XLSX export preview panel styles.
+   Token-pure (only --jects-* tokens, no hardcoded color literals) and scoped to
+   @layer jects.components per house style. Styles the accessible "export ready"
+   preview surface produced by `buildXlsxPreview` / `GanttXlsxExporter.buildPreview`:
+   a labelled panel with a spreadsheet-like table preview and a download button. */
+@layer jects.components {
+  .jects-gantt-xlsx-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    padding: var(--jects-space-4);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+  }
+
+  .jects-gantt-xlsx-preview__title {
+    margin: 0;
+    font-size: var(--jects-font-size-lg);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-gantt-xlsx-preview__table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .jects-gantt-xlsx-preview__caption {
+    caption-side: top;
+    text-align: start;
+    padding-block-end: var(--jects-space-2);
+    color: oklch(var(--jects-muted-foreground));
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-gantt-xlsx-preview__table th {
+    text-align: start;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border-block-end: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted));
+    color: oklch(var(--jects-muted-foreground));
+    font-weight: var(--jects-font-weight-medium);
+    white-space: nowrap;
+  }
+
+  .jects-gantt-xlsx-preview__table td {
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+    white-space: pre;
+  }
+
+  .jects-gantt-xlsx-preview__cell--num {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .jects-gantt-xlsx-preview__row--summary td {
+    font-weight: var(--jects-font-weight-semibold);
+    background: oklch(var(--jects-accent) / 0.35);
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-gantt-xlsx-preview__download {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2) var(--jects-space-4);
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-md);
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    cursor: pointer;
+    transition: background var(--jects-duration-fast) ease;
+  }
+
+  .jects-gantt-xlsx-preview__download:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+
+  .jects-gantt-xlsx-preview__download:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,349 @@
+/* Gantt chart — layout shell, task-tree pane, timeline pane, bars, dependency
+   lines, baselines, today line, and the task editor.
+
+   House style "Cool Zinc + Calm CMYK": chrome uses neutral semantic tokens;
+   accents use the CMYK ramp sparingly (today/now = cyan, critical path = key,
+   progress = primary). All rules live inside @layer jects.components and
+   reference ONLY --jects-* tokens — no hardcoded color literals. */
+
+@layer jects.components {
+  /* Visually-hidden helper (screen-reader-only usage hints). */
+  .jects-gantt__sr-only {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── shell ─────────────────────────────────────────────────────────── */
+  .jects-gantt {
+    /* Positioning context for absolutely-positioned overlays (export menu,
+       multi-baseline compare picker, etc.). Without this they escape to the
+       initial containing block and pin to the top-right of the PAGE. */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 0;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    overflow: hidden;
+  }
+
+  .jects-gantt__split {
+    display: flex;
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  /* ── left task-tree pane ───────────────────────────────────────────── */
+  .jects-gantt__tree {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+    border-inline-end: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-card));
+    overflow: hidden;
+  }
+
+  .jects-gantt__tree-grid {
+    flex: 1 1 auto;
+    min-block-size: 0;
+  }
+
+  .jects-gantt__tree-scroller {
+    flex: 1 1 auto;
+    overflow: auto;
+    min-block-size: 0;
+  }
+
+  .jects-gantt__tree-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    color: oklch(var(--jects-card-foreground));
+  }
+
+  .jects-gantt__tree-th {
+    position: sticky;
+    inset-block-start: 0;
+    text-align: start;
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-card));
+    padding: var(--jects-space-2);
+    border-block-end: 1px solid oklch(var(--jects-border));
+    white-space: nowrap;
+  }
+
+  .jects-gantt__tree-row {
+    cursor: pointer;
+  }
+
+  .jects-gantt__tree-row:hover {
+    background: oklch(var(--jects-accent) / 0.4);
+  }
+
+  .jects-gantt__tree-td {
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── right timeline pane ───────────────────────────────────────────── */
+  .jects-gantt__timeline {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  .jects-gantt__timeline-header {
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: oklch(var(--jects-card));
+    border-block-end: 1px solid oklch(var(--jects-border));
+    color: oklch(var(--jects-card-foreground));
+    user-select: none;
+  }
+
+  .jects-gantt__header-band {
+    position: relative;
+    block-size: var(--jects-space-6);
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.5);
+  }
+
+  .jects-gantt__header-band:last-child {
+    border-block-end: none;
+  }
+
+  .jects-gantt__header-cell {
+    position: absolute;
+    inset-block: 0;
+    display: flex;
+    align-items: center;
+    padding-inline: var(--jects-space-1);
+    color: oklch(var(--jects-muted-foreground));
+    border-inline-end: 1px solid oklch(var(--jects-border) / 0.4);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .jects-gantt__header-cell--start {
+    justify-content: flex-start;
+  }
+  .jects-gantt__header-cell--center {
+    justify-content: center;
+  }
+  .jects-gantt__header-cell--end {
+    justify-content: flex-end;
+  }
+
+  .jects-gantt__timeline-scroller {
+    flex: 1 1 auto;
+    overflow: auto;
+    min-block-size: 0;
+    position: relative;
+  }
+
+  .jects-gantt__timeline-content {
+    position: relative;
+  }
+
+  /* ── backdrop (grid lines, shading, today) ─────────────────────────── */
+  .jects-gantt__timeline-backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .jects-gantt__colline {
+    position: absolute;
+    inset-block: 0;
+    inline-size: 1px;
+    background: oklch(var(--jects-border) / 0.4);
+  }
+
+  .jects-gantt__colline--major {
+    background: oklch(var(--jects-border));
+  }
+
+  .jects-gantt__nonworking {
+    position: absolute;
+    inset-block: 0;
+    background: oklch(var(--jects-muted) / 0.45);
+  }
+
+  .jects-gantt__today {
+    position: absolute;
+    inset-block: 0;
+    inline-size: 2px;
+    background: oklch(var(--jects-cmyk-cyan));
+    z-index: var(--jects-z-sticky);
+  }
+
+  /* ── bars ──────────────────────────────────────────────────────────── */
+  .jects-gantt__bars {
+    position: absolute;
+    inset: 0;
+  }
+
+  .jects-gantt__bar {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border: 1px solid oklch(var(--jects-primary) / 0.7);
+    overflow: visible;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .jects-gantt__bar:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-gantt__bar--summary {
+    background: oklch(var(--jects-foreground));
+    color: oklch(var(--jects-background));
+    border-color: oklch(var(--jects-foreground));
+    border-radius: var(--jects-radius-sm);
+    cursor: default;
+  }
+
+  .jects-gantt__bar--milestone {
+    background: oklch(var(--jects-cmyk-magenta));
+    border-color: oklch(var(--jects-cmyk-magenta));
+    border-radius: var(--jects-radius-sm);
+    transform: rotate(45deg);
+    cursor: grab;
+  }
+
+  .jects-gantt__bar--critical {
+    background: oklch(var(--jects-cmyk-key));
+    border-color: oklch(var(--jects-cmyk-key));
+    color: oklch(var(--jects-background));
+  }
+
+  .jects-gantt__bar-progress {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: oklch(var(--jects-primary-foreground) / 0.35);
+    border-start-start-radius: var(--jects-radius-sm);
+    border-end-start-radius: var(--jects-radius-sm);
+  }
+
+  .jects-gantt__bar-label {
+    position: relative;
+    padding-inline: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 1;
+  }
+
+  .jects-gantt__bar--milestone .jects-gantt__bar-label {
+    display: none;
+  }
+
+  .jects-gantt__bar-handle {
+    position: absolute;
+    inset-block: 0;
+    inline-size: var(--jects-space-1);
+    cursor: ew-resize;
+    z-index: 2;
+  }
+
+  .jects-gantt__bar-handle--start {
+    inset-inline-start: 0;
+  }
+  .jects-gantt__bar-handle--end {
+    inset-inline-end: 0;
+  }
+
+  .jects-gantt__bar-link {
+    position: absolute;
+    inset-inline-end: calc(-1 * var(--jects-space-2));
+    inset-block-start: 50%;
+    inline-size: var(--jects-space-2);
+    block-size: var(--jects-space-2);
+    transform: translateY(-50%);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-cmyk-cyan));
+    opacity: 0;
+    cursor: crosshair;
+    z-index: 3;
+  }
+
+  .jects-gantt__bar:hover .jects-gantt__bar-link {
+    opacity: 1;
+  }
+
+  /* ── baseline overlay ──────────────────────────────────────────────── */
+  .jects-gantt__baseline {
+    position: absolute;
+    block-size: var(--jects-space-1);
+    background: oklch(var(--jects-muted-foreground) / 0.55);
+    border-radius: var(--jects-radius-sm);
+    pointer-events: none;
+  }
+
+  /* ── dependency lines ──────────────────────────────────────────────── */
+  .jects-gantt__deps {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .jects-gantt__dep-line {
+    stroke: oklch(var(--jects-muted-foreground));
+    stroke-width: 1.5;
+    fill: none;
+  }
+
+  .jects-gantt__dep-line--ghost {
+    stroke: oklch(var(--jects-cmyk-cyan));
+    stroke-dasharray: 4 3;
+  }
+
+  .jects-gantt__dep-arrow {
+    fill: oklch(var(--jects-muted-foreground));
+  }
+
+  /* ── task editor (Window + Form) ───────────────────────────────────── */
+  .jects-gantt__editor-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+  }
+
+  .jects-gantt__editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--jects-space-2);
+    padding-block-start: var(--jects-space-2);
+    border-block-start: 1px solid oklch(var(--jects-border));
+  }
+}

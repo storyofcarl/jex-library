@@ -1,0 +1,66 @@
+/* Dependency drawing / editing UI — token-only (no hardcoded color literals).
+   Terminal handles on hovered bars, the live rubber-band link line, the
+   link-target highlight, and the selected-dependency line. All inside
+   @layer jects.components and referencing only --jects-* tokens. */
+@layer jects.components {
+  /* ── terminal handles (link anchor points on a hovered bar) ── */
+  .jects-scheduler__terminal {
+    position: absolute;
+    inline-size: 12px;
+    block-size: 12px;
+    margin-inline-start: -6px;
+    margin-block-start: -6px;
+    border-radius: 9999px;
+    background: oklch(var(--jects-background));
+    border: 2px solid oklch(var(--jects-ring));
+    box-shadow: var(--jects-shadow-sm);
+    cursor: crosshair;
+    /* Above the bars so it is grabbable; the bars layer sits under the SVG. */
+    z-index: var(--jects-z-sticky);
+    box-sizing: border-box;
+    transition: transform var(--jects-duration-fast) ease;
+  }
+  .jects-scheduler__terminal:hover {
+    transform: scale(1.25);
+    background: oklch(var(--jects-ring));
+  }
+
+  /* ── live rubber-band line while dragging a new link ── */
+  .jects-scheduler__dep-rubber {
+    fill: none;
+    stroke: oklch(var(--jects-ring));
+    stroke-width: 2;
+    stroke-dasharray: 4 3;
+    pointer-events: none;
+  }
+
+  /* ── candidate target bar highlight ── */
+  .jects-scheduler__bar--link-target {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    box-shadow: var(--jects-shadow-md);
+  }
+
+  /* ── selectable / selected dependency line ── */
+  .jects-scheduler--deps-editable .jects-scheduler__deps {
+    /* The SVG layer must receive pointer events to allow selecting a line, but
+       only on the stroked paths (set per-path below), not the whole rect. */
+    pointer-events: none;
+  }
+  .jects-scheduler--deps-editable .jects-scheduler__dep-line,
+  .jects-scheduler--deps-editable .jects-scheduler__dep-hit {
+    pointer-events: stroke;
+    cursor: pointer;
+  }
+  /* A wide, invisible hit path layered under each visible line widens the
+     clickable area (a 1.5px stroke is hard to click). */
+  .jects-scheduler__dep-hit {
+    fill: none;
+    stroke: oklch(var(--jects-foreground) / 0);
+    stroke-width: 10;
+  }
+  .jects-scheduler__dep-line--selected {
+    stroke: oklch(var(--jects-ring));
+    stroke-width: 2.5;
+  }
+}

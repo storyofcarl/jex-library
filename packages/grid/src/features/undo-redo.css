@@ -1,0 +1,55 @@
+/**
+ * UndoRedoFeature — optional toolbar affordance styles.
+ *
+ * The undo/redo *engine* is logic-only; these rules style the optional
+ * `.jects-grid__undo-toolbar` an app can render to drive `undo()`/`redo()`
+ * (and that the feature's browser test mounts to assert enabled/disabled
+ * state visually). Token-pure: every value references a `--jects-*` token.
+ */
+
+@layer jects.components {
+  .jects-grid__undo-toolbar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-grid__undo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--jects-space-7);
+    height: var(--jects-space-7);
+    padding: 0 var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-secondary));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+    transition: background var(--jects-duration-fast);
+  }
+
+  .jects-grid__undo-btn:hover:not(:disabled) {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-grid__undo-btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-grid__undo-btn:disabled {
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted));
+    cursor: default;
+    opacity: 0.6;
+  }
+}

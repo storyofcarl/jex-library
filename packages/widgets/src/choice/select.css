@@ -1,0 +1,117 @@
+/* Select styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-select {
+    display: inline-block;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    min-width: 12rem;
+  }
+
+  .jects-select__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    width: 100%;
+    height: 2.5rem;
+    box-sizing: border-box;
+    padding-inline: var(--jects-space-3);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    transition:
+      border-color var(--jects-duration-fast) ease,
+      box-shadow var(--jects-duration-fast) ease;
+  }
+
+  .jects-select__trigger:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-select--disabled .jects-select__trigger,
+  .jects-select__trigger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .jects-select__value {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jects-select__value--placeholder {
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-select__clear,
+  .jects-select__chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-select__clear {
+    cursor: pointer;
+    border-radius: var(--jects-radius-sm);
+  }
+  .jects-select__clear:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-accent));
+  }
+
+  .jects-select--open .jects-select__chevron {
+    transform: rotate(180deg);
+  }
+  .jects-select__chevron {
+    transition: transform var(--jects-duration-fast) ease;
+  }
+
+  /* ---- listbox (popup panel) ---- */
+  .jects-select__listbox {
+    box-sizing: border-box;
+    max-height: 16rem;
+    overflow-y: auto;
+    padding: var(--jects-space-1);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    box-shadow: var(--jects-shadow-lg);
+    z-index: var(--jects-z-dropdown);
+  }
+
+  .jects-select__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2) var(--jects-space-2);
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+    user-select: none;
+  }
+  .jects-select__option--active {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-select__option--selected {
+    font-weight: var(--jects-font-weight-medium);
+  }
+  .jects-select__option--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .jects-select__option-check {
+    display: inline-flex;
+    color: oklch(var(--jects-primary));
+  }
+}

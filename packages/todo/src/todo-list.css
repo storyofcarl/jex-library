@@ -1,0 +1,940 @@
+/* @jects/todo — TodoList styles.
+   Token-pure: references ONLY --jects-* tokens (no hardcoded color literals).
+   All rules live inside @layer jects.components. */
+@layer jects.components {
+  .jects-todo {
+    --_todo-indent: 1.5rem;
+
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    inline-size: 100%;
+    /* Fill a sized host so the body scrolls INTERNALLY instead of overflowing
+       past the host (in an auto-height container this resolves to content
+       height, so the simple checklist case still grows naturally). */
+    block-size: 100%;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    overflow: hidden;
+  }
+
+  /* ── toolbar ─────────────────────────────────────────────────────────── */
+  .jects-todo__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-3);
+    padding: var(--jects-space-3);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+
+  .jects-todo__add {
+    display: flex;
+    flex: 1 1 16rem;
+    align-items: stretch;
+    gap: var(--jects-space-2);
+  }
+
+  .jects-todo__add-input {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    box-sizing: border-box;
+    block-size: 2.25rem;
+    padding-inline: var(--jects-space-3);
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+  }
+  .jects-todo__add-input::placeholder {
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-todo__add-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-todo__add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+  }
+  .jects-todo__add-btn:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+  .jects-todo__add-btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-todo__filters {
+    display: inline-flex;
+    padding: 2px;
+    gap: 2px;
+    background: oklch(var(--jects-muted) / 0.6);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+  .jects-todo__filter {
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font: inherit;
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+  .jects-todo__filter:hover {
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-todo__filter--active {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    box-shadow: var(--jects-shadow-sm);
+  }
+  .jects-todo__filter:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── list ────────────────────────────────────────────────────────────── */
+  .jects-todo__list {
+    position: relative;
+    flex: 1 1 auto;
+    min-block-size: 2rem;
+    overflow: auto;
+  }
+  .jects-todo__body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .jects-todo__empty {
+    padding: var(--jects-space-6) var(--jects-space-4);
+    text-align: center;
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-todo__empty[hidden] {
+    display: none;
+  }
+
+  /* ── labeled columns (header + rows share one grid template) ─────────────
+     The Task column is the flexible 1fr; every other track is fixed so the
+     header labels and all row cells line up regardless of content or nesting
+     depth (depth indentation lives INSIDE the Task cell). */
+  .jects-todo__list {
+    --_todo-grid:
+      var(--_todo-c-sel, 1.5rem)
+      var(--_todo-c-done, 4rem)
+      var(--_todo-c-status, 7rem)
+      minmax(6rem, 1fr)
+      var(--_todo-c-people, 5rem)
+      var(--_todo-c-due, 7.5rem)
+      var(--_todo-c-priority, 5rem)
+      var(--_todo-c-actions, 11rem);
+  }
+
+  /* ── column header (list view only) ──────────────────────────────────── */
+  .jects-todo__header {
+    display: grid;
+    grid-template-columns: var(--_todo-grid);
+    align-items: center;
+    column-gap: var(--jects-space-2);
+    padding-block: var(--jects-space-2);
+    padding-inline: var(--jects-space-3);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted) / 0.45);
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+  }
+  .jects-todo__header[hidden] {
+    display: none;
+  }
+  .jects-todo__hcell {
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: oklch(var(--jects-muted-foreground));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jects-todo__hcell--done,
+  .jects-todo__hcell--status {
+    text-align: center;
+  }
+
+  /* ── row ─────────────────────────────────────────────────────────────── */
+  .jects-todo__row {
+    --_todo-depth: 0;
+
+    display: grid;
+    grid-template-columns: var(--_todo-grid);
+    align-items: center;
+    column-gap: var(--jects-space-2);
+    padding-block: var(--jects-space-2);
+    padding-inline: var(--jects-space-3);
+    border-bottom: 1px solid oklch(var(--jects-border) / 0.6);
+    cursor: default;
+  }
+
+  /* Explicit column placement (scoped to direct children so the shared cell
+     classes — status / due / priority / avatars — are unaffected in the board
+     and calendar views, which are not grids). */
+  .jects-todo__row > .jects-todo__rowsel,
+  .jects-todo__header > .jects-todo__rowsel,
+  .jects-todo__header > .jects-todo__hcell--lead { grid-column: 1; justify-self: center; }
+  .jects-todo__row > .jects-todo__done,
+  .jects-todo__header > .jects-todo__hcell--done { grid-column: 2; justify-self: center; }
+  .jects-todo__row > .jects-todo__status,
+  .jects-todo__header > .jects-todo__hcell--status { grid-column: 3; }
+  .jects-todo__row > .jects-todo__task,
+  .jects-todo__header > .jects-todo__hcell--task { grid-column: 4; }
+  .jects-todo__row > .jects-todo__avatars,
+  .jects-todo__header > .jects-todo__hcell--people { grid-column: 5; }
+  .jects-todo__row > .jects-todo__due,
+  .jects-todo__header > .jects-todo__hcell--due { grid-column: 6; }
+  .jects-todo__row > .jects-todo__priority,
+  .jects-todo__header > .jects-todo__hcell--priority { grid-column: 7; }
+  .jects-todo__row > .jects-todo__actions,
+  .jects-todo__header > .jects-todo__hcell--actions { grid-column: 8; }
+
+  /* ── task cell (twisty + title on line 1, chips wrap to line 2) ──────── */
+  .jects-todo__task {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-1) var(--jects-space-2);
+    min-inline-size: 0;
+    padding-inline-start: calc(var(--_todo-depth) * var(--_todo-indent));
+  }
+  .jects-todo__task > .jects-todo__meta {
+    flex-basis: 100%;
+  }
+  .jects-todo__task > .jects-todo__editor {
+    flex-basis: 100%;
+  }
+  .jects-todo__row:last-child {
+    border-bottom: none;
+  }
+  .jects-todo__row:hover {
+    background: oklch(var(--jects-muted) / 0.35);
+  }
+  .jects-todo__row[aria-selected='true'] {
+    background: oklch(var(--jects-accent) / 0.5);
+  }
+  .jects-todo__row:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+  .jects-todo__row--dragging {
+    opacity: 0.5;
+  }
+  .jects-todo__row--drop {
+    box-shadow: inset 0 2px 0 0 oklch(var(--jects-primary));
+  }
+
+  .jects-todo__twisty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    flex: 0 0 auto;
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+  .jects-todo__twisty[aria-hidden='true'] {
+    visibility: hidden;
+    cursor: default;
+  }
+  .jects-todo__twisty:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-muted) / 0.6);
+  }
+
+  /* Done toggle — a labeled pill that reads "Done" (off = outline, on = filled
+     with a check, partial = parents with some children done). */
+  .jects-todo__done {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+    padding: 0 var(--jects-space-2);
+    block-size: 1.4rem;
+    font-family: inherit;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    white-space: nowrap;
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-xl);
+    cursor: pointer;
+  }
+  .jects-todo__done:hover {
+    color: oklch(var(--jects-foreground));
+    border-color: oklch(var(--jects-primary) / 0.5);
+  }
+  .jects-todo__done--partial {
+    color: oklch(var(--jects-primary));
+    background: oklch(var(--jects-primary) / 0.12);
+    border-color: oklch(var(--jects-primary) / 0.45);
+  }
+  .jects-todo__done--on {
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border-color: oklch(var(--jects-primary));
+  }
+  .jects-todo__done-mark {
+    display: inline-flex;
+    align-items: center;
+  }
+  .jects-todo__done-mark:empty {
+    display: none;
+  }
+
+  /* The title line within the Task cell (title + parent progress badge). */
+  .jects-todo__main {
+    display: flex;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    align-items: center;
+    gap: var(--jects-space-1) var(--jects-space-2);
+  }
+  .jects-todo__main[hidden] {
+    display: none;
+  }
+  .jects-todo__title {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jects-todo__row--done .jects-todo__title {
+    color: oklch(var(--jects-muted-foreground));
+    text-decoration: line-through;
+  }
+
+  /* Secondary chips line beneath the title (tags / effort / recur / deps). */
+  .jects-todo__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-1) var(--jects-space-2);
+  }
+  .jects-todo__due {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+    white-space: nowrap;
+  }
+  .jects-todo__due--overdue {
+    color: oklch(var(--jects-destructive));
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  .jects-todo__priority {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--jects-space-2);
+    block-size: 1.125rem;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    border-radius: var(--jects-radius-sm);
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted) / 0.6);
+  }
+  .jects-todo__priority--low {
+    color: oklch(var(--jects-cmyk-cyan));
+    background: oklch(var(--jects-cmyk-cyan-soft));
+  }
+  .jects-todo__priority--medium {
+    color: oklch(var(--jects-warning));
+    background: oklch(var(--jects-warning) / 0.15);
+  }
+  .jects-todo__priority--high {
+    color: oklch(var(--jects-destructive));
+    background: oklch(var(--jects-destructive) / 0.12);
+  }
+
+  /* ── row actions ─────────────────────────────────────────────────────── */
+  /* All actions are ALWAYS visible (nothing depends on hover to be understood).
+     Secondary actions read subtly at rest and strengthen on hover/focus. */
+  .jects-todo__actions {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--jects-space-1);
+  }
+  .jects-todo__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.6rem;
+    block-size: 1.6rem;
+    color: oklch(var(--jects-muted-foreground) / 0.7);
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+    transition: color 120ms ease, background 120ms ease;
+  }
+  .jects-todo__row:hover .jects-todo__action,
+  .jects-todo__row:focus-within .jects-todo__action {
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-todo__action:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-muted) / 0.7);
+  }
+  .jects-todo__action:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* The always-visible "+ subtask" affordance — a labeled pill so its purpose
+     is clear without hovering. */
+  .jects-todo__addsub {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    padding-inline: var(--jects-space-1) var(--jects-space-2);
+    block-size: 1.6rem;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-primary));
+    background: oklch(var(--jects-primary) / 0.08);
+    border: 1px solid oklch(var(--jects-primary) / 0.25);
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 120ms ease, border-color 120ms ease;
+  }
+  .jects-todo__addsub:hover {
+    background: oklch(var(--jects-primary) / 0.16);
+    border-color: oklch(var(--jects-primary) / 0.5);
+  }
+  .jects-todo__addsub:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-todo__addsub-text {
+    line-height: 1;
+  }
+
+  /* ── inline editor ───────────────────────────────────────────────────── */
+  .jects-todo__editor {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+  .jects-todo__editor-title {
+    flex: 2 1 12rem;
+    min-inline-size: 0;
+  }
+  .jects-todo__editor-due {
+    flex: 1 1 9rem;
+    min-inline-size: 0;
+  }
+
+  /* ── progress footer ─────────────────────────────────────────────────── */
+  .jects-todo__progress {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-3);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    border-top: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+  .jects-todo__progress-track {
+    position: relative;
+    flex: 1 1 auto;
+    block-size: 0.5rem;
+    background: oklch(var(--jects-muted));
+    border-radius: var(--jects-radius-xl);
+    overflow: hidden;
+  }
+  .jects-todo__progress-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: 0%;
+    background: oklch(var(--jects-success));
+    border-radius: inherit;
+    transition: inline-size var(--jects-duration-normal) ease;
+  }
+  .jects-todo__progress-label {
+    flex: 0 0 auto;
+    font-size: var(--jects-font-size-xs);
+    font-variant-numeric: tabular-nums;
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  /* ── utilities ───────────────────────────────────────────────────────── */
+  .jects-todo__sr {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── enterprise toolbar controls ─────────────────────────────────────── */
+  .jects-todo__search {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding-inline: var(--jects-space-2);
+    block-size: 2rem;
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+  }
+  .jects-todo__search-input {
+    min-inline-size: 8rem;
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: transparent;
+    border: none;
+    outline: none;
+  }
+  .jects-todo__select {
+    block-size: 2rem;
+    padding-inline: var(--jects-space-2);
+    font: inherit;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+  }
+  .jects-todo__select:focus-visible,
+  .jects-todo__search:focus-within {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-todo__views {
+    display: inline-flex;
+    padding: 2px;
+    gap: 2px;
+    background: oklch(var(--jects-muted) / 0.6);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+  .jects-todo__view {
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font: inherit;
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+  .jects-todo__view--active {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    box-shadow: var(--jects-shadow-sm);
+  }
+  .jects-todo__sortdir,
+  .jects-todo__save,
+  .jects-todo__hist {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2rem;
+    block-size: 2rem;
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+  }
+  .jects-todo__hist:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .jects-todo__sortdir:hover:not(:disabled),
+  .jects-todo__save:hover,
+  .jects-todo__hist:hover:not(:disabled) {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-muted) / 0.6);
+  }
+
+  /* ── area (list ↔ board) ─────────────────────────────────────────────── */
+  .jects-todo__area {
+    position: relative;
+    flex: 1 1 auto;
+    min-block-size: 2rem;
+    display: flex;
+    overflow: hidden;
+  }
+  .jects-todo__list { flex: 1 1 auto; }
+  .jects-todo__list[hidden],
+  .jects-todo__board[hidden] { display: none; }
+
+  /* ── selection ───────────────────────────────────────────────────────── */
+  /* The multi-select box is a SQUARE checkbox (vs the ROUND "Done" checkbox)
+     so the two are never confused. In the list view it is ALWAYS visible under
+     its own labeled column. */
+  .jects-todo__rowsel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.05rem;
+    block-size: 1.05rem;
+    flex: 0 0 auto;
+    color: oklch(var(--jects-primary-foreground));
+    background: transparent;
+    border: 1.5px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+    transition: border-color 120ms ease, background 120ms ease;
+  }
+  .jects-todo__row:hover .jects-todo__rowsel,
+  .jects-todo__header:hover .jects-todo__rowsel {
+    border-color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-todo__rowsel--on,
+  .jects-todo__rowsel--some {
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border-color: oklch(var(--jects-primary));
+  }
+  /* Board cards keep the select box as a hover-revealed secondary affordance. */
+  .jects-todo__card .jects-todo__rowsel {
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+  .jects-todo__card:hover .jects-todo__rowsel,
+  .jects-todo__card:focus-within .jects-todo__rowsel,
+  .jects-todo__card .jects-todo__rowsel--on {
+    opacity: 1;
+  }
+  .jects-todo__row--selected {
+    background: oklch(var(--jects-cmyk-cyan-soft) / 0.5);
+  }
+
+  /* ── status pill ─────────────────────────────────────────────────────── */
+  .jects-todo__status {
+    --_status-color: var(--jects-muted-foreground);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+    padding: 0 var(--jects-space-2);
+    block-size: 1.25rem;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--_status-color));
+    background: oklch(var(--_status-color) / 0.14);
+    border: 1px solid oklch(var(--_status-color) / 0.3);
+    border-radius: var(--jects-radius-xl);
+    cursor: pointer;
+  }
+  /* A caret hints the pill is a menu (opens a status picker), not a toggle. */
+  .jects-todo__status::after {
+    content: '';
+    inline-size: 0;
+    block-size: 0;
+    border-inline: 0.22rem solid transparent;
+    border-block-start: 0.26rem solid currentColor;
+    opacity: 0.55;
+  }
+  .jects-todo__status:hover {
+    background: oklch(var(--_status-color) / 0.22);
+    border-color: oklch(var(--_status-color) / 0.45);
+  }
+
+  /* ── tags / avatars / effort / recur / deps ──────────────────────────── */
+  .jects-todo__tag {
+    --_tag-color: var(--jects-muted-foreground);
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--jects-space-2);
+    block-size: 1.125rem;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--_tag-color));
+    background: oklch(var(--_tag-color) / 0.14);
+    border-radius: var(--jects-radius-sm);
+  }
+  .jects-todo__avatars {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+  }
+  .jects-todo__avatar {
+    --_avatar-color: var(--jects-cmyk-cyan);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.4rem;
+    block-size: 1.4rem;
+    margin-inline-start: -0.35rem;
+    font-size: 0.625rem;
+    font-weight: var(--jects-font-weight-bold);
+    color: oklch(var(--jects-background));
+    background: oklch(var(--_avatar-color));
+    border: 1.5px solid oklch(var(--jects-card));
+    border-radius: 50%;
+  }
+  .jects-todo__avatar:first-child { margin-inline-start: 0; }
+  .jects-todo__effort,
+  .jects-todo__dep,
+  .jects-todo__cf {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-todo__dep { color: oklch(var(--jects-warning)); }
+  .jects-todo__recur {
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-cmyk-cyan));
+  }
+
+  /* ── due-date status ─────────────────────────────────────────────────── */
+  .jects-todo__due--overdue { color: oklch(var(--jects-destructive)); font-weight: var(--jects-font-weight-medium); }
+  .jects-todo__due--today { color: oklch(var(--jects-warning)); font-weight: var(--jects-font-weight-medium); }
+  .jects-todo__due--soon { color: oklch(var(--jects-cmyk-cyan)); }
+  .jects-todo__row--due-overdue { box-shadow: inset 2px 0 0 0 oklch(var(--jects-destructive)); }
+  .jects-todo__row--due-today { box-shadow: inset 2px 0 0 0 oklch(var(--jects-warning)); }
+
+  /* ── group headers ───────────────────────────────────────────────────── */
+  .jects-todo__group-header {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-muted) / 0.45);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  .jects-todo__group-swatch {
+    inline-size: 0.7rem;
+    block-size: 0.7rem;
+    border-radius: 2px;
+  }
+  .jects-todo__group-count {
+    margin-inline-start: auto;
+    padding: 0 var(--jects-space-2);
+    font-size: var(--jects-font-size-xs);
+    font-variant-numeric: tabular-nums;
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted));
+    border-radius: var(--jects-radius-xl);
+  }
+
+  /* ── board ───────────────────────────────────────────────────────────── */
+  .jects-todo__board {
+    flex: 1 1 auto;
+    display: flex;
+    gap: var(--jects-space-3);
+    padding: var(--jects-space-3);
+    overflow-x: auto;
+  }
+  .jects-todo__col {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 16rem;
+    min-block-size: 4rem;
+    background: oklch(var(--jects-muted) / 0.35);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+  .jects-todo__col--drop {
+    outline: 2px dashed oklch(var(--jects-primary));
+    outline-offset: -2px;
+  }
+  .jects-todo__col-head {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    font-weight: var(--jects-font-weight-semibold);
+    border-bottom: 1px solid oklch(var(--jects-border));
+  }
+  .jects-todo__col-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2);
+    overflow-y: auto;
+  }
+  .jects-todo__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-sm);
+    cursor: grab;
+  }
+  .jects-todo__card--selected { outline: 2px solid oklch(var(--jects-primary)); }
+  .jects-todo__card--p-high { border-inline-start: 3px solid oklch(var(--jects-destructive)); }
+  .jects-todo__card--p-medium { border-inline-start: 3px solid oklch(var(--jects-warning)); }
+  .jects-todo__card--p-low { border-inline-start: 3px solid oklch(var(--jects-cmyk-cyan)); }
+  .jects-todo__card:focus-visible { outline: 2px solid oklch(var(--jects-ring)); }
+  .jects-todo__card-title { font-weight: var(--jects-font-weight-medium); cursor: pointer; }
+  .jects-todo__card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-1) var(--jects-space-2);
+  }
+
+  /* ── bulk action bar ─────────────────────────────────────────────────── */
+  .jects-todo__bulkbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    border-top: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-cmyk-cyan-soft) / 0.4);
+  }
+  .jects-todo__bulkbar[hidden] { display: none; }
+  .jects-todo__bulk-count {
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-todo__bulk-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font: inherit;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+  }
+  .jects-todo__bulk-btn:hover { background: oklch(var(--jects-muted) / 0.6); }
+
+  /* ── detail side panel ───────────────────────────────────────────────── */
+  .jects-todo__detail {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: min(22rem, 100%);
+    display: flex;
+    flex-direction: column;
+    background: oklch(var(--jects-card));
+    border-inline-start: 1px solid oklch(var(--jects-border));
+    box-shadow: var(--jects-shadow-lg);
+    z-index: 5;
+  }
+  .jects-todo__detail-head {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-3);
+    border-bottom: 1px solid oklch(var(--jects-border));
+  }
+  .jects-todo__detail-title {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    font: inherit;
+    font-size: var(--jects-font-size-md);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    outline: none;
+  }
+  .jects-todo__detail-title:focus { border-bottom-color: oklch(var(--jects-ring)); }
+  .jects-todo__detail-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+  .jects-todo__detail-close:hover { background: oklch(var(--jects-muted) / 0.7); }
+  .jects-todo__detail-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    padding: var(--jects-space-3);
+    overflow-y: auto;
+  }
+  .jects-todo__detail-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+  .jects-todo__detail-field--check {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+  .jects-todo__detail-label {
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-todo__detail-input {
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    padding: var(--jects-space-1) var(--jects-space-2);
+  }
+  .jects-todo__detail-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-todo__detail-note {
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+    font-style: italic;
+  }
+}

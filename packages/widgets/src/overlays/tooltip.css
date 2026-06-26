@@ -1,0 +1,36 @@
+/* Tooltip styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-tooltip {
+    position: fixed;
+    z-index: var(--jects-z-tooltip);
+    box-sizing: border-box;
+    max-width: 18rem;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    line-height: 1.3;
+    white-space: normal;
+    pointer-events: none;
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-foreground));
+    border-radius: var(--jects-radius-sm);
+    box-shadow: var(--jects-shadow-md);
+  }
+
+  .jects-tooltip[hidden] {
+    display: none;
+  }
+
+  .jects-tooltip--visible {
+    animation: jects-tooltip-in var(--jects-duration-fast) ease;
+  }
+
+  @keyframes jects-tooltip-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}

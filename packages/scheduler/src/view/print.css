@@ -1,0 +1,218 @@
+/*
+ * Scheduler — Print (print-optimized, paginated flow). Token-pure (--jects-*
+ * only). Two concerns live here:
+ *
+ *   1. The screen styles for the static print document the `PrintController`
+ *      builds (`.jects-scheduler-print*`) — so a build preview / test renders it.
+ *   2. The `@media print` rules that paginate that document for the printer:
+ *      each `.jects-scheduler-print__page` becomes one sheet with a forced page
+ *      break, the header band repeats per page, and lanes never split across a
+ *      page boundary.
+ */
+@layer jects.components {
+  /* The hidden iframe the controller prints through (off-screen on screen). */
+  .jects-scheduler-print__frame {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 0;
+    block-size: 0;
+    border: 0;
+    visibility: hidden;
+  }
+
+  .jects-scheduler-print {
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+  }
+
+  .jects-scheduler-print__page {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    margin-block-end: var(--jects-space-6);
+    padding: var(--jects-space-4);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+  }
+
+  /* ── repeated header (title + time band) ── */
+  .jects-scheduler-print__header {
+    position: relative;
+    margin-block-end: var(--jects-space-2);
+  }
+  .jects-scheduler-print__title {
+    font-weight: var(--jects-font-weight-semibold);
+    font-size: var(--jects-font-size-md);
+    color: oklch(var(--jects-foreground));
+    margin-block-end: var(--jects-space-1);
+  }
+  .jects-scheduler-print__header-band {
+    position: relative;
+    block-size: 1.5rem;
+    border-block-end: 1px solid oklch(var(--jects-border));
+  }
+  .jects-scheduler-print__header-cell {
+    position: absolute;
+    inset-block: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    border-inline-start: 1px solid oklch(var(--jects-border) / 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .jects-scheduler-print__header-cell--major {
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  /* ── page body: resource column + time grid ── */
+  .jects-scheduler-print__body {
+    position: relative;
+    display: block;
+  }
+  .jects-scheduler-print__resources {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    border-inline-end: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-card));
+  }
+  .jects-scheduler-print__resource-row {
+    position: absolute;
+    inset-inline: 0;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.5);
+  }
+  .jects-scheduler-print__resource-cell {
+    display: flex;
+    align-items: center;
+    block-size: 100%;
+    padding-inline: var(--jects-space-3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-scheduler-print__grid {
+    position: absolute;
+    inset-block-start: 0;
+    overflow: hidden;
+  }
+  .jects-scheduler-print__gridline {
+    position: absolute;
+    inset-block: 0;
+    inline-size: 1px;
+    background: oklch(var(--jects-border) / 0.4);
+  }
+  .jects-scheduler-print__gridline--major {
+    background: oklch(var(--jects-border));
+  }
+  .jects-scheduler-print__lane {
+    position: absolute;
+    inset-inline: 0;
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.5);
+  }
+
+  .jects-scheduler-print__bar {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding-inline: var(--jects-space-2);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border: 1px solid oklch(var(--jects-primary) / 0.7);
+    overflow: hidden;
+    font-size: var(--jects-font-size-xs);
+    /* Print backgrounds (browsers strip them by default). */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* A bar continuing onto an adjacent page: flatten the cut edge as a cue. */
+  .jects-scheduler-print__bar--clip-start {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    border-inline-start-style: dashed;
+  }
+  .jects-scheduler-print__bar--clip-end {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    border-inline-end-style: dashed;
+  }
+  .jects-scheduler-print__bar[data-color='cyan'] {
+    background: oklch(var(--jects-cmyk-cyan));
+    border-color: oklch(var(--jects-cmyk-cyan) / 0.7);
+  }
+  .jects-scheduler-print__bar[data-color='magenta'] {
+    background: oklch(var(--jects-cmyk-magenta));
+    border-color: oklch(var(--jects-cmyk-magenta) / 0.7);
+  }
+  .jects-scheduler-print__bar[data-color='yellow'] {
+    background: oklch(var(--jects-cmyk-yellow));
+    border-color: oklch(var(--jects-cmyk-yellow) / 0.7);
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-scheduler-print__bar[data-color='success'] {
+    background: oklch(var(--jects-success));
+    border-color: oklch(var(--jects-success) / 0.7);
+  }
+  .jects-scheduler-print__bar-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /*
+   * ── @media print: paginate the built document ──
+   * Each built page becomes its own physical sheet. The forced break BEFORE each
+   * page (except the first) keeps lanes whole (a lane never straddles a boundary,
+   * because the paginator already packed whole lanes per page) and re-draws the
+   * repeated header at the top of every sheet.
+   */
+  @media print {
+    /* Hide the live, on-screen scheduler when a print document is present so the
+       printer only renders the paginated flow. */
+    .jects-scheduler-print ~ .jects-scheduler,
+    .jects-scheduler-print + .jects-scheduler {
+      display: none;
+    }
+
+    .jects-scheduler-print__page {
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      break-after: page;
+      page-break-after: always;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .jects-scheduler-print__page:last-child {
+      break-after: auto;
+      page-break-after: auto;
+    }
+
+    /* Repeat the header band as a running header on every printed sheet. */
+    .jects-scheduler-print__header {
+      display: table-header-group;
+    }
+
+    /* Never split a lane across the page fold. */
+    .jects-scheduler-print__lane,
+    .jects-scheduler-print__resource-row,
+    .jects-scheduler-print__bar {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+}

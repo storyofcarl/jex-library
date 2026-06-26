@@ -1,0 +1,104 @@
+/* Tabbar styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-tabbar {
+    display: flex;
+    align-items: stretch;
+    gap: var(--jects-space-1);
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .jects-tabbar::-webkit-scrollbar {
+    height: 6px;
+  }
+  .jects-tabbar::-webkit-scrollbar-thumb {
+    background: oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-tabbar__tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    height: 2.5rem;
+    padding-inline: var(--jects-space-3);
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    background: transparent;
+    color: oklch(var(--jects-muted-foreground));
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      color var(--jects-duration-fast) ease,
+      border-color var(--jects-duration-fast) ease,
+      background-color var(--jects-duration-fast) ease;
+  }
+
+  .jects-tabbar__tab:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-accent) / 0.5);
+  }
+
+  .jects-tabbar__tab:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-tabbar__tab--active {
+    color: oklch(var(--jects-foreground));
+    border-bottom-color: oklch(var(--jects-primary));
+  }
+  .jects-tabbar__tab--active:hover {
+    background: transparent;
+  }
+
+  .jects-tabbar__tab--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .jects-tabbar__label {
+    display: inline-block;
+  }
+
+  /* Closable tabs: trim trailing padding so the close button sits snug. */
+  .jects-tabbar__tab--closable {
+    padding-inline-end: var(--jects-space-1);
+  }
+
+  .jects-tabbar__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    box-sizing: border-box;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-inline-start: var(--jects-space-1);
+    border-radius: var(--jects-radius-sm);
+    color: oklch(var(--jects-muted-foreground));
+    cursor: pointer;
+    transition:
+      color var(--jects-duration-fast) ease,
+      background-color var(--jects-duration-fast) ease;
+  }
+  .jects-tabbar__close:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-accent));
+  }
+}

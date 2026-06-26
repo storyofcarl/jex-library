@@ -1,0 +1,360 @@
+/* @jects/diagram UI styles — references ONLY --jects-* tokens (no hard-coded
+   color literals). All rules live inside @layer jects.components. */
+@layer jects.components {
+  .jects-diagram {
+    --_diagram-bg: oklch(var(--jects-background));
+    --_diagram-fg: oklch(var(--jects-foreground));
+    --_diagram-border: oklch(var(--jects-border));
+    --_diagram-muted: oklch(var(--jects-muted));
+    --_diagram-muted-fg: oklch(var(--jects-muted-foreground));
+    --_diagram-accent: oklch(var(--jects-accent));
+    --_diagram-primary: oklch(var(--jects-primary));
+    --_diagram-card: oklch(var(--jects-card));
+    --_diagram-grid: oklch(var(--jects-border) / 0.5);
+
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 320px;
+    box-sizing: border-box;
+    color: var(--_diagram-fg);
+    background: var(--_diagram-bg);
+    border: 1px solid var(--_diagram-border);
+    border-radius: var(--jects-radius-md);
+    font-family: var(--jects-font-family);
+    overflow: hidden;
+  }
+
+  .jects-diagram__toolbar {
+    flex: 0 0 auto;
+    border-block-end: 1px solid var(--_diagram-border);
+    background: var(--_diagram-muted);
+    padding: var(--jects-space-1);
+  }
+
+  .jects-diagram__main {
+    flex: 1 1 auto;
+    display: flex;
+    min-block-size: 0;
+  }
+
+  /* ── shapebar ── */
+  .jects-diagram__shapebar {
+    flex: 0 0 auto;
+    inline-size: 96px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-2);
+    overflow-y: auto;
+    border-inline-end: 1px solid var(--_diagram-border);
+    background: var(--_diagram-card);
+  }
+
+  .jects-diagram__shapebar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: var(--jects-space-1);
+    cursor: grab;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: var(--_diagram-fg);
+    font-size: var(--jects-font-size-xs);
+  }
+  .jects-diagram__shapebar-item:hover {
+    background: var(--_diagram-accent);
+    border-color: var(--_diagram-border);
+  }
+  .jects-diagram__shapebar-item:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-diagram__shapebar-glyph {
+    inline-size: 36px;
+    block-size: 28px;
+    border: 1.5px solid var(--_diagram-fg);
+    background: var(--_diagram-card);
+    border-radius: 3px;
+  }
+  .jects-diagram__shapebar-glyph[data-shape='ellipse'],
+  .jects-diagram__shapebar-glyph[data-shape='terminator'] {
+    border-radius: 14px;
+  }
+  .jects-diagram__shapebar-glyph[data-shape='diamond'],
+  .jects-diagram__shapebar-glyph[data-shape='decision'] {
+    transform: rotate(45deg) scale(0.72);
+  }
+  .jects-diagram__shapebar-label {
+    color: var(--_diagram-muted-fg);
+    text-align: center;
+  }
+
+  /* ── canvas ── */
+  .jects-diagram__canvas {
+    position: relative;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    background: var(--_diagram-bg);
+  }
+  .jects-diagram--grid .jects-diagram__canvas {
+    background-image:
+      linear-gradient(to right, var(--_diagram-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--_diagram-grid) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  .jects-diagram__canvas:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-diagram__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    touch-action: none;
+  }
+
+  /* ── shapes ── */
+  .jects-diagram__shape-body {
+    fill: var(--_fill, oklch(var(--jects-card)));
+    stroke: var(--_stroke, oklch(var(--jects-border)));
+    stroke-width: var(--_stroke-w, 1.5px);
+    stroke-dasharray: var(--_dash, none);
+  }
+  .jects-diagram__shape {
+    cursor: move;
+  }
+  /* Keyboard focus ring for the roving-tabindex shape cursor. */
+  .jects-diagram__shape:focus {
+    outline: none;
+  }
+  .jects-diagram__shape:focus-visible .jects-diagram__shape-body {
+    stroke: oklch(var(--jects-ring));
+    stroke-width: calc(var(--_stroke-w, 1.5px) + 1px);
+  }
+  /* Source shape while a keyboard connector is being drawn. */
+  .jects-diagram__shape--connect-source .jects-diagram__shape-body {
+    stroke: oklch(var(--jects-ring));
+    stroke-dasharray: 4 3;
+  }
+  .jects-diagram__shape--connect-source .jects-diagram__port {
+    opacity: 1;
+  }
+  .jects-diagram__shape--locked {
+    cursor: default;
+  }
+  /* Group container: a faint dashed bounding box behind its children. */
+  .jects-diagram__group-body {
+    fill: oklch(var(--jects-primary) / 0.04);
+    stroke: var(--_diagram-primary);
+    stroke-width: 1px;
+    stroke-dasharray: 6 4;
+    pointer-events: all;
+  }
+  /* HTML (foreignObject) shape body wrapper. */
+  .jects-diagram__html-body {
+    inline-size: 100%;
+    block-size: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    color: var(--_diagram-fg);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-diagram__shape--dimmed {
+    opacity: 0.25;
+  }
+  .jects-diagram__shape-text {
+    fill: var(--_text, oklch(var(--jects-card-foreground)));
+    font-size: var(--jects-font-size-sm);
+    font-family: var(--jects-font-family);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .jects-diagram__port {
+    fill: var(--_diagram-bg);
+    stroke: var(--_diagram-primary);
+    stroke-width: 1.5px;
+    opacity: 0;
+    cursor: crosshair;
+    transition: opacity var(--jects-duration-fast) ease;
+  }
+  .jects-diagram__shape:hover .jects-diagram__port,
+  .jects-diagram__shape--selected .jects-diagram__port {
+    opacity: 1;
+  }
+
+  /* ── connectors ── */
+  .jects-diagram__connector-path {
+    fill: none;
+    stroke: var(--_stroke, oklch(var(--jects-foreground)));
+    stroke-width: var(--_stroke-w, 1.5px);
+    stroke-dasharray: var(--_dash, none);
+  }
+  .jects-diagram__connector-hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 12px;
+    cursor: pointer;
+  }
+  .jects-diagram__connector--selected .jects-diagram__connector-path {
+    stroke: var(--_diagram-primary);
+    stroke-width: 2.5px;
+  }
+  .jects-diagram__connector--dimmed {
+    opacity: 0.25;
+  }
+  .jects-diagram__arrowhead {
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-diagram__connector--selected .jects-diagram__arrowhead {
+    color: oklch(var(--jects-primary));
+  }
+  .jects-diagram__connector-label,
+  .jects-diagram__lane-title {
+    fill: oklch(var(--jects-foreground));
+    font-size: var(--jects-font-size-xs);
+    font-family: var(--jects-font-family);
+    user-select: none;
+  }
+  .jects-diagram__connector-pending {
+    fill: none;
+    stroke: var(--_diagram-primary);
+    stroke-width: 1.5px;
+    stroke-dasharray: 4 3;
+  }
+
+  /* ── swimlanes ── */
+  .jects-diagram__lane-body {
+    fill: oklch(var(--jects-muted) / 0.25);
+    stroke: var(--_diagram-border);
+    stroke-width: 1px;
+  }
+  .jects-diagram__lane-header {
+    fill: oklch(var(--jects-muted) / 0.6);
+    stroke: var(--_diagram-border);
+    stroke-width: 1px;
+  }
+
+  /* ── selection overlay ── */
+  .jects-diagram__sel-outline {
+    fill: none;
+    stroke: var(--_diagram-primary);
+    stroke-width: 1px;
+    stroke-dasharray: 3 2;
+  }
+  .jects-diagram__handle {
+    fill: var(--_diagram-bg);
+    stroke: var(--_diagram-primary);
+    stroke-width: 1.5px;
+  }
+  .jects-diagram__handle[data-handle='nw'],
+  .jects-diagram__handle[data-handle='se'] {
+    cursor: nwse-resize;
+  }
+  .jects-diagram__handle[data-handle='ne'],
+  .jects-diagram__handle[data-handle='sw'] {
+    cursor: nesw-resize;
+  }
+  .jects-diagram__handle[data-handle='n'],
+  .jects-diagram__handle[data-handle='s'] {
+    cursor: ns-resize;
+  }
+  .jects-diagram__handle[data-handle='e'],
+  .jects-diagram__handle[data-handle='w'] {
+    cursor: ew-resize;
+  }
+  .jects-diagram__snapline {
+    stroke: var(--_diagram-primary);
+    stroke-width: 1px;
+    stroke-dasharray: 2 2;
+  }
+  .jects-diagram__marquee {
+    fill: oklch(var(--jects-primary) / 0.1);
+    stroke: var(--_diagram-primary);
+    stroke-width: 1px;
+    stroke-dasharray: 3 2;
+  }
+
+  /* ── inline editor ── */
+  .jects-diagram__inline-editor {
+    position: absolute;
+    z-index: var(--jects-z-popover);
+    box-sizing: border-box;
+    resize: none;
+    border: 2px solid oklch(var(--jects-ring));
+    border-radius: var(--jects-radius-sm);
+    background: var(--_diagram-card);
+    color: var(--_diagram-fg);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    text-align: center;
+    padding: 2px 4px;
+  }
+  .jects-diagram__inline-editor:focus-visible {
+    outline: none;
+  }
+
+  /* ── properties panel ── */
+  .jects-diagram__panel {
+    flex: 0 0 auto;
+    inline-size: 220px;
+    border-inline-start: 1px solid var(--_diagram-border);
+    background: var(--_diagram-card);
+    overflow-y: auto;
+  }
+  .jects-diagram-props {
+    display: flex;
+    flex-direction: column;
+  }
+  .jects-diagram-props__title {
+    padding: var(--jects-space-2);
+    font-weight: var(--jects-font-weight-semibold);
+    font-size: var(--jects-font-size-sm);
+    border-block-end: 1px solid var(--_diagram-border);
+    color: var(--_diagram-fg);
+  }
+  .jects-diagram-props__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    padding: var(--jects-space-3);
+  }
+  .jects-diagram-props__empty {
+    color: var(--_diagram-muted-fg);
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-diagram-props__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+  .jects-diagram-props__label {
+    font-size: var(--jects-font-size-xs);
+    color: var(--_diagram-muted-fg);
+  }
+  .jects-diagram-props__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--jects-space-2);
+  }
+  .jects-diagram-props__cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .jects-diagram-props__sublabel {
+    font-size: var(--jects-font-size-xs);
+    color: var(--_diagram-muted-fg);
+  }
+
+  .jects-diagram--readonly .jects-diagram__shape {
+    cursor: default;
+  }
+}

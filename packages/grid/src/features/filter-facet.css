@@ -1,0 +1,147 @@
+/* @jects/grid — faceted (set / checklist) filter popup styles.
+   Token-pure: references ONLY --jects-* tokens, no hardcoded color literals.
+   All rules live inside @layer jects.components. */
+
+@layer jects.components {
+  .jects-grid-facet {
+    position: fixed;
+    z-index: var(--jects-z-popover);
+    display: flex;
+    flex-direction: column;
+    inline-size: calc(var(--jects-space-12) * 1.75);
+    min-inline-size: calc(var(--jects-space-12) * 1.5);
+    max-block-size: 70vh;
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-lg);
+    overflow: hidden;
+  }
+
+  .jects-grid-facet__title {
+    padding: var(--jects-space-2) var(--jects-space-3) var(--jects-space-1);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-grid-facet__search {
+    padding: var(--jects-space-1) var(--jects-space-2);
+  }
+
+  .jects-grid-facet__search-input {
+    inline-size: 100%;
+    box-sizing: border-box;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-grid-facet__search-input::placeholder {
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-grid-facet__search-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-grid-facet__selectall {
+    padding: var(--jects-space-1) var(--jects-space-3);
+    border-bottom: 1px solid oklch(var(--jects-border) / 0.6);
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  .jects-grid-facet__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    overflow-y: auto;
+    padding: var(--jects-space-1) var(--jects-space-1);
+  }
+
+  .jects-grid-facet__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-grid-facet__row:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-grid-facet__check {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .jects-grid-facet__count {
+    flex: 0 0 auto;
+    padding: 0 var(--jects-space-2);
+    font-size: var(--jects-font-size-xs);
+    font-variant-numeric: tabular-nums;
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-grid-facet__empty {
+    padding: var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-muted-foreground));
+    text-align: center;
+  }
+
+  .jects-grid-facet__actions {
+    display: flex;
+    gap: var(--jects-space-1);
+    justify-content: flex-end;
+    padding: var(--jects-space-2);
+    border-top: 1px solid oklch(var(--jects-border));
+  }
+
+  .jects-grid-facet__action {
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+
+  .jects-grid-facet__action:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-grid-facet__cancel {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-secondary));
+  }
+
+  .jects-grid-facet__cancel:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-grid-facet__apply {
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border-color: oklch(var(--jects-primary));
+  }
+
+  .jects-grid-facet__apply:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+}

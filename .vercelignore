@@ -1,0 +1,10 @@
+/node_modules
+/packages
+/apps
+/tooling
+/preview
+/docs
+/.turbo
+/.changeset
+/archive
+/_audit_scratch

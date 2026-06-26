@@ -1,11 +1,13 @@
 {
   "name": "@jects/core",
   "version": "0.0.0",
-  "description": "Jects UI core — signals, Widget base, Store/TreeStore, EventEmitter, DOM utils, virtualization. Zero runtime deps, framework-free.",
+  "description": "Jects UI core — the zero-dependency engine powering the suite: signals, Widget base, Store/TreeStore, typed EventEmitter, DOM utilities, virtualization, and the component factory. Framework-free.",
   "license": "UNLICENSED",
   "type": "module",
   "sideEffects": false,
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

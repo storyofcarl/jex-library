@@ -1,0 +1,79 @@
+/* ProgressBar styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-progress {
+    --_progress-track: oklch(var(--jects-muted));
+    --_progress-fill: oklch(var(--jects-primary));
+
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+  }
+
+  .jects-progress__track {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    border-radius: var(--jects-radius-xl);
+    background: var(--_progress-track);
+  }
+
+  .jects-progress__fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--_progress-fill);
+    transition: width var(--jects-duration-normal) ease;
+  }
+
+  .jects-progress__label {
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+    font-variant-numeric: tabular-nums;
+    min-width: 2.5ch;
+    text-align: end;
+  }
+
+  /* ---- sizes ---- */
+  .jects-progress--sm .jects-progress__track {
+    height: 0.25rem;
+  }
+  .jects-progress--md .jects-progress__track {
+    height: 0.5rem;
+  }
+  .jects-progress--lg .jects-progress__track {
+    height: 0.75rem;
+  }
+
+  /* ---- variants ---- */
+  .jects-progress--primary {
+    --_progress-fill: oklch(var(--jects-primary));
+  }
+  .jects-progress--success {
+    --_progress-fill: oklch(var(--jects-success));
+  }
+  .jects-progress--warning {
+    --_progress-fill: oklch(var(--jects-warning));
+  }
+  .jects-progress--destructive {
+    --_progress-fill: oklch(var(--jects-destructive));
+  }
+
+  /* ---- indeterminate ---- */
+  .jects-progress--indeterminate .jects-progress__fill {
+    width: 40%;
+    transition: none;
+    animation: jects-progress-indeterminate var(--jects-duration-slow) ease-in-out infinite;
+  }
+
+  @keyframes jects-progress-indeterminate {
+    0% {
+      margin-inline-start: -40%;
+    }
+    100% {
+      margin-inline-start: 100%;
+    }
+  }
+}

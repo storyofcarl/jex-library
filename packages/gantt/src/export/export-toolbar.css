@@ -1,0 +1,83 @@
+/* @jects/gantt — "Export to PNG" toolbar action.
+
+   A single token-pure, focusable button pinned to the chart's top-end corner
+   (mirroring the Bryntum/DHTMLX export affordance). Every color is
+   `oklch(var(--jects-*))`; sizing uses the --jects-* space/radius scales. All
+   rules live inside @layer jects.components so they compose with the rest of the
+   Gantt component layer. No hardcoded color literals. */
+@layer jects.components {
+  /* The export toolbar, floating above the panes in the top-end corner. The
+     host Gantt root is positioned, so absolute positioning anchors to it. */
+  .jects-gantt__export-toolbar {
+    position: absolute;
+    inset-block-start: var(--jects-space-2);
+    inset-inline-end: var(--jects-space-2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    box-shadow: var(--jects-shadow-md);
+    z-index: var(--jects-z-sticky);
+  }
+
+  /* The export button: icon (+ optional label). */
+  .jects-gantt__export-toolbar__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    min-block-size: var(--jects-space-7);
+    padding-block: var(--jects-space-1);
+    padding-inline: var(--jects-space-2);
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: oklch(var(--jects-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color var(--jects-duration-fast),
+      color var(--jects-duration-fast),
+      border-color var(--jects-duration-fast);
+  }
+
+  .jects-gantt__export-toolbar__btn > .jects-icon {
+    inline-size: var(--jects-space-4);
+    block-size: var(--jects-space-4);
+    display: block;
+    flex: none;
+  }
+
+  .jects-gantt__export-toolbar__label {
+    white-space: nowrap;
+  }
+
+  .jects-gantt__export-toolbar__btn:hover:not(:disabled) {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+    border-color: oklch(var(--jects-border));
+  }
+
+  .jects-gantt__export-toolbar__btn:active:not(:disabled) {
+    background: oklch(var(--jects-accent) / 0.8);
+  }
+
+  .jects-gantt__export-toolbar__btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* Busy (export in flight) — muted + non-interactive, no layout shift. */
+  .jects-gantt__export-toolbar__btn--busy,
+  .jects-gantt__export-toolbar__btn:disabled {
+    color: oklch(var(--jects-muted-foreground) / 0.6);
+    cursor: default;
+    pointer-events: none;
+  }
+}

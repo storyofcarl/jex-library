@@ -1,0 +1,94 @@
+/* Pagination styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-3);
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-pagination__pages {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-pagination__page,
+  .jects-pagination__nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding-inline: var(--jects-space-2);
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-md);
+    background: transparent;
+    color: oklch(var(--jects-foreground));
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color var(--jects-duration-fast) ease,
+      color var(--jects-duration-fast) ease,
+      border-color var(--jects-duration-fast) ease;
+  }
+
+  .jects-pagination__page:hover:not(:disabled),
+  .jects-pagination__nav:hover:not(:disabled) {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-pagination__page:focus-visible,
+  .jects-pagination__nav:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-pagination__page--current {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border-color: transparent;
+  }
+  .jects-pagination__page--current:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+    color: oklch(var(--jects-primary-foreground));
+  }
+
+  .jects-pagination__page:disabled,
+  .jects-pagination__nav:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .jects-pagination__nav--edge .jects-icon {
+    transform: rotate(90deg);
+  }
+
+  .jects-pagination__gap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-pagination__size {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: auto;
+  }
+
+  .jects-pagination--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}

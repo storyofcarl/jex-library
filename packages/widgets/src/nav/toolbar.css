@@ -1,0 +1,57 @@
+/* Toolbar styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    box-sizing: border-box;
+    padding: var(--jects-space-1);
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-toolbar--vertical {
+    flex-direction: column;
+    align-items: stretch;
+    width: max-content;
+  }
+
+  .jects-toolbar__item,
+  .jects-toolbar__overflow {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .jects-toolbar__separator {
+    flex: none;
+    align-self: stretch;
+    width: 1px;
+    margin: 0 var(--jects-space-1);
+    background: oklch(var(--jects-border));
+  }
+  .jects-toolbar--vertical .jects-toolbar__separator {
+    width: auto;
+    height: 1px;
+    margin: var(--jects-space-1) 0;
+  }
+
+  .jects-toolbar__overflow {
+    margin-inline-start: auto;
+  }
+  .jects-toolbar--vertical .jects-toolbar__overflow {
+    margin-inline-start: 0;
+    margin-top: auto;
+  }
+
+  .jects-toolbar__overflow-menu {
+    position: absolute;
+    top: 100%;
+    inset-inline-end: 0;
+    z-index: var(--jects-z-dropdown);
+    margin-top: var(--jects-space-1);
+  }
+  .jects-toolbar__overflow-menu[hidden] {
+    display: none;
+  }
+}

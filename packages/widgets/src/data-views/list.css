@@ -1,0 +1,84 @@
+/* List styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-list {
+    display: block;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    outline: none;
+  }
+
+  .jects-list:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-list__viewport {
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .jects-list__spacer {
+    position: relative;
+    width: 100%;
+  }
+
+  .jects-list__content {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    will-change: transform;
+  }
+
+  .jects-list__item {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    padding-inline: var(--jects-space-3);
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid oklch(var(--jects-border) / 0.5);
+    color: oklch(var(--jects-foreground));
+    transition: background-color var(--jects-duration-fast) ease;
+  }
+
+  .jects-list__item:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-list__item--selected {
+    background: oklch(var(--jects-primary) / 0.12);
+  }
+
+  .jects-list__item--selected:hover {
+    background: oklch(var(--jects-primary) / 0.18);
+  }
+
+  .jects-list__item--active {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-list__label {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-list__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--jects-space-6);
+    color: oklch(var(--jects-muted-foreground));
+    font-size: var(--jects-font-size-sm);
+  }
+}

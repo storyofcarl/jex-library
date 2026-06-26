@@ -1,0 +1,61 @@
+/* @jects/grid — InfiniteLoadFeature (lazy / infinite load-on-demand) styles.
+   Token-pure (only --jects-* tokens), all inside @layer jects.components.
+
+   A row still backed by a not-yet-fetched placeholder gets
+   `.jects-grid__row--loading` (+ aria-busy). Its cells render a shimmering
+   skeleton bar so the user sees that data is streaming in as they scroll. */
+
+@layer jects.components {
+  .jects-grid__row--loading {
+    cursor: progress;
+  }
+
+  /* Hide whatever stub text a placeholder cell carries and draw a skeleton bar. */
+  .jects-grid__row--loading .jects-grid__cell {
+    color: transparent;
+    user-select: none;
+  }
+
+  .jects-grid__row--loading .jects-grid__cell::after {
+    content: '';
+    display: block;
+    block-size: var(--jects-space-3);
+    inline-size: 70%;
+    border-radius: var(--jects-radius-sm);
+    background-color: oklch(var(--jects-muted-foreground) / 0.18);
+    background-image: linear-gradient(
+      90deg,
+      oklch(var(--jects-muted-foreground) / 0) 0%,
+      oklch(var(--jects-muted-foreground) / 0.22) 50%,
+      oklch(var(--jects-muted-foreground) / 0) 100%
+    );
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    animation: jects-grid-skeleton 1.2s ease-in-out infinite;
+  }
+
+  /* Vary the skeleton bar width a little per column for a more natural look. */
+  .jects-grid__row--loading .jects-grid__cell:nth-child(2n)::after {
+    inline-size: 55%;
+  }
+  .jects-grid__row--loading .jects-grid__cell:nth-child(3n)::after {
+    inline-size: 82%;
+  }
+
+  @keyframes jects-grid-skeleton {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Respect reduced-motion: drop the shimmer, keep a static skeleton bar. */
+  @media (prefers-reduced-motion: reduce) {
+    .jects-grid__row--loading .jects-grid__cell::after {
+      animation: none;
+      background-image: none;
+    }
+  }
+}

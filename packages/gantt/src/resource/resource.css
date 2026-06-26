@@ -1,0 +1,82 @@
+/* Gantt resource assignment chips — rendered by `ResourceAssignmentView`.
+
+   Token-pure: every color is `oklch(var(--jects-*))`; sizing uses the --jects-*
+   space/radius scales. All rules live inside @layer jects.components so they
+   compose with the rest of the Gantt component layer. */
+@layer jects.components {
+  .jects-resource-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-resource-chips__empty {
+    color: oklch(var(--jects-muted-foreground));
+    font-style: italic;
+    padding-inline: var(--jects-space-1);
+  }
+
+  .jects-resource-chips__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding-inline: var(--jects-space-1) var(--jects-space-2);
+    padding-block: var(--jects-space-1);
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-secondary));
+    color: oklch(var(--jects-secondary-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    cursor: pointer;
+    max-inline-size: 12rem;
+  }
+
+  .jects-resource-chips__chip:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-resource-chips__chip:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* Over-allocated resource: destructive accent. */
+  .jects-resource-chips__chip--over {
+    background: oklch(var(--jects-destructive) / 0.12);
+    color: oklch(var(--jects-destructive-foreground));
+    border-color: oklch(var(--jects-destructive) / 0.6);
+  }
+
+  .jects-resource-chips__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-5);
+    block-size: var(--jects-space-5);
+    border-radius: var(--jects-radius-xl);
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    flex: 0 0 auto;
+  }
+
+  .jects-resource-chips__chip--over .jects-resource-chips__avatar {
+    background: oklch(var(--jects-destructive));
+    color: oklch(var(--jects-destructive-foreground));
+  }
+
+  .jects-resource-chips__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-resource-chips__units {
+    color: oklch(var(--jects-muted-foreground));
+    font-variant-numeric: tabular-nums;
+  }
+}

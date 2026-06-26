@@ -1,0 +1,31 @@
+/* Multi-assignment rendering — bar units badge.
+   Token-pure (only --jects-* tokens), inside @layer jects.components.
+   Imported as a side-effect by view/assignment-rendering.ts so it is only
+   bundled when the plugin is used. */
+@layer jects.components {
+  /* A small allocation badge shown on bars whose assignment units ≠ 1
+     (e.g. "×2" for two units, "50%" for a fractional allocation). It rides at
+     the trailing edge of the bar and never intercepts pointer/drag events. */
+  .jects-scheduler__bar-units {
+    margin-inline-start: auto;
+    flex: none;
+    padding-inline: var(--jects-space-1);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-primary-foreground) / 0.22);
+    color: inherit;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    line-height: 1.4;
+    pointer-events: none;
+  }
+
+  /* Fractional / over-allocated bars get a subtle inset edge so the allocation
+     is legible without relying on the badge text alone. The width is driven by
+     the --_assign-units custom property the plugin sets per bar. */
+  .jects-scheduler__bar[data-units]:not([data-units='1']) {
+    box-shadow: inset 2px 0 0 0 oklch(var(--jects-primary-foreground) / 0.55);
+  }
+  .jects-scheduler__bar[data-color='yellow'][data-units]:not([data-units='1']) {
+    box-shadow: inset 2px 0 0 0 oklch(var(--jects-foreground) / 0.45);
+  }
+}

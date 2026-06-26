@@ -1,0 +1,167 @@
+/* Gantt tabbed task editor — the multi-tab editor shell (General + Resources),
+   the WAI-ARIA tablist, the General-tab field grid, and the action bar.
+
+   Token-pure: every colour is `oklch(var(--jects-*))`; sizing uses the
+   --jects-* space / radius / font scales. All rules live inside
+   @layer jects.components so they compose with the rest of the Gantt component
+   layer. The Resources-tab field reuses the chips/units styles already defined
+   in resource-assignment.css. */
+@layer jects.components {
+  .jects-gantt__task-editor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    inline-size: 26rem;
+    max-inline-size: 100%;
+    padding: var(--jects-space-4);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    box-shadow: var(--jects-shadow-lg);
+  }
+
+  .jects-gantt__task-editor-title {
+    margin: 0;
+    font-size: var(--jects-font-size-lg);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* ── tablist ───────────────────────────────────────────────────────────── */
+  .jects-gantt__task-editor-tabs {
+    display: flex;
+    gap: var(--jects-space-1);
+    border-bottom: 1px solid oklch(var(--jects-border));
+  }
+
+  .jects-gantt__task-editor-tab {
+    appearance: none;
+    cursor: pointer;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: var(--jects-radius-sm) var(--jects-radius-sm) 0 0;
+  }
+
+  .jects-gantt__task-editor-tab:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-accent) / 0.5);
+  }
+
+  .jects-gantt__task-editor-tab--active {
+    color: oklch(var(--jects-foreground));
+    border-bottom-color: oklch(var(--jects-primary));
+  }
+
+  .jects-gantt__task-editor-tab:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  /* ── panels ────────────────────────────────────────────────────────────── */
+  .jects-gantt__task-editor-panel:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+    border-radius: var(--jects-radius-sm);
+  }
+
+  /* ── General-tab field grid ────────────────────────────────────────────── */
+  .jects-gantt__task-editor-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+  }
+
+  .jects-gantt__task-editor-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-gantt__task-editor-row--check {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+
+  .jects-gantt__task-editor-label {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-gantt__task-editor-input {
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding: var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-gantt__task-editor-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    border-color: oklch(var(--jects-ring));
+  }
+
+  .jects-gantt__task-editor-check {
+    accent-color: oklch(var(--jects-primary));
+    inline-size: 1rem;
+    block-size: 1rem;
+  }
+
+  .jects-gantt__task-editor-check:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── action bar ────────────────────────────────────────────────────────── */
+  .jects-gantt__task-editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--jects-space-2);
+    margin-block-start: var(--jects-space-2);
+  }
+
+  .jects-gantt__task-editor-btn {
+    appearance: none;
+    cursor: pointer;
+    padding: var(--jects-space-2) var(--jects-space-4);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-gantt__task-editor-btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-gantt__task-editor-btn--ghost {
+    color: oklch(var(--jects-foreground));
+    background: transparent;
+    border-color: oklch(var(--jects-border));
+  }
+
+  .jects-gantt__task-editor-btn--ghost:hover {
+    background: oklch(var(--jects-accent) / 0.5);
+  }
+
+  .jects-gantt__task-editor-btn--primary {
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+  }
+
+  .jects-gantt__task-editor-btn--primary:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+}

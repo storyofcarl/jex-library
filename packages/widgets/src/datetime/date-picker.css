@@ -1,0 +1,65 @@
+/* DatePicker styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-datepicker {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 2.5rem;
+    padding-inline: var(--jects-space-1) var(--jects-space-1);
+    padding-inline-start: var(--jects-space-3);
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    transition: border-color var(--jects-duration-fast) ease, box-shadow var(--jects-duration-fast) ease;
+  }
+  .jects-datepicker:focus-within {
+    border-color: oklch(var(--jects-ring));
+    outline: 2px solid oklch(var(--jects-ring) / 0.4);
+    outline-offset: 0;
+  }
+
+  .jects-datepicker--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .jects-datepicker__input {
+    flex: 1;
+    min-width: 7rem;
+    height: 100%;
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    border: none;
+    outline: none;
+    font: inherit;
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-datepicker__input::placeholder {
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-datepicker__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    cursor: pointer;
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    font-size: var(--jects-font-size-md);
+    line-height: 1;
+    transition: background-color var(--jects-duration-fast) ease;
+  }
+  .jects-datepicker__trigger:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+}

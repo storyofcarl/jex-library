@@ -1,0 +1,714 @@
+/* Calendar styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-cal {
+    --_cal-border: oklch(var(--jects-border));
+    /* Muted text: use the higher-contrast secondary-foreground so small labels
+       meet WCAG AA on light + dark surfaces (muted-foreground alone is ~2.3:1). */
+    --_cal-muted: oklch(var(--jects-secondary-foreground));
+    --_cal-event: oklch(var(--jects-primary));
+
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 28rem;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid var(--_cal-border);
+    border-radius: var(--jects-radius-lg);
+    overflow: hidden;
+  }
+  .jects-cal:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+  .jects-cal *,
+  .jects-cal *::before,
+  .jects-cal *::after {
+    box-sizing: border-box;
+  }
+
+  /* ── toolbar ───────────────────────────────────────────────────────── */
+  .jects-cal__toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-3);
+    padding: var(--jects-space-3) var(--jects-space-4);
+    border-bottom: 1px solid var(--_cal-border);
+    background: oklch(var(--jects-card));
+  }
+  .jects-cal__nav {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+  }
+  .jects-cal__title {
+    font-size: var(--jects-font-size-lg);
+    font-weight: var(--jects-font-weight-semibold);
+    flex: 1;
+  }
+  .jects-cal__views {
+    display: inline-flex;
+    gap: var(--jects-space-1);
+    background: oklch(var(--jects-muted));
+    padding: var(--jects-space-1);
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-cal__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--jects-space-1);
+    min-height: 2rem;
+    padding: 0 var(--jects-space-3);
+    font: inherit;
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid var(--_cal-border);
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+    transition: background-color var(--jects-duration-fast) ease;
+  }
+  .jects-cal__btn:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-cal__btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-cal__view-btn {
+    border-color: transparent;
+    background: transparent;
+  }
+  .jects-cal__view-btn--active {
+    background: oklch(var(--jects-background));
+    border-color: var(--_cal-border);
+    box-shadow: var(--jects-shadow-sm);
+  }
+
+  /* ── main layout ───────────────────────────────────────────────────── */
+  .jects-cal__main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  .jects-cal__sidebar {
+    width: 14rem;
+    flex: none;
+    padding: var(--jects-space-3);
+    border-right: 1px solid var(--_cal-border);
+    overflow-y: auto;
+    background: oklch(var(--jects-card));
+  }
+  .jects-cal__view {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+    position: relative;
+  }
+
+  /* ── mini-calendar ─────────────────────────────────────────────────── */
+  .jects-cal__mini-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--jects-space-2);
+  }
+  .jects-cal__mini-label {
+    font-weight: var(--jects-font-weight-semibold);
+  }
+  .jects-cal__mini-nav {
+    min-height: 1.5rem;
+    padding: 0 var(--jects-space-2);
+  }
+  .jects-cal__mini-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+  }
+  .jects-cal__mini-dow {
+    text-align: center;
+    font-size: var(--jects-font-size-xs);
+    color: var(--_cal-muted);
+    padding: var(--jects-space-1) 0;
+  }
+  .jects-cal__mini-day {
+    aspect-ratio: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: inherit;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+  .jects-cal__mini-day:hover {
+    background: oklch(var(--jects-accent));
+  }
+  .jects-cal__mini-day--muted {
+    color: oklch(var(--jects-secondary-foreground));
+  }
+  .jects-cal__mini-day--today {
+    font-weight: var(--jects-font-weight-bold);
+    color: oklch(var(--jects-primary));
+  }
+  .jects-cal__mini-day--selected {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+  }
+  .jects-cal__mini-day:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── filters ───────────────────────────────────────────────────────── */
+  .jects-cal__filter {
+    margin-top: var(--jects-space-4);
+  }
+  .jects-cal__filter-title {
+    font-size: var(--jects-font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--_cal-muted);
+    margin-bottom: var(--jects-space-2);
+  }
+  .jects-cal__filter-row {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-1) 0;
+    cursor: pointer;
+  }
+  .jects-cal__filter-swatch {
+    --_cal-swatch: oklch(var(--jects-primary));
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: var(--jects-radius-sm);
+    background: var(--_cal-swatch);
+    flex: none;
+  }
+  .jects-cal__filter-name {
+    font-size: var(--jects-font-size-sm);
+  }
+
+  /* ── month view ────────────────────────────────────────────────────── */
+  .jects-cal__month {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+  .jects-cal__month-head {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--_cal-border);
+    position: sticky;
+    top: 0;
+    background: oklch(var(--jects-card));
+    z-index: 1;
+  }
+  .jects-cal__month-dow {
+    padding: var(--jects-space-2);
+    text-align: center;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: var(--_cal-muted);
+  }
+  .jects-cal__month-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    flex: 1;
+    min-height: 5rem;
+  }
+  .jects-cal__month-cell {
+    border-right: 1px solid var(--_cal-border);
+    border-bottom: 1px solid var(--_cal-border);
+    padding: var(--jects-space-1);
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    cursor: pointer;
+    min-width: 0;
+  }
+  .jects-cal__month-cell:hover {
+    background: oklch(var(--jects-accent) / 0.4);
+  }
+  .jects-cal__month-cell--muted {
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+  .jects-cal__month-cell--muted .jects-cal__month-num {
+    color: oklch(var(--jects-secondary-foreground));
+  }
+  .jects-cal__month-cell--today .jects-cal__month-num {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border-radius: var(--jects-radius-full, 999px);
+  }
+  .jects-cal__month-cell--selected {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+  .jects-cal__month-num {
+    align-self: flex-end;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+  }
+  .jects-cal__month-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+  }
+  .jects-cal__more {
+    font: inherit;
+    font-size: var(--jects-font-size-xs);
+    color: var(--_cal-muted);
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    padding: 0 var(--jects-space-1);
+  }
+  .jects-cal__more:hover {
+    color: oklch(var(--jects-foreground));
+    text-decoration: underline;
+  }
+
+  /* ── events ────────────────────────────────────────────────────────── */
+  .jects-cal__event {
+    --_cal-event: oklch(var(--jects-primary));
+    font: inherit;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-cal__event:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-cal__event--chip {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: 1px var(--jects-space-1);
+    border-radius: var(--jects-radius-sm);
+    font-size: var(--jects-font-size-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    background: transparent;
+  }
+  .jects-cal__event--chip:hover {
+    background: oklch(var(--jects-accent));
+  }
+  .jects-cal__event-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--_cal-event);
+    flex: none;
+  }
+  .jects-cal__event-time {
+    color: var(--_cal-muted);
+    flex: none;
+  }
+  .jects-cal__event-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jects-cal__event--bar {
+    display: block;
+    width: 100%;
+    padding: 1px var(--jects-space-2);
+    margin-bottom: 2px;
+    border-radius: var(--jects-radius-sm);
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+    border-left: 3px solid var(--_cal-event);
+    box-shadow: inset 0 0 0 1px oklch(var(--jects-border));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ── time grid (day / week / resource) ─────────────────────────────── */
+  .jects-cal__timegrid {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+  .jects-cal__tg-header {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: oklch(var(--jects-card));
+    border-bottom: 1px solid var(--_cal-border);
+  }
+  .jects-cal__tg-header > .jects-cal__tg-daycol-head:nth-child(2) {
+    grid-column: 2;
+  }
+  .jects-cal__tg-header {
+    grid-template-columns: 3.5rem repeat(var(--_cal-cols, 1), 1fr);
+  }
+  .jects-cal__tg-corner {
+    border-right: 1px solid var(--_cal-border);
+  }
+  .jects-cal__tg-daycol-head {
+    padding: var(--jects-space-2);
+    text-align: center;
+    border-right: 1px solid var(--_cal-border);
+    cursor: default;
+  }
+  .jects-cal__tg-dow {
+    display: block;
+    font-size: var(--jects-font-size-xs);
+    color: var(--_cal-muted);
+    text-transform: uppercase;
+  }
+  .jects-cal__tg-date {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    font-weight: var(--jects-font-weight-semibold);
+  }
+  .jects-cal__tg-daycol-head--today .jects-cal__tg-date {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border-radius: 999px;
+  }
+
+  .jects-cal__tg-allday {
+    display: grid;
+    grid-template-columns: 3.5rem repeat(var(--_cal-cols, 1), 1fr);
+    border-bottom: 1px solid var(--_cal-border);
+    min-height: 1.75rem;
+    background: oklch(var(--jects-background));
+  }
+  .jects-cal__tg-allday-label {
+    font-size: var(--jects-font-size-xs);
+    color: var(--_cal-muted);
+    padding: var(--jects-space-1);
+    border-right: 1px solid var(--_cal-border);
+    text-align: right;
+  }
+  .jects-cal__tg-allday-lane {
+    border-right: 1px solid var(--_cal-border);
+    padding: 2px;
+    min-width: 0;
+  }
+
+  .jects-cal__tg-body {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    flex: 1;
+  }
+  .jects-cal__tg-gutter {
+    border-right: 1px solid var(--_cal-border);
+  }
+  .jects-cal__tg-hour {
+    position: relative;
+    border-bottom: 1px solid oklch(var(--jects-border) / 0.5);
+  }
+  .jects-cal__tg-hour-label {
+    position: absolute;
+    top: -0.6em;
+    right: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    color: var(--_cal-muted);
+    background: oklch(var(--jects-background));
+    padding: 0 2px;
+  }
+  .jects-cal__tg-cols {
+    display: grid;
+    grid-template-columns: repeat(var(--_cal-cols, 1), 1fr);
+  }
+  .jects-cal__tg-col {
+    position: relative;
+    border-right: 1px solid var(--_cal-border);
+  }
+  .jects-cal__tg-col--today {
+    background: oklch(var(--jects-primary) / 0.04);
+  }
+  .jects-cal__tg-line {
+    border-bottom: 1px solid oklch(var(--jects-border) / 0.5);
+    pointer-events: none;
+  }
+  .jects-cal__tg-now {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: oklch(var(--jects-destructive));
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .jects-cal__event--timed {
+    position: absolute;
+    border-radius: var(--jects-radius-sm);
+    padding: 1px var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    overflow: hidden;
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-foreground));
+    border-left: 3px solid var(--_cal-event);
+    box-shadow: inset 0 0 0 1px oklch(var(--jects-border));
+    z-index: 2;
+    cursor: grab;
+  }
+  .jects-cal__event--timed .jects-cal__event-time {
+    color: oklch(var(--jects-secondary-foreground));
+    display: block;
+  }
+  .jects-cal__event--timed .jects-cal__event-title {
+    display: block;
+    font-weight: var(--jects-font-weight-medium);
+  }
+  .jects-cal__event-resize {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 6px;
+    cursor: ns-resize;
+  }
+  .jects-cal__ghost {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-primary) / 0.3);
+    border: 1px dashed oklch(var(--jects-primary));
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    padding: 1px var(--jects-space-1);
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  /* ── year view ─────────────────────────────────────────────────────── */
+  .jects-cal__year {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: var(--jects-space-4);
+    padding: var(--jects-space-4);
+  }
+  .jects-cal__year-month-head {
+    font: inherit;
+    font-weight: var(--jects-font-weight-semibold);
+    background: transparent;
+    border: none;
+    color: oklch(var(--jects-foreground));
+    cursor: pointer;
+    margin-bottom: var(--jects-space-2);
+    padding: 0;
+  }
+  .jects-cal__year-month-head:hover {
+    color: oklch(var(--jects-primary));
+    text-decoration: underline;
+  }
+  .jects-cal__year-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+  }
+  .jects-cal__year-dow {
+    text-align: center;
+    font-size: var(--jects-font-size-xs);
+    color: var(--_cal-muted);
+  }
+  .jects-cal__year-day {
+    aspect-ratio: 1;
+    font: inherit;
+    font-size: var(--jects-font-size-xs);
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    color: oklch(var(--jects-foreground));
+    cursor: pointer;
+  }
+  .jects-cal__year-day:hover {
+    background: oklch(var(--jects-accent));
+  }
+  .jects-cal__year-day--muted {
+    color: oklch(var(--jects-secondary-foreground));
+  }
+  .jects-cal__year-day--today {
+    font-weight: var(--jects-font-weight-bold);
+    color: oklch(var(--jects-primary));
+  }
+  .jects-cal__year-day--has {
+    background: oklch(var(--jects-primary) / 0.18);
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  /* ── agenda view ───────────────────────────────────────────────────── */
+  .jects-cal__agenda {
+    padding: var(--jects-space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-4);
+  }
+  .jects-cal__agenda-date {
+    font-weight: var(--jects-font-weight-semibold);
+    padding-bottom: var(--jects-space-1);
+    border-bottom: 1px solid var(--_cal-border);
+    margin-bottom: var(--jects-space-2);
+  }
+  .jects-cal__agenda-date--today {
+    color: oklch(var(--jects-primary));
+  }
+  .jects-cal__agenda-row {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-3);
+    width: 100%;
+    padding: var(--jects-space-2);
+    font: inherit;
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-md);
+    color: oklch(var(--jects-foreground));
+    cursor: pointer;
+  }
+  .jects-cal__agenda-row:hover {
+    background: oklch(var(--jects-accent));
+  }
+  .jects-cal__agenda-time {
+    width: 4rem;
+    flex: none;
+    color: var(--_cal-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .jects-cal__agenda-dot {
+    --_cal-event: oklch(var(--jects-primary));
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 999px;
+    background: var(--_cal-event);
+    flex: none;
+  }
+  .jects-cal__agenda-title {
+    font-weight: var(--jects-font-weight-medium);
+  }
+  .jects-cal__agenda-loc {
+    color: var(--_cal-muted);
+    margin-left: auto;
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-cal__empty {
+    padding: var(--jects-space-8) var(--jects-space-4);
+    text-align: center;
+    color: var(--_cal-muted);
+  }
+
+  /* ── Timeline view (horizontal time axis, resources as rows) ─────────── */
+  .jects-cal__timeline {
+    --_cal-tl-rowhead: 8rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+  }
+  .jects-cal__tl-header {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: oklch(var(--jects-card));
+    border-bottom: 1px solid var(--_cal-border);
+  }
+  .jects-cal__tl-rowhead {
+    flex: none;
+    width: var(--_cal-tl-rowhead);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    font-weight: var(--jects-font-weight-medium);
+    border-right: 1px solid var(--_cal-border);
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  .jects-cal__tl-corner {
+    background: oklch(var(--jects-card));
+  }
+  .jects-cal__tl-axis {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: repeat(var(--_cal-tl-hours, 24), 1fr);
+  }
+  .jects-cal__tl-tick {
+    padding: var(--jects-space-2) var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    color: var(--_cal-muted);
+    border-left: 1px solid var(--_cal-border);
+    font-variant-numeric: tabular-nums;
+  }
+  .jects-cal__tl-row {
+    display: flex;
+    min-height: 2.75rem;
+    border-bottom: 1px solid var(--_cal-border);
+  }
+  .jects-cal__tl-row .jects-cal__tl-rowhead {
+    color: var(--_cal-muted);
+    border-bottom: 0;
+  }
+  .jects-cal__tl-track {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 2.75rem;
+  }
+  .jects-cal__tl-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    border-left: 1px solid var(--_cal-border);
+    opacity: 0.5;
+  }
+  .jects-cal__tl-event {
+    position: absolute;
+    top: var(--jects-space-1);
+    bottom: var(--jects-space-1);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: 0 var(--jects-space-2);
+    overflow: hidden;
+    white-space: nowrap;
+    color: oklch(var(--jects-primary-foreground));
+    background: var(--_cal-event);
+    border: 0;
+    border-radius: var(--jects-radius-sm);
+    font-size: var(--jects-font-size-xs);
+    cursor: pointer;
+  }
+  .jects-cal__tl-event:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-cal__tl-event .jects-cal__event-time {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.85;
+  }
+}

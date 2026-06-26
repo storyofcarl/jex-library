@@ -1,0 +1,72 @@
+/* Scheduler Excel-export preview table.
+
+   The Excel export itself produces a SpreadsheetML workbook (no DOM), but the
+   `toHtmlTable()` preview + the export-toolbar button surface a styled, token-
+   pure table so the feature can be shown in stories / the customizer and
+   verified in a real browser. All rules live in @layer jects.components and
+   reference only --jects-* tokens (no hardcoded color literals). */
+@layer jects.components {
+  .jects-scheduler-export {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    color: oklch(var(--jects-foreground));
+    font-family: var(--jects-font-family);
+  }
+
+  .jects-scheduler-export__toolbar {
+    display: flex;
+    gap: var(--jects-space-2);
+    align-items: center;
+  }
+
+  .jects-scheduler-export__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    cursor: pointer;
+  }
+
+  .jects-scheduler-export__btn:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+
+  .jects-scheduler-export__btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-scheduler-export__table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--jects-font-size-sm);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+  }
+
+  .jects-scheduler-export__table th,
+  .jects-scheduler-export__table td {
+    border: 1px solid oklch(var(--jects-border));
+    padding: var(--jects-space-1) var(--jects-space-2);
+    text-align: start;
+  }
+
+  .jects-scheduler-export__table th {
+    background: oklch(var(--jects-muted));
+    /* Use the high-contrast foreground (not muted-foreground) on the muted band
+       so header text clears the 4.5:1 WCAG AA contrast bar. */
+    color: oklch(var(--jects-foreground));
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  .jects-scheduler-export__table tbody tr:nth-child(even) {
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+}

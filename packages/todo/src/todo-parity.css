@@ -1,0 +1,293 @@
+/* @jects/todo — parity feature styles (calendar / timeline / table / swimlanes /
+   pickers / collaboration). Token-pure: only --jects-* tokens. */
+@layer jects.components {
+  /* ── toolbar additions ── */
+  .jects-todo__toolbtn,
+  .jects-todo__navbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    cursor: pointer;
+  }
+  .jects-todo__toolbtn:hover,
+  .jects-todo__navbtn:hover { background: oklch(var(--jects-muted)); }
+  .jects-todo__toolbtn:focus-visible,
+  .jects-todo__navbtn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── inline editors (rows + cells) ── */
+  .jects-todo__inline {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    padding: 0 var(--jects-space-1);
+    cursor: pointer;
+  }
+  .jects-todo__inline:hover { background: oklch(var(--jects-muted)); border-color: oklch(var(--jects-border)); }
+  .jects-todo__tag-add,
+  .jects-todo__avatar--add {
+    color: oklch(var(--jects-muted-foreground));
+    font-weight: var(--jects-font-weight-bold);
+  }
+
+  /* ── milestone marker (diamond) ── */
+  .jects-todo__milestone {
+    display: inline-block;
+    inline-size: 0.6rem;
+    block-size: 0.6rem;
+    margin-inline-end: var(--jects-space-1);
+    background: oklch(var(--jects-cmyk-yellow));
+    transform: rotate(45deg);
+    flex: none;
+  }
+
+  /* ── parent progress badge ── */
+  .jects-todo__pbadge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-todo__pbadge-track {
+    inline-size: 3rem;
+    block-size: 0.35rem;
+    background: oklch(var(--jects-muted));
+    border-radius: var(--jects-radius-full);
+    overflow: hidden;
+  }
+  .jects-todo__pbadge-fill {
+    display: block;
+    block-size: 100%;
+    background: oklch(var(--jects-success));
+  }
+
+  /* ── running-timer chip ── */
+  .jects-todo__timer-on {
+    display: inline-flex;
+    align-items: center;
+    color: oklch(var(--jects-cmyk-magenta));
+  }
+
+  /* ── popover (pickers / builders) ── */
+  .jects-todo__popover {
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-lg);
+    padding: var(--jects-space-1);
+    min-inline-size: 12rem;
+    max-block-size: 20rem;
+    overflow: auto;
+  }
+  .jects-todo__picker,
+  .jects-todo__builder { display: flex; flex-direction: column; gap: var(--jects-space-1); }
+  .jects-todo__picker-search,
+  .jects-todo__builder .jects-todo__select {
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    padding: var(--jects-space-1) var(--jects-space-2);
+  }
+  .jects-todo__picker-list { display: flex; flex-direction: column; gap: 2px; }
+  .jects-todo__picker-item {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    font: inherit;
+    text-align: start;
+    color: oklch(var(--jects-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    cursor: pointer;
+  }
+  .jects-todo__picker-item:hover { background: oklch(var(--jects-muted)); }
+  .jects-todo__picker-item--on { background: oklch(var(--jects-accent)); color: oklch(var(--jects-accent-foreground)); }
+  .jects-todo__picker-add { color: oklch(var(--jects-primary)); font-weight: var(--jects-font-weight-medium); }
+
+  /* ── builders (sort / filter / columns) ── */
+  .jects-todo__builder-rows { display: flex; flex-direction: column; gap: var(--jects-space-1); }
+  .jects-todo__builder-row { display: flex; align-items: center; gap: var(--jects-space-1); }
+  .jects-todo__builder-add,
+  .jects-todo__builder-move,
+  .jects-todo__builder-rm {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    cursor: pointer;
+  }
+  .jects-todo__builder-sec { display: flex; flex-direction: column; gap: 2px; padding-block: var(--jects-space-1); }
+  .jects-todo__builder-sec-title { font-size: var(--jects-font-size-xs); font-weight: var(--jects-font-weight-medium); color: oklch(var(--jects-muted-foreground)); }
+  .jects-todo__builder-chk { display: flex; align-items: center; gap: var(--jects-space-2); cursor: pointer; }
+
+  /* ── board: swimlanes + WIP ── */
+  .jects-todo__cols { display: flex; gap: var(--jects-space-2); align-items: flex-start; }
+  /* The board is a flex ROW for plain columns; in swimlane mode it must stack
+     the header strip + each lane vertically instead. */
+  .jects-todo__board--swimlanes { flex-direction: column; }
+  .jects-todo__board--swimlanes .jects-todo__lane {
+    display: flex;
+    gap: var(--jects-space-2);
+    border-block-start: 1px solid oklch(var(--jects-border));
+    padding-block: var(--jects-space-2);
+  }
+  /* Header-strip cells span the same width as the lane columns so they align. */
+  .jects-todo__board--swimlanes .jects-todo__lane--head .jects-todo__col-head { flex: 0 0 16rem; }
+  .jects-todo__lane-label {
+    inline-size: 8rem;
+    flex: none;
+    font-weight: var(--jects-font-weight-medium);
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+  }
+  .jects-todo__col-head--over { color: oklch(var(--jects-destructive)); }
+  .jects-todo__col--over { box-shadow: inset 0 0 0 1px oklch(var(--jects-destructive)); }
+
+  /* View containers set an explicit `display`, which beats the UA `[hidden]`
+     rule at equal specificity — so the inactive views would never hide and
+     would overflow the active one. Re-assert `display:none` when hidden
+     (`[hidden]`+class out-specifies the plain class). */
+  .jects-todo__calendar[hidden],
+  .jects-todo__timeline[hidden],
+  .jects-todo__table-wrap[hidden] { display: none; }
+
+  /* ── calendar view ── */
+  .jects-todo__calendar { display: flex; flex-direction: column; padding: var(--jects-space-2); gap: var(--jects-space-2); }
+  .jects-todo__cal-head { display: flex; align-items: center; justify-content: space-between; gap: var(--jects-space-2); }
+  .jects-todo__cal-title { font-size: var(--jects-font-size-md); font-weight: var(--jects-font-weight-semibold); }
+  .jects-todo__cal-nav { display: flex; gap: var(--jects-space-1); }
+  .jects-todo__cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: oklch(var(--jects-border)); border: 1px solid oklch(var(--jects-border)); border-radius: var(--jects-radius-md); overflow: hidden; }
+  .jects-todo__cal-dow { background: oklch(var(--jects-muted)); padding: var(--jects-space-1); text-align: center; font-size: var(--jects-font-size-xs); font-weight: var(--jects-font-weight-medium); color: oklch(var(--jects-muted-foreground)); }
+  .jects-todo__cal-cell { background: oklch(var(--jects-card)); min-block-size: 5rem; padding: var(--jects-space-1); display: flex; flex-direction: column; gap: 2px; }
+  .jects-todo__cal-grid--week .jects-todo__cal-cell { min-block-size: 12rem; }
+  .jects-todo__cal-cell--other { background: oklch(var(--jects-muted)); opacity: 0.6; }
+  .jects-todo__cal-cell--today { box-shadow: inset 0 0 0 2px oklch(var(--jects-ring)); }
+  .jects-todo__cal-cell--drop { background: oklch(var(--jects-accent)); }
+  .jects-todo__cal-num { font-size: var(--jects-font-size-xs); color: oklch(var(--jects-muted-foreground)); }
+  .jects-todo__cal-chip {
+    font: inherit;
+    text-align: start;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-muted));
+    border: none;
+    border-inline-start: 3px solid oklch(var(--_status-color, var(--jects-primary)));
+    border-radius: var(--jects-radius-sm);
+    padding: 1px var(--jects-space-1);
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jects-todo__cal-chip--milestone { border-inline-start-color: oklch(var(--jects-cmyk-yellow)); font-weight: var(--jects-font-weight-medium); }
+
+  /* ── timeline / gantt ── */
+  .jects-todo__timeline { display: flex; flex-direction: column; padding: var(--jects-space-2); gap: var(--jects-space-2); }
+  .jects-todo__tl-head { display: flex; gap: var(--jects-space-1); }
+  .jects-todo__tl-scroll { overflow-x: auto; }
+  .jects-todo__tl-axis { position: relative; block-size: 1.25rem; }
+  .jects-todo__tl-tick { font-size: var(--jects-font-size-xs); color: oklch(var(--jects-muted-foreground)); white-space: nowrap; }
+  .jects-todo__tl-row { position: relative; block-size: 30px; display: flex; align-items: center; }
+  .jects-todo__tl-label { inline-size: 200px; flex: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .jects-todo__tl-bar {
+    block-size: 18px;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--_status-color, var(--jects-primary)));
+    cursor: grab;
+  }
+  .jects-todo__tl-bar--dragging { opacity: 0.7; cursor: grabbing; }
+  .jects-todo__tl-bar--milestone { background: oklch(var(--jects-cmyk-yellow)); transform: rotate(45deg); }
+  .jects-todo__tl-arrow { stroke: oklch(var(--jects-muted-foreground)); stroke-width: 1.5; }
+
+  /* ── table / grid ── */
+  .jects-todo__table-wrap { overflow: auto; }
+  .jects-todo__table { border-collapse: collapse; inline-size: 100%; font-size: var(--jects-font-size-sm); }
+  .jects-todo__table th,
+  .jects-todo__table td {
+    border: 1px solid oklch(var(--jects-border));
+    padding: var(--jects-space-1) var(--jects-space-2);
+    text-align: start;
+    white-space: nowrap;
+  }
+  .jects-todo__table th {
+    background: oklch(var(--jects-muted));
+    font-weight: var(--jects-font-weight-medium);
+    position: sticky;
+    inset-block-start: 0;
+    cursor: grab;
+  }
+  .jects-todo__table th.jects-todo__th--dragover { background: oklch(var(--jects-accent)); }
+  .jects-todo__cell { display: inline-block; cursor: default; }
+  .jects-todo__cell.jects-todo__inline { cursor: pointer; }
+
+  /* ── detail: timer / deps / comments / activity / attachments ── */
+  .jects-todo__timer-bar { block-size: 0.4rem; background: oklch(var(--jects-muted)); border-radius: var(--jects-radius-full); overflow: hidden; margin-block: var(--jects-space-1); }
+  .jects-todo__timer-fill { display: block; block-size: 100%; background: oklch(var(--jects-primary)); }
+  .jects-todo__timer-fill--over { background: oklch(var(--jects-destructive)); }
+  .jects-todo__timer-btn,
+  .jects-todo__attach-btn,
+  .jects-todo__comment-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    cursor: pointer;
+  }
+  .jects-todo__timer-btn--on { background: oklch(var(--jects-cmyk-magenta)); color: oklch(var(--jects-background)); }
+  .jects-todo__deps,
+  .jects-todo__attach,
+  .jects-todo__comments,
+  .jects-todo__activity { display: flex; flex-direction: column; gap: var(--jects-space-1); }
+  .jects-todo__dep-list { display: flex; flex-wrap: wrap; gap: var(--jects-space-1); }
+  .jects-todo__dep-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: oklch(var(--jects-muted));
+    border-radius: var(--jects-radius-sm);
+    padding: 1px var(--jects-space-1);
+  }
+  .jects-todo__dep-chip--open { box-shadow: inset 0 0 0 1px oklch(var(--jects-destructive)); }
+  .jects-todo__dep-name { font: inherit; color: oklch(var(--jects-primary)); background: none; border: none; cursor: pointer; text-decoration: underline; }
+  .jects-todo__dep-rm,
+  .jects-todo__attach-rm { background: none; border: none; color: oklch(var(--jects-muted-foreground)); cursor: pointer; display: inline-flex; }
+  .jects-todo__dep-warn { display: flex; align-items: center; gap: var(--jects-space-1); color: oklch(var(--jects-destructive)); font-size: var(--jects-font-size-xs); }
+  .jects-todo__attach-list,
+  .jects-todo__comment-thread,
+  .jects-todo__activity-list { display: flex; flex-direction: column; gap: var(--jects-space-1); }
+  .jects-todo__attach-item { display: flex; align-items: center; justify-content: space-between; gap: var(--jects-space-2); }
+  .jects-todo__attach-add,
+  .jects-todo__comment-add { display: flex; gap: var(--jects-space-1); }
+  .jects-todo__comment { border-inline-start: 2px solid oklch(var(--jects-border)); padding-inline-start: var(--jects-space-2); }
+  .jects-todo__comment-meta { font-size: var(--jects-font-size-xs); color: oklch(var(--jects-muted-foreground)); }
+  .jects-todo__mention { color: oklch(var(--jects-primary)); font-weight: var(--jects-font-weight-medium); }
+  .jects-todo__activity-item { font-size: var(--jects-font-size-xs); color: oklch(var(--jects-muted-foreground)); }
+  .jects-todo__detail-picker { text-align: start; cursor: pointer; }
+}

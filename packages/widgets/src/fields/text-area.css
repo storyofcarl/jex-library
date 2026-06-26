@@ -1,0 +1,93 @@
+/* TextArea styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-textarea {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+    box-sizing: border-box;
+  }
+
+  .jects-textarea__label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  .jects-textarea__required {
+    color: oklch(var(--jects-destructive));
+  }
+
+  .jects-textarea__input {
+    --_ta-border: oklch(var(--jects-input));
+
+    box-sizing: border-box;
+    width: 100%;
+    resize: vertical;
+    border: 1px solid var(--_ta-border);
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    font-family: var(--jects-font-family);
+    line-height: 1.4;
+    transition:
+      border-color var(--jects-duration-fast) ease,
+      box-shadow var(--jects-duration-fast) ease;
+  }
+  .jects-textarea__input::placeholder {
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-textarea__input:focus {
+    outline: none;
+    --_ta-border: oklch(var(--jects-ring));
+    box-shadow: 0 0 0 2px oklch(var(--jects-ring) / 0.4);
+  }
+
+  .jects-textarea--autogrow .jects-textarea__input {
+    resize: none;
+    overflow: hidden;
+  }
+
+  .jects-textarea--invalid .jects-textarea__input {
+    --_ta-border: oklch(var(--jects-destructive));
+  }
+
+  .jects-textarea--disabled {
+    opacity: 0.5;
+  }
+  .jects-textarea--disabled .jects-textarea__input {
+    background: oklch(var(--jects-muted));
+    pointer-events: none;
+  }
+  .jects-textarea--readonly .jects-textarea__input {
+    background: oklch(var(--jects-muted));
+  }
+
+  .jects-textarea__counter {
+    align-self: flex-end;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-textarea__error {
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-destructive));
+  }
+
+  /* ---- sizes ---- */
+  .jects-textarea--sm .jects-textarea__input {
+    padding: var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-textarea--md .jects-textarea__input {
+    padding: var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-textarea--lg .jects-textarea__input {
+    padding: var(--jects-space-4);
+    font-size: var(--jects-font-size-md);
+  }
+}

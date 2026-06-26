@@ -1,0 +1,70 @@
+/* @jects/grid — Range-fill (fill-handle drag) feature styles.
+   Token-pure: only --jects-* tokens, all rules inside @layer jects.components.
+   No hardcoded color literals — colors come only from --jects-* tokens.
+
+   The handle + dashed preview live in a body-level, fixed-positioned overlay
+   (mounted OUTSIDE the grid's role="grid" subtree so they are not invalid grid
+   children per WAI-ARIA). They are positioned by the feature in viewport
+   coordinates, so they track the grid cells exactly. Covers:
+     - the fixed overlay container,
+     - the draggable fill handle anchored to the active range's corner,
+     - the dashed preview outline over the projected fill range,
+     - the root-level grabbing affordance while a fill drag is in flight. */
+
+@layer jects.components {
+  /* Root flag while a fill drag is active. */
+  .jects-grid--filling {
+    user-select: none;
+    cursor: crosshair;
+  }
+
+  /* Body-level overlay layer (presentational; pointer events pass through to its
+     children only — the handle re-enables them). */
+  .jects-grid-fill-overlay {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 0;
+    block-size: 0;
+    pointer-events: none;
+    z-index: var(--jects-z-popover);
+  }
+
+  /* The draggable fill handle — a small square pinned to the bottom-right corner
+     of the active range's anchor cell, positioned via inline `top`/`left`
+     (viewport coordinates). */
+  .jects-grid__fill-handle {
+    position: fixed;
+    inline-size: var(--jects-space-2);
+    block-size: var(--jects-space-2);
+    margin-block-start: calc(var(--jects-space-2) / -2 - 1px);
+    margin-inline-start: calc(var(--jects-space-2) / -2 - 1px);
+    box-sizing: border-box;
+    pointer-events: auto;
+    background: oklch(var(--jects-primary));
+    border: 1px solid oklch(var(--jects-background));
+    border-radius: 1px;
+    cursor: crosshair;
+    touch-action: none;
+  }
+
+  .jects-grid__fill-handle:hover {
+    background: oklch(var(--jects-primary) / 0.85);
+  }
+
+  .jects-grid__fill-handle:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* Dashed preview rectangle over the projected fill target range, positioned in
+     viewport coordinates by the feature. */
+  .jects-grid__fill-preview {
+    position: fixed;
+    pointer-events: none;
+    box-sizing: border-box;
+    border: 1px dashed oklch(var(--jects-primary));
+    background: oklch(var(--jects-primary) / 0.08);
+    border-radius: var(--jects-radius-sm);
+  }
+}

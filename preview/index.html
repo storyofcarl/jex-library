@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-jects-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jects UI — Component Gallery</title>
+
+    <!-- Google Fonts for the Bootstrap-faithful theme options. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    />
+
+    <!-- RUN FROM THE REPO ROOT so the ../packages/* paths resolve:
+           cd D:/agentWork/jex_library
+           python -m http.server 8080
+         then open  http://localhost:8080/preview/
+         (Serving from inside preview/ will 404 the ../packages/* assets.) -->
+
+    <!-- Theme + token contract (light + dark + light-hc + dark-hc, plus the
+         CMYK / data ramps). all.css @imports base/dark/high-contrast/etc. -->
+    <link rel="stylesheet" href="../packages/theme/dist/css/all.css" />
+    <!-- Component stylesheets (side-effect CSS the widgets/grid/charts expect). -->
+    <link rel="stylesheet" href="../packages/widgets/dist/style.css" />
+    <link rel="stylesheet" href="../packages/grid/dist/style.css" />
+    <link rel="stylesheet" href="../packages/charts/dist/style.css" />
+    <link rel="stylesheet" href="../packages/pivot/dist/style.css" />
+    <link rel="stylesheet" href="../packages/spreadsheet/dist/style.css" />
+    <!-- Wave 4 scheduling components (+ shared timeline-core). -->
+    <link rel="stylesheet" href="../packages/timeline-core/dist/style.css" />
+    <link rel="stylesheet" href="../packages/scheduler/dist/style.css" />
+    <link rel="stylesheet" href="../packages/gantt/dist/style.css" />
+    <link rel="stylesheet" href="../packages/calendar/dist/style.css" />
+    <link rel="stylesheet" href="../packages/kanban/dist/style.css" />
+    <!-- Wave 5 components. -->
+    <link rel="stylesheet" href="../packages/diagram/dist/style.css" />
+    <link rel="stylesheet" href="../packages/todo/dist/style.css" />
+    <link rel="stylesheet" href="../packages/booking/dist/style.css" />
+    <link rel="stylesheet" href="../packages/chatbot/dist/style.css" />
+    <!-- Gallery chrome (uses house tokens itself). -->
+    <link rel="stylesheet" href="./gallery.css" />
+
+    <!-- Resolve the bare @jects/* specifiers the built ESM dist files import
+         from each other to the already-built dist ESM entries. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@jects/core": "../packages/core/dist/core.js",
+          "@jects/tokens": "../packages/tokens/dist/index.js",
+          "@jects/theme": "../packages/theme/dist/theme.js",
+          "@jects/icons": "../packages/icons/dist/icons.js",
+          "@jects/widgets": "../packages/widgets/dist/widgets.js",
+          "@jects/grid": "../packages/grid/dist/grid.js",
+          "@jects/charts": "../packages/charts/dist/charts.js",
+          "@jects/pivot": "../packages/pivot/dist/pivot.js",
+          "@jects/spreadsheet": "../packages/spreadsheet/dist/spreadsheet.js",
+          "@jects/timeline-core": "../packages/timeline-core/dist/timeline-core.js",
+          "@jects/scheduler": "../packages/scheduler/dist/scheduler.js",
+          "@jects/gantt": "../packages/gantt/dist/gantt.js",
+          "@jects/calendar": "../packages/calendar/dist/calendar.js",
+          "@jects/kanban": "../packages/kanban/dist/kanban.js",
+          "@jects/diagram": "../packages/diagram/dist/diagram.js",
+          "@jects/todo": "../packages/todo/dist/todo.js",
+          "@jects/booking": "../packages/booking/dist/booking.js",
+          "@jects/chatbot": "../packages/chatbot/dist/chatbot.js"
+        }
+      }
+    </script>
+  </head>
+  <body class="jects-scope">
+    <div id="gallery"></div>
+    <script type="module" src="./gallery.js"></script>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+/**
+ * Styling for the ICS export/import toolbar surface.
+ *
+ * Token-pure (only --jects-* tokens), inside @layer jects.components, BEM-ish.
+ * The ICS feature itself is headless; this stylesheet themes the optional
+ * import/export toolbar an integrator can render alongside the scheduler (and is
+ * exercised by the browser/a11y test).
+ */
+@layer jects.components {
+  .jects-scheduler-ics {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+  }
+
+  .jects-scheduler-ics__label {
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-scheduler-ics__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-3);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-secondary));
+    color: oklch(var(--jects-secondary-foreground));
+    font: inherit;
+    cursor: pointer;
+    transition: background var(--jects-duration-fast) ease;
+  }
+
+  .jects-scheduler-ics__btn:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-scheduler-ics__btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-scheduler-ics__btn--primary {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border-color: oklch(var(--jects-primary));
+  }
+
+  .jects-scheduler-ics__btn--primary:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+    color: oklch(var(--jects-primary-foreground));
+  }
+
+  .jects-scheduler-ics__file {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

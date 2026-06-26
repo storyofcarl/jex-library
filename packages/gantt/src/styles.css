@@ -1,0 +1,30 @@
+/* Aggregated gantt styles — bundled into dist/style.css.
+   Each part's CSS lives next to its source and is imported here.
+   All rules MUST live inside @layer jects.components and reference only
+   --jects-* tokens (no hardcoded color literals). */
+@import './ui/gantt.css';
+@import './ui/indicators.css';
+@import './ui/multi-baseline.css';
+@import './ui/project-lines.css';
+@import './ui/progress-line.css';
+@import './ui/rollup-markers.css';
+@import './ui/rollups.css';
+@import './ui/rollup-column.css';
+@import './ui/segmented-tasks.css';
+@import './ui/pert-view.css';
+@import './ui/undo.css';
+@import './ui/resource-assignment.css';
+@import './ui/resource-utilization.css';
+@import './ui/dependency-editor.css';
+@import './ui/successors-column.css';
+@import './ui/export-feature.css';
+@import './ui/resource-histogram.css';
+@import './ui/gantt-resource-pane.css';
+@import './resource/resource.css';
+@import './ui/task-editor-tabs.css';
+@import './export/ics-preview.css';
+@import './export/export-xlsx.css';
+@import './export/csv-export.css';
+@import './export/export-toolbar.css';
+@import './export/png.css';
+@import './export/pdf.css';

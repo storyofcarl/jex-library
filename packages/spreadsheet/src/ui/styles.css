@@ -1,0 +1,4 @@
+/* Aggregated spreadsheet UI styles. Imported by the UI entry (spreadsheet.ts)
+   so it lands in dist/style.css when the package barrel re-exports the UI.
+   All rules live in @layer jects.components and reference only --jects-* tokens. */
+@import './spreadsheet.css';

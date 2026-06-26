@@ -1,0 +1,71 @@
+/* Gantt Undo/redo (STM) feature — a token-pure toolbar of undo / redo buttons
+   rendered by `GanttUndoRedo`.
+
+   Token-pure: every color is `oklch(var(--jects-*))`; sizing uses the --jects-*
+   space/radius scales. All rules live inside @layer jects.components so they
+   compose with the rest of the Gantt component layer. */
+@layer jects.components {
+  /* The undo/redo toolbar, pinned to the top-start corner of the Gantt root,
+     floating above the panes. */
+  .jects-gantt__stm {
+    position: absolute;
+    inset-block-start: var(--jects-space-2);
+    inset-inline-start: var(--jects-space-2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-popover));
+    box-shadow: var(--jects-shadow-md);
+    z-index: var(--jects-z-sticky);
+  }
+
+  /* A single toolbar button. */
+  .jects-gantt__stm__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-7);
+    block-size: var(--jects-space-7);
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: oklch(var(--jects-foreground));
+    cursor: pointer;
+    transition:
+      background-color var(--jects-duration-fast),
+      color var(--jects-duration-fast),
+      border-color var(--jects-duration-fast);
+  }
+
+  .jects-gantt__stm__btn > .jects-icon {
+    inline-size: var(--jects-space-4);
+    block-size: var(--jects-space-4);
+    display: block;
+  }
+
+  .jects-gantt__stm__btn:hover:not(:disabled) {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+    border-color: oklch(var(--jects-border));
+  }
+
+  .jects-gantt__stm__btn:active:not(:disabled) {
+    background: oklch(var(--jects-accent) / 0.8);
+  }
+
+  .jects-gantt__stm__btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* Disabled (nothing to undo/redo) — muted + non-interactive. */
+  .jects-gantt__stm__btn:disabled {
+    color: oklch(var(--jects-muted-foreground) / 0.5);
+    cursor: default;
+    pointer-events: none;
+  }
+}

@@ -1,0 +1,229 @@
+/* Gantt task-editor dependency tabs — the Predecessors / Successors editable
+   grids, the Advanced (constraint / calendar / scheduling-mode) form, and the
+   Notes textarea.
+
+   Token-pure: every colour is `oklch(var(--jects-*))`; spacing/radius/type use
+   the --jects-* scales. All rules live inside @layer jects.components so they
+   compose with the rest of the Gantt component layer. */
+@layer jects.components {
+  /* ── dependency grid (Predecessors / Successors) ─────────────────────────── */
+  .jects-gantt__dep-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+  }
+
+  .jects-gantt__dep-grid {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    overflow: hidden;
+  }
+
+  .jects-gantt__dep-grid-head,
+  .jects-gantt__dep-row {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1fr) auto;
+    gap: var(--jects-space-2);
+    align-items: center;
+    padding: var(--jects-space-2);
+  }
+
+  .jects-gantt__dep-grid-head {
+    background: oklch(var(--jects-muted));
+    border-bottom: 1px solid oklch(var(--jects-border));
+  }
+
+  .jects-gantt__dep-grid-th {
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-muted-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .jects-gantt__dep-grid-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .jects-gantt__dep-row + .jects-gantt__dep-row {
+    border-top: 1px solid oklch(var(--jects-border) / 0.6);
+  }
+
+  .jects-gantt__dep-cell {
+    min-inline-size: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .jects-gantt__dep-cell--action {
+    justify-content: flex-end;
+  }
+
+  .jects-gantt__dep-input {
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-gantt__dep-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    border-color: oklch(var(--jects-ring));
+  }
+
+  .jects-gantt__dep-remove {
+    appearance: none;
+    cursor: pointer;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-gantt__dep-remove:hover {
+    color: oklch(var(--jects-destructive));
+    border-color: oklch(var(--jects-destructive));
+    background: oklch(var(--jects-destructive) / 0.08);
+  }
+
+  .jects-gantt__dep-remove:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-gantt__dep-empty {
+    margin: 0;
+    padding: var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-muted-foreground));
+    text-align: center;
+    border: 1px dashed oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-gantt__dep-addbar {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .jects-gantt__dep-add {
+    appearance: none;
+    cursor: pointer;
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-gantt__dep-add:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+
+  .jects-gantt__dep-add:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── Advanced form ───────────────────────────────────────────────────────── */
+  .jects-gantt__adv-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+  }
+
+  .jects-gantt__adv-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-gantt__adv-row--check {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+
+  .jects-gantt__adv-label {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-gantt__adv-input {
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding: var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-gantt__adv-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    border-color: oklch(var(--jects-ring));
+  }
+
+  .jects-gantt__adv-check {
+    accent-color: oklch(var(--jects-primary));
+    inline-size: 1rem;
+    block-size: 1rem;
+  }
+
+  .jects-gantt__adv-check:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── Notes textarea ──────────────────────────────────────────────────────── */
+  .jects-gantt__notes-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-gantt__notes-label {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-gantt__notes-input {
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding: var(--jects-space-2);
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    resize: vertical;
+  }
+
+  .jects-gantt__notes-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    border-color: oklch(var(--jects-ring));
+  }
+}

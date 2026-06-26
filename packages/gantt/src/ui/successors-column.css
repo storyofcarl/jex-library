@@ -1,0 +1,30 @@
+/* Successors (and predecessors) task-tree column — read-only dependency
+   notation cells.
+
+   These are the symmetric Bryntum/DHTMLX dependency columns in the left grid
+   pane: a comma-joined notation string of the links INTO (predecessors) and OUT
+   OF (successors) each task. We render the notation in the monospace family so
+   the ref/type/lag tokens align and read as code-like link expressions, and tint
+   it with the muted foreground so it sits quieter than the task name.
+
+   House style "Cool Zinc + Calm CMYK": chrome only — neutral semantic tokens, no
+   accents. All rules live inside @layer jects.components and reference ONLY
+   --jects-* tokens (no hardcoded color literals). */
+
+@layer jects.components {
+  .jects-gantt__tree-td[data-field='successors'],
+  .jects-gantt__tree-td[data-field='predecessors'] {
+    font-family: var(--jects-font-family-mono);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+    letter-spacing: 0.01em;
+  }
+
+  /* An empty successors/predecessors cell shows a faint em-dash placeholder so
+     the column reads as "no links" rather than as a blank gap. */
+  .jects-gantt__tree-td[data-field='successors']:empty::before,
+  .jects-gantt__tree-td[data-field='predecessors']:empty::before {
+    content: '—';
+    color: oklch(var(--jects-muted-foreground) / 0.5);
+  }
+}

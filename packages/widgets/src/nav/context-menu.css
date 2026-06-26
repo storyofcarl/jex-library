@@ -1,0 +1,11 @@
+/* ContextMenu styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-context-menu {
+    position: fixed;
+    z-index: var(--jects-z-popover);
+    margin: 0;
+  }
+  .jects-context-menu[hidden] {
+    display: none;
+  }
+}

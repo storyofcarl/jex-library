@@ -1,0 +1,49 @@
+/*
+ * Grouped / multi-level (stacked) column headers — token-pure (only --jects-*).
+ * Layered with the rest of the grid component styles.
+ */
+@layer jects.components {
+  /* The header element switches to a stacked, multi-row layout when grouped. */
+  .jects-grid__header--grouped {
+    position: sticky;
+    inset-block-start: 0;
+  }
+
+  /* Each level is an absolutely-positioned band-spanning row. */
+  .jects-grid__header--grouped .jects-grid__header-row {
+    position: absolute;
+    inset-inline-start: 0;
+  }
+
+  /* Group (spanning) rows sit above the leaf row and read slightly stronger. */
+  .jects-grid__header--grouped .jects-grid__header-grouprow {
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  /* A spanning group header cell. */
+  .jects-grid__header-group {
+    justify-content: center;
+    text-align: center;
+    background: oklch(var(--jects-muted) / 0.6);
+    /* A subtle bottom rule separates a group from the headers it spans. */
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  /* Group cells in the frozen bands keep an opaque backdrop so scrolling body
+     content never bleeds through the pinned header region. */
+  .jects-grid__header-group.jects-grid__cell--frozen {
+    background: oklch(var(--jects-muted));
+  }
+
+  /* Align modifiers already exist for leaf header cells; group cells reuse them
+     (justify-content) but default to centered above. */
+  .jects-grid__header-group.jects-grid__header-cell--start {
+    justify-content: flex-start;
+    text-align: start;
+  }
+  .jects-grid__header-group.jects-grid__header-cell--end {
+    justify-content: flex-end;
+    text-align: end;
+  }
+}

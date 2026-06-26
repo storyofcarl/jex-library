@@ -1,0 +1,7 @@
+/* Aggregated timeline-core styles — bundled into dist/style.css.
+   Each part's CSS lives next to its source and is imported here.
+   All rules MUST live inside @layer jects.components and reference only
+   --jects-* tokens (no hardcoded color literals). */
+
+@import './axis/axis.css';
+@import './interactions/interactions.css';

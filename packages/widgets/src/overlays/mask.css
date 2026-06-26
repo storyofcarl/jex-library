@@ -1,0 +1,64 @@
+/* Mask styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-mask {
+    position: absolute;
+    inset: 0;
+    z-index: var(--jects-z-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background) / 0.6);
+    backdrop-filter: blur(1px);
+    cursor: progress;
+  }
+
+  .jects-mask[hidden] {
+    display: none;
+  }
+
+  .jects-mask--pass-through {
+    pointer-events: none;
+  }
+
+  .jects-mask__box {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--jects-space-3);
+    padding: var(--jects-space-4) var(--jects-space-6);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    box-shadow: var(--jects-shadow-lg);
+  }
+
+  .jects-mask__spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .jects-mask__spinner-ring {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid oklch(var(--jects-muted));
+    border-top-color: oklch(var(--jects-primary));
+    border-radius: var(--jects-radius-xl);
+    animation: jects-mask-spin var(--jects-duration-slow) linear infinite;
+  }
+
+  .jects-mask__message {
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  @keyframes jects-mask-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

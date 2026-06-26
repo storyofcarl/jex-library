@@ -1,0 +1,116 @@
+/* Scheduler — vertical orientation styles (resources as columns, time flows
+   down). References ONLY --jects-* tokens (no hard-coded colors). All rules live
+   inside @layer jects.components. This file is additive: it scopes everything
+   under `.jects-scheduler--vertical` so the default horizontal mode is untouched. */
+@layer jects.components {
+  /* In vertical mode the left rail becomes the TIME axis (bands running down)
+     and the top strip becomes the RESOURCE header (columns running across). The
+     grid template stays a 2×2 shell; only the contents of each region change. */
+
+  /* ── time axis on the left (time bands running down) ── */
+  .jects-scheduler--vertical .jects-scheduler__time-band {
+    position: absolute;
+    inset-block: 0;
+    inline-size: 50%;
+    border-inline-end: 1px solid oklch(var(--jects-border) / 0.6);
+  }
+  .jects-scheduler--vertical .jects-scheduler__time-band:first-child {
+    inset-inline-start: 0;
+  }
+  .jects-scheduler--vertical .jects-scheduler__time-band:last-child {
+    inset-inline-end: 0;
+    inset-inline-start: auto;
+  }
+  .jects-scheduler--vertical .jects-scheduler__time-cell {
+    position: absolute;
+    inset-inline: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    border-block-start: 1px solid oklch(var(--jects-border) / 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .jects-scheduler--vertical .jects-scheduler__time-cell--major {
+    font-weight: var(--jects-font-weight-medium);
+    border-block-start-color: oklch(var(--jects-border));
+  }
+
+  /* The left header region (`__time-header`) is repurposed as the vertical time
+     axis: let it overflow vertically with the body (synced via scrollTop). */
+  .jects-scheduler--vertical .jects-scheduler__time-header {
+    /* Keep it as a relative band; the time-bands inside are absolutely placed. */
+    overflow: hidden;
+  }
+
+  /* ── resource columns across the top ── */
+  .jects-scheduler--vertical .jects-scheduler__resource-header {
+    position: relative;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: hidden;
+  }
+  .jects-scheduler--vertical .jects-scheduler__col-header {
+    position: absolute;
+    inset-block: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--jects-space-2);
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-inline-start: 1px solid oklch(var(--jects-border) / 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  /* The locked left panel holds nothing in vertical mode (time bands live in the
+     header strip); collapse its visual weight so it doesn't read as a column. */
+  .jects-scheduler--vertical .jects-scheduler__resources {
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+
+  /* ── backdrop: gridlines run HORIZONTALLY, column separators VERTICALLY ── */
+  .jects-scheduler--vertical .jects-scheduler__gridline {
+    inset-inline: 0;
+    inset-block: auto;
+    inline-size: auto;
+    block-size: 1px;
+  }
+  .jects-scheduler--vertical .jects-scheduler__col-sep {
+    position: absolute;
+    inset-block: 0;
+    inline-size: 1px;
+    background: oklch(var(--jects-border) / 0.5);
+    pointer-events: none;
+  }
+  .jects-scheduler--vertical .jects-scheduler__nonworking {
+    inset-inline: 0;
+    inset-block: auto;
+  }
+  .jects-scheduler--vertical .jects-scheduler__now {
+    inset-inline: 0;
+    inset-block: auto;
+    inline-size: auto;
+    block-size: 2px;
+  }
+
+  /* ── bars: vertical resize cursor; progress fills downward ── */
+  .jects-scheduler--vertical .jects-scheduler__bar {
+    cursor: ns-resize;
+  }
+  .jects-scheduler--vertical .jects-scheduler__bar-progress {
+    inset-block-start: 0;
+    inset-block-end: auto;
+    inset-inline-start: 0;
+    inline-size: 100%;
+  }
+}

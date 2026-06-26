@@ -1,0 +1,245 @@
+/* PivotTable styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-pivot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+  }
+
+  /* ── config panel ── */
+  .jects-pivot__panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-3);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+  }
+
+  .jects-pivot__zone {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: var(--jects-space-2);
+    min-height: 4rem;
+    padding: var(--jects-space-2);
+    border: 1px dashed oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-muted) / 0.4);
+    transition:
+      background-color var(--jects-duration-fast) ease,
+      border-color var(--jects-duration-fast) ease;
+  }
+
+  .jects-pivot__zone--over {
+    border-color: oklch(var(--jects-ring));
+    border-style: solid;
+    background: oklch(var(--jects-accent));
+  }
+
+  .jects-pivot__zone--source {
+    background: oklch(var(--jects-background));
+  }
+
+  .jects-pivot__zone-title {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  /* ── field chips ── */
+  .jects-pivot__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    height: 1.75rem;
+    padding-inline: var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-secondary));
+    color: oklch(var(--jects-secondary-foreground));
+    cursor: grab;
+    user-select: none;
+  }
+
+  .jects-pivot__chip:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-pivot__chip--dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+  }
+
+  /* Keyboard pick-up state (the accessible equivalent of dragging). */
+  .jects-pivot__chip--picked {
+    outline: 2px dashed oklch(var(--jects-ring));
+    outline-offset: 2px;
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  /* Visually-hidden polite live region for keyboard-move announcements. */
+  .jects-pivot__live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .jects-pivot__chip-label {
+    white-space: nowrap;
+  }
+
+  .jects-pivot__chip-agg {
+    height: 1.25rem;
+    padding-inline: var(--jects-space-1);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-pivot__chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    font-size: var(--jects-font-size-sm);
+    line-height: 1;
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+
+  .jects-pivot__chip-remove:hover {
+    color: oklch(var(--jects-destructive));
+    background: oklch(var(--jects-destructive) / 0.12);
+  }
+
+  .jects-pivot__chip-remove:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── result grid ── */
+  .jects-pivot__grid {
+    position: relative;
+    min-height: 12rem;
+    height: 24rem;
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    overflow: hidden;
+  }
+
+  /* totals emphasis on projected cells */
+  .jects-pivot__cell--total {
+    font-weight: var(--jects-font-weight-semibold);
+    background: oklch(var(--jects-muted) / 0.5);
+  }
+
+  /* ── collapsible row-header toggle ── */
+  .jects-pivot__rowlabel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    min-width: 0;
+  }
+
+  .jects-pivot__rowlabel-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-pivot__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    font-size: var(--jects-font-size-xs);
+    line-height: 1;
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+
+  .jects-pivot__toggle:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-muted) / 0.5);
+  }
+
+  .jects-pivot__toggle:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── filter-chip operator + value editor ── */
+  .jects-pivot__chip--filter {
+    flex-wrap: wrap;
+    height: auto;
+    padding-block: var(--jects-space-1);
+  }
+
+  .jects-pivot__chip-op,
+  .jects-pivot__chip-value {
+    height: 1.25rem;
+    padding-inline: var(--jects-space-1);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-pivot__chip-value {
+    min-width: 4rem;
+    max-width: 7rem;
+  }
+
+  .jects-pivot__chip-value[hidden] {
+    display: none;
+  }
+
+  /* ── conditional-format helper classes (declarative `class` rules can use
+     these, or callbacks can emit their own) ── */
+  .jects-pivot__cf--positive {
+    color: oklch(var(--jects-success, var(--jects-foreground)));
+  }
+
+  .jects-pivot__cf--negative {
+    color: oklch(var(--jects-destructive));
+  }
+
+  .jects-pivot__cf--highlight {
+    background: oklch(var(--jects-accent) / 0.5);
+  }
+}

@@ -1,0 +1,74 @@
+/* Gantt dependency notation editor — rendered by `DependencyCellEditor`.
+
+   The inline editor mounted over a Predecessors / Successors task-tree cell: a
+   single-line notation input plus an ARIA-live validation error region. It is
+   sized to fill its host cell so it reads as an in-place edit.
+
+   Token-pure: every color is `oklch(var(--jects-*))`; sizing uses the --jects-*
+   space/radius/font scales. All rules live inside @layer jects.components so
+   they compose with the rest of the Gantt component layer. */
+@layer jects.components {
+  .jects-gantt-dep-editor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    inline-size: 100%;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-gantt-dep-editor__input {
+    inline-size: 100%;
+    box-sizing: border-box;
+    padding-block: var(--jects-space-1);
+    padding-inline: var(--jects-space-2);
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-sm);
+    outline: none;
+  }
+
+  .jects-gantt-dep-editor__input::placeholder {
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-gantt-dep-editor__input:focus-visible {
+    border-color: oklch(var(--jects-ring));
+    box-shadow: 0 0 0 2px oklch(var(--jects-ring) / 0.35);
+  }
+
+  .jects-gantt-dep-editor--invalid .jects-gantt-dep-editor__input,
+  .jects-gantt-dep-editor__input[aria-invalid='true'] {
+    border-color: oklch(var(--jects-destructive));
+    box-shadow: 0 0 0 2px oklch(var(--jects-destructive) / 0.3);
+  }
+
+  /* Validation / cycle-rejection feedback (ARIA-live). Empty by default; only
+     occupies space once a message is set. */
+  .jects-gantt-dep-editor__error {
+    min-block-size: 0;
+    color: oklch(var(--jects-destructive));
+    font-size: var(--jects-font-size-xs);
+    line-height: 1.3;
+  }
+
+  .jects-gantt-dep-editor__error:empty {
+    display: none;
+  }
+
+  /* The read-only cell text rendered by the editable columns when NOT editing. */
+  .jects-gantt-dep-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    inline-size: 100%;
+    color: oklch(var(--jects-foreground));
+    font-variant-numeric: tabular-nums;
+  }
+
+  .jects-gantt-dep-cell--empty {
+    color: oklch(var(--jects-muted-foreground));
+  }
+}

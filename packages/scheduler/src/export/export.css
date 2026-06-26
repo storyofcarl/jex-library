@@ -1,0 +1,95 @@
+/**
+ * Scheduler export — print stylesheet.
+ *
+ * The PDF/PNG raster path produces files headlessly, but the scheduler also
+ * supports a native vector "Print" path (`window.print()`): this stylesheet
+ * restyles the live `.jects-scheduler` for paper so a browser-print → "Save as
+ * PDF" produces clean, vector, paginated output (header bands + lanes + bars +
+ * dependencies). Token-pure: every colour references a `--jects-*` token.
+ */
+
+@layer jects.components {
+  /* A class the exporter toggles on <html> while a print export is in flight,
+     so only the target scheduler prints (everything else is hidden). */
+  .jects-scheduler-printing body > *:not(.jects-scheduler-print-host) {
+    display: none !important;
+  }
+
+  @media print {
+    .jects-scheduler {
+      /* Let the timeline flow onto multiple pages instead of clipping. */
+      overflow: visible !important;
+      height: auto !important;
+      border-color: oklch(var(--jects-border));
+      color: oklch(var(--jects-foreground));
+      background: oklch(var(--jects-background));
+    }
+
+    .jects-scheduler__scroller,
+    .jects-scheduler__resources,
+    .jects-scheduler__content {
+      overflow: visible !important;
+      height: auto !important;
+    }
+
+    /* Repeat the header band on every printed page. */
+    .jects-scheduler__time-header,
+    .jects-scheduler__resource-header {
+      position: sticky;
+      top: 0;
+      background: oklch(var(--jects-muted));
+      color: oklch(var(--jects-foreground));
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Keep a lane (row) from breaking across a page boundary. */
+    .jects-scheduler__resource-row,
+    .jects-scheduler__bar {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Ensure shaded non-working bands + bars actually ink on paper. */
+    .jects-scheduler__nonworking,
+    .jects-scheduler__bar,
+    .jects-scheduler__bar-progress,
+    .jects-scheduler__now,
+    .jects-scheduler__dep-line,
+    .jects-scheduler__dep-arrow {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Hide interactive-only affordances that shouldn't ink. */
+    .jects-scheduler__bar--ghost,
+    .jects-scheduler__dep-hit,
+    .jects-scheduler__live {
+      display: none !important;
+    }
+
+    .jects-scheduler__bar {
+      box-shadow: none !important;
+      border: 1px solid oklch(var(--jects-border));
+    }
+
+    .jects-scheduler__now {
+      background: oklch(var(--jects-destructive));
+    }
+  }
+
+  /* A lightweight banner the exporter can inject above the printed schedule. */
+  .jects-scheduler-export-banner {
+    display: none;
+  }
+  @media print {
+    .jects-scheduler-export-banner {
+      display: block;
+      margin-bottom: var(--jects-space-2);
+      font-family: var(--jects-font-family);
+      font-size: var(--jects-font-size-lg);
+      font-weight: var(--jects-font-weight-semibold);
+      color: oklch(var(--jects-foreground));
+    }
+  }
+}

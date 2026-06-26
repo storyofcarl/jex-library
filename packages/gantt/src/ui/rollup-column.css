@@ -1,0 +1,75 @@
+/* Gantt task-tree 'rollup' DATA column (Bryntum/DHTMLX parity).
+
+   This styles the rollup cell inside the left task-tree grid pane:
+     - 'flag' mode: a small checkbox-style toggle (role="checkbox") whose checked
+       state mirrors task.rollup; it drives the visual bar-rollup overlay.
+     - 'summary' mode: a static aggregated value span.
+
+   House style "Cool Zinc + Calm CMYK": the checkbox sits on the --jects-input
+   surface with a --jects-border hairline; when checked it fills with the calm
+   cyan accent (--jects-cmyk-cyan) so the rollup column reads as a distinct, soft
+   data flag rather than core primary chrome. All rules live inside
+   @layer jects.components and reference ONLY --jects-* tokens — no hardcoded
+   colour literals. */
+
+@layer jects.components {
+  /* The static value cell (summary mode). */
+  .jects-gantt__rollup-cell {
+    display: inline-block;
+    min-inline-size: 1.5em;
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+    color: oklch(var(--jects-card-foreground));
+  }
+
+  /* The checkbox toggle (flag mode). */
+  .jects-gantt__rollup-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-4);
+    block-size: var(--jects-space-4);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-input));
+    color: oklch(var(--jects-cmyk-cyan));
+    font-size: var(--jects-font-size-xs);
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background var(--jects-duration-fast) ease,
+      border-color var(--jects-duration-fast) ease,
+      box-shadow var(--jects-duration-fast) ease;
+  }
+
+  .jects-gantt__rollup-check:hover {
+    border-color: oklch(var(--jects-cmyk-cyan));
+  }
+
+  .jects-gantt__rollup-check:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px oklch(var(--jects-ring) / 0.6);
+  }
+
+  /* Checked: fill with the calm cyan accent; the check glyph reads in the
+     inverse background tint. */
+  .jects-gantt__rollup-check--on {
+    background: oklch(var(--jects-cmyk-cyan));
+    border-color: oklch(var(--jects-cmyk-cyan));
+    color: oklch(var(--jects-background));
+  }
+
+  /* Read-only (non-editable) toggle: dim it and drop the pointer affordance. */
+  .jects-gantt__rollup-check[aria-disabled='true'] {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  /* High-contrast: ensure the toggle keeps a visible border in forced colours. */
+  @media (prefers-contrast: more) {
+    .jects-gantt__rollup-check {
+      outline: 1px solid oklch(var(--jects-foreground));
+    }
+  }
+}

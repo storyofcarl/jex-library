@@ -1,0 +1,38 @@
+/* Container styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-container {
+    --_container-gap: var(--jects-space-0);
+    --_container-align: stretch;
+    --_container-justify: flex-start;
+
+    box-sizing: border-box;
+    align-items: var(--_container-align);
+    justify-content: var(--_container-justify);
+    gap: var(--_container-gap);
+  }
+
+  /* ---- flex layout ---- */
+  .jects-container--flex {
+    display: flex;
+  }
+  .jects-container--row {
+    flex-direction: row;
+  }
+  .jects-container--column {
+    flex-direction: column;
+  }
+  .jects-container--wrap {
+    flex-wrap: wrap;
+  }
+
+  /* ---- grid layout ---- */
+  .jects-container--grid {
+    display: grid;
+    grid-template-columns: repeat(var(--_container-columns, 1), minmax(0, 1fr));
+  }
+
+  /* raw-HTML wrapper keeps inline children flowing inside the layout */
+  .jects-container__html {
+    display: contents;
+  }
+}

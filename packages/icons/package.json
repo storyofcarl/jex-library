@@ -1,11 +1,13 @@
 {
   "name": "@jects/icons",
   "version": "0.0.0",
-  "description": "Jects UI icon set — tree-shakeable inline SVG exports + sprite.",
+  "description": "Jects UI icons — tree-shakeable inline SVG set plus a sprite and render helpers.",
   "license": "UNLICENSED",
   "type": "module",
   "sideEffects": false,
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

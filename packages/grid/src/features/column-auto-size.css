@@ -1,0 +1,56 @@
+/* @jects/grid — column auto-size (header double-click affordance) styles.
+   Token-pure (only --jects-* tokens), all inside @layer jects.components.
+
+   The handle sits at the trailing edge of each header cell. It is the
+   double-click target that auto-fits the column to its content (Excel-style).
+   It must read as a thin grab affordance on hover/focus without disturbing the
+   header layout when idle. */
+
+@layer jects.components {
+  .jects-grid__header-cell {
+    /* Anchor the absolutely-positioned auto-size handle to the cell edge. */
+    position: relative;
+  }
+
+  .jects-grid__col-auto-sizer {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    /* `width` is set inline from the feature's `handleSize`; keep a floor. */
+    min-inline-size: var(--jects-space-1);
+    cursor: col-resize;
+    /* Idle: invisible grab strip; a faint divider appears on hover/focus. */
+    background: transparent;
+    border-inline-end: 2px solid transparent;
+    z-index: 3;
+    touch-action: none;
+    transition: border-color var(--jects-duration-fast) ease;
+  }
+
+  .jects-grid__col-auto-sizer:hover {
+    border-inline-end-color: oklch(var(--jects-ring) / 0.5);
+  }
+
+  .jects-grid__col-auto-sizer:focus-visible {
+    outline: none;
+    border-inline-end-color: oklch(var(--jects-ring));
+  }
+
+  /* Subtle double-tick glyph hint centered on hover/focus, so the affordance
+     reads as "fit to content" rather than a plain resize grip. */
+  .jects-grid__col-auto-sizer::after {
+    content: '';
+    position: absolute;
+    inset-block: 35%;
+    inset-inline-end: 0;
+    inline-size: 2px;
+    background: oklch(var(--jects-border));
+    opacity: 0;
+    transition: opacity var(--jects-duration-fast) ease;
+  }
+
+  .jects-grid__col-auto-sizer:hover::after,
+  .jects-grid__col-auto-sizer:focus-visible::after {
+    opacity: 1;
+  }
+}

@@ -5,8 +5,35 @@ on:
     branches: [main]
   pull_request:
 
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
 jobs:
-  build-test:
+  verify:
+    name: typecheck · lint · test · build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.17.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+      - name: Capability matrix is up to date
+        run: |
+          pnpm matrix
+          git diff --exit-code docs/MATRIX.md \
+            || (echo "::error::docs/MATRIX.md is stale — run 'pnpm matrix' and commit." && exit 1)
+
+  browser-a11y:
+    name: browser + a11y (Chromium)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,10 +46,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm test
-      - name: Browser tests (Chromium)
-        run: |
-          pnpm exec playwright install --with-deps chromium
-          pnpm --filter @jects/widgets test:browser
+      - run: pnpm exec playwright install --with-deps chromium
+      # Representative data-heavy packages; expand as the suite stabilizes.
+      - run: pnpm --filter @jects/widgets --filter @jects/grid --filter @jects/gantt test:browser

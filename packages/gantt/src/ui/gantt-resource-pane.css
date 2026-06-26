@@ -1,0 +1,135 @@
+/* Gantt Resource Pane — rendered by `GanttResourcePane`.
+
+   The integrated, axis-synced docked pane that hosts the resource histogram,
+   utilization grid, and resource list, with a tablist toolbar to toggle between
+   them and a collapse affordance. The histogram panel shares the Gantt's time
+   axis content width so its horizontal scroll tracks the timeline's.
+
+   Token-pure: every color is `oklch(var(--jects-*))`; sizing uses the --jects-*
+   space/radius scales. All rules live inside @layer jects.components. */
+@layer jects.components {
+  .jects-gantt-resource-pane {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border-top: 1px solid oklch(var(--jects-border));
+  }
+
+  /* Toolbar: tablist + collapse toggle. */
+  .jects-gantt-resource-pane__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    background: oklch(var(--jects-card));
+    border-bottom: 1px solid oklch(var(--jects-border));
+  }
+
+  .jects-gantt-resource-pane__tablist {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-gantt-resource-pane__tab {
+    appearance: none;
+    margin: 0;
+    padding: var(--jects-space-1) var(--jects-space-3);
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: oklch(var(--jects-muted-foreground));
+    font: inherit;
+    font-weight: var(--jects-font-weight-medium);
+    cursor: pointer;
+    transition: background var(--jects-duration-fast) ease,
+      color var(--jects-duration-fast) ease;
+  }
+
+  .jects-gantt-resource-pane__tab:hover {
+    background: oklch(var(--jects-accent) / 0.6);
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-gantt-resource-pane__tab:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-gantt-resource-pane__tab--active {
+    background: oklch(var(--jects-primary) / 0.12);
+    border-color: oklch(var(--jects-primary) / 0.4);
+    color: oklch(var(--jects-primary));
+  }
+
+  .jects-gantt-resource-pane__collapse {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-6);
+    block-size: var(--jects-space-6);
+    margin: 0;
+    padding: 0;
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    line-height: 1;
+    cursor: pointer;
+    transition: background var(--jects-duration-fast) ease;
+  }
+
+  .jects-gantt-resource-pane__collapse:hover {
+    background: oklch(var(--jects-accent) / 0.6);
+  }
+
+  .jects-gantt-resource-pane__collapse:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* Body: the active view fills it; hidden panels are display:none via [hidden]. */
+  .jects-gantt-resource-pane__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .jects-gantt-resource-pane--collapsed .jects-gantt-resource-pane__body {
+    display: none;
+  }
+
+  .jects-gantt-resource-pane__panel {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  /* The histogram panel scrolls horizontally to track the shared axis width. */
+  .jects-gantt-resource-pane__panel:has(> .jects-resource-histogram) {
+    overflow-x: auto;
+  }
+
+  .jects-gantt-resource-pane__panel[hidden] {
+    display: none;
+  }
+
+  .jects-gantt-resource-pane__panel:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-gantt-resource-pane__empty {
+    padding: var(--jects-space-3);
+    color: oklch(var(--jects-muted-foreground));
+    font-style: italic;
+  }
+}

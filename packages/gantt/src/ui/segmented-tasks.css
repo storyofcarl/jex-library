@@ -1,0 +1,122 @@
+/**
+ * @jects/gantt — split / segmented-task rendering (token-pure).
+ *
+ * A split task's base bar is dimmed to a faint "hull" while its real work is
+ * drawn as the segment sub-bars inside the `.jects-gantt__segments` overlay,
+ * joined by dashed connectors spanning the interruption gaps. All colors,
+ * spacing and radii reference `--jects-*` tokens only.
+ */
+
+@layer jects.components {
+  /* The hosting bar carries `data-split`; fade its own fill/label so the
+     segment sub-bars read as the task's actual work. */
+  .jects-gantt__bar[data-split] {
+    background: oklch(var(--jects-primary) / 0.18);
+    border-color: oklch(var(--jects-primary) / 0.4);
+  }
+  .jects-gantt__bar[data-split] > .jects-gantt__bar-label {
+    opacity: 0.55;
+  }
+  .jects-gantt__bar[data-split] > .jects-gantt__bar-progress {
+    display: none;
+  }
+
+  /* Overlay layer: spans the whole bar, lets gaps fall through to the hull. */
+  .jects-gantt__segments {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* A single working segment sub-bar. */
+  .jects-gantt__segment {
+    position: absolute;
+    inset-block: 0;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-primary));
+    border: 1px solid oklch(var(--jects-primary) / 0.7);
+    color: oklch(var(--jects-primary-foreground));
+    overflow: hidden;
+    pointer-events: auto;
+    cursor: grab;
+  }
+
+  .jects-gantt__segment--dragging {
+    cursor: grabbing;
+    box-shadow: var(--jects-shadow-md);
+    z-index: 3;
+  }
+
+  .jects-gantt__bar--critical .jects-gantt__segment {
+    background: oklch(var(--jects-cmyk-key));
+    border-color: oklch(var(--jects-cmyk-key));
+    color: oklch(var(--jects-background));
+  }
+
+  /* Per-segment progress fill. */
+  .jects-gantt__segment-progress {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: oklch(var(--jects-primary-foreground) / 0.35);
+    border-start-start-radius: var(--jects-radius-sm);
+    border-end-start-radius: var(--jects-radius-sm);
+  }
+
+  /* Edge resize handles on a segment. */
+  .jects-gantt__segment-handle {
+    position: absolute;
+    inset-block: 0;
+    inline-size: var(--jects-space-1);
+    cursor: ew-resize;
+    z-index: 2;
+  }
+  .jects-gantt__segment-handle--start {
+    inset-inline-start: 0;
+  }
+  .jects-gantt__segment-handle--end {
+    inset-inline-end: 0;
+  }
+
+  /* Connector across the gap between two segments. */
+  .jects-gantt__segment-connector {
+    position: absolute;
+    inset-block-start: 50%;
+    block-size: 0;
+    transform: translateY(-50%);
+    border-block-start: 1px dashed oklch(var(--jects-muted-foreground) / 0.8);
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .jects-gantt__segment-connector:hover,
+  .jects-gantt__segment-connector:focus-visible {
+    border-block-start-color: oklch(var(--jects-primary));
+    border-block-start-width: 2px;
+    outline: none;
+  }
+
+  /* Small junction caps so the connector reads as joining two pieces. */
+  .jects-gantt__segment-connector::before,
+  .jects-gantt__segment-connector::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 50%;
+    inline-size: var(--jects-space-1);
+    block-size: var(--jects-space-1);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-muted-foreground) / 0.8);
+    transform: translateY(-50%);
+  }
+  .jects-gantt__segment-connector::before {
+    inset-inline-start: 0;
+  }
+  .jects-gantt__segment-connector::after {
+    inset-inline-end: 0;
+  }
+}

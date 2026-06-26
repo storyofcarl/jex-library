@@ -1,0 +1,403 @@
+/* Booking styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-booking {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--jects-space-6);
+    align-items: flex-start;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    padding: var(--jects-space-5);
+  }
+
+  /* ── date column ──────────────────────────────────────────────────── */
+  .jects-booking__date {
+    flex: 0 0 auto;
+  }
+  .jects-booking__calendar {
+    display: block;
+  }
+  /* The embedded @jects/widgets MiniCalendar renders out-of-month day buttons
+     with `muted-foreground / 0.6`, which on the popover background blends down
+     to ~2.3:1 contrast — below the 4.5:1 a11y bar (axe color-contrast). Within
+     the booking flow we raise these to full `--jects-muted-foreground`
+     (~4.8:1) so the calendar stays accessible. Token-only, no hardcoded color. */
+  .jects-booking__calendar .jects-minical__day--outside:not(.jects-minical__day--disabled) {
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  /* ── main column (resources + slots + form) ──────────────────────── */
+  .jects-booking__main {
+    flex: 1 1 18rem;
+    min-width: 16rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-4);
+  }
+
+  .jects-booking__heading {
+    margin: 0 0 var(--jects-space-3);
+    font-size: var(--jects-font-size-md);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* ── resource selector ───────────────────────────────────────────── */
+  .jects-booking__resources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--jects-space-2);
+  }
+  .jects-booking__resource {
+    appearance: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    transition:
+      background-color var(--jects-duration-fast) ease,
+      color var(--jects-duration-fast) ease,
+      border-color var(--jects-duration-fast) ease;
+  }
+  .jects-booking__resource:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-booking__resource--selected {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border-color: oklch(var(--jects-primary));
+  }
+  .jects-booking__resource:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ── slot grid ───────────────────────────────────────────────────── */
+  .jects-booking__slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+    gap: var(--jects-space-2);
+  }
+  .jects-booking__slot {
+    appearance: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1;
+    text-align: center;
+    padding: var(--jects-space-2) var(--jects-space-2);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    transition:
+      background-color var(--jects-duration-fast) ease,
+      color var(--jects-duration-fast) ease,
+      border-color var(--jects-duration-fast) ease;
+  }
+  .jects-booking__slot--available:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+    border-color: oklch(var(--jects-primary));
+  }
+  .jects-booking__slot--selected {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border-color: oklch(var(--jects-primary));
+  }
+  .jects-booking__slot--selected:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+    color: oklch(var(--jects-primary-foreground));
+  }
+  .jects-booking__slot--unavailable {
+    background: oklch(var(--jects-muted));
+    color: oklch(var(--jects-muted-foreground));
+    cursor: not-allowed;
+    text-decoration-line: line-through;
+  }
+  .jects-booking__slot--booked {
+    border-color: oklch(var(--jects-destructive) / 0.4);
+  }
+  .jects-booking__slot:disabled,
+  .jects-booking__slot[aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .jects-booking__slot:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-booking__empty {
+    margin: 0;
+    padding: var(--jects-space-4);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted));
+    border-radius: var(--jects-radius-md);
+  }
+
+  /* ── reservation form ────────────────────────────────────────────── */
+  .jects-booking__form-section {
+    margin-top: var(--jects-space-2);
+    padding-top: var(--jects-space-4);
+    border-top: 1px solid oklch(var(--jects-border));
+  }
+
+  /* ── toolbar (undo / redo / bulk delete) ─────────────────────────── */
+  .jects-booking__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--jects-space-2);
+  }
+  .jects-booking__tool {
+    appearance: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    transition:
+      background-color var(--jects-duration-fast) ease,
+      border-color var(--jects-duration-fast) ease;
+  }
+  .jects-booking__tool:hover:not(:disabled) {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-booking__tool:disabled,
+  .jects-booking__tool[aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .jects-booking__tool:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ── confirmation banner ──────────────────────────────────────────── */
+  .jects-booking__banner {
+    padding: var(--jects-space-3) var(--jects-space-4);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border-radius: var(--jects-radius-md);
+  }
+
+  /* ── service selector ─────────────────────────────────────────────── */
+  .jects-booking__services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--jects-space-2);
+  }
+  .jects-booking__service {
+    appearance: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    text-align: left;
+    font-family: inherit;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    transition:
+      background-color var(--jects-duration-fast) ease,
+      border-color var(--jects-duration-fast) ease;
+  }
+  .jects-booking__service:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-booking__service--selected {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    border-color: oklch(var(--jects-primary));
+  }
+  .jects-booking__service:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-booking__service-name {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+  }
+  .jects-booking__service-meta {
+    font-size: var(--jects-font-size-xs);
+    opacity: 0.85;
+  }
+
+  /* ── timezone selector ────────────────────────────────────────────── */
+  .jects-booking__tz {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-booking__tz-select {
+    appearance: none;
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-booking__tz-select:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ── slot seats / waitlist ────────────────────────────────────────── */
+  .jects-booking__slot {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .jects-booking__slot-seats {
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-normal);
+    opacity: 0.85;
+  }
+  .jects-booking__slot--waitlist {
+    border-color: oklch(var(--jects-primary) / 0.5);
+    border-style: dashed;
+    cursor: pointer;
+    text-decoration-line: none;
+  }
+
+  /* ── manage panel ─────────────────────────────────────────────────── */
+  .jects-booking__manage {
+    margin-top: var(--jects-space-2);
+    padding-top: var(--jects-space-4);
+    border-top: 1px solid oklch(var(--jects-border));
+  }
+  .jects-booking__manage-heading {
+    margin: 0 0 var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-booking__manage-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+  }
+  .jects-booking__manage-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-booking__manage-info {
+    flex: 1 1 auto;
+  }
+  .jects-booking__manage-action {
+    appearance: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-booking__manage-action:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-booking__manage-action:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ── calendar overview ────────────────────────────────────────────── */
+  .jects-booking__overview {
+    flex: 1 1 100%;
+    /* Keep the month overview a compact, bounded mini-month rather than a
+       page-wide block of empty cells. */
+    max-width: 28rem;
+  }
+  .jects-booking-cal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    font-family: var(--jects-font-family);
+  }
+  .jects-booking-cal__row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--jects-space-1);
+  }
+  .jects-booking-cal__day {
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+    min-height: 2rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    font-family: inherit;
+    font-size: var(--jects-font-size-sm);
+    padding: var(--jects-space-1);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-booking-cal__day--outside {
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted));
+  }
+  .jects-booking-cal__day--today {
+    border-color: oklch(var(--jects-primary));
+  }
+  .jects-booking-cal__day--has {
+    font-weight: var(--jects-font-weight-semibold);
+  }
+  .jects-booking-cal__day:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-booking-cal__badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 1.1rem;
+    text-align: center;
+    font-size: var(--jects-font-size-xs);
+    line-height: 1.1rem;
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border-radius: var(--jects-radius-xl);
+  }
+}

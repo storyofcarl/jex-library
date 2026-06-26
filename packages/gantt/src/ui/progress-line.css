@@ -1,0 +1,64 @@
+/* Gantt Progress line / status line — the jagged "line of balance" drawn at a
+   status date, bowing left for tasks behind schedule and right for tasks ahead.
+
+   House style "Cool Zinc + Calm CMYK": the base status line uses a neutral
+   accent; the jagged progress polyline uses the warning token (a schedule-health
+   instrument reads as a caution colour), and per-task vertex dots are tinted by
+   status — behind = destructive, ahead = success, on-track = muted. All rules
+   live inside @layer jects.components and reference ONLY --jects-* tokens — no
+   hardcoded colour literals. */
+
+@layer jects.components {
+  /* The SVG overlay spans the full timeline content and never intercepts pointer
+     events meant for the bars beneath it (it is a read-only status instrument). */
+  .jects-gantt__progress-line {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    pointer-events: none;
+    overflow: visible;
+    z-index: var(--jects-z-sticky);
+  }
+
+  /* The straight reference status line behind the zig-zag. */
+  .jects-gantt__progress-line-base {
+    stroke: oklch(var(--jects-accent-foreground) / 0.45);
+    stroke-width: 1.5;
+    stroke-dasharray: 3 3;
+    fill: none;
+  }
+
+  /* The jagged progress polyline itself — the schedule-health silhouette. */
+  .jects-gantt__progress-line-poly {
+    stroke: oklch(var(--jects-warning));
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    fill: none;
+  }
+
+  /* Per-task vertex dots, tinted by schedule status. */
+  .jects-gantt__progress-line-vertex {
+    stroke: oklch(var(--jects-background));
+    stroke-width: 1;
+  }
+
+  .jects-gantt__progress-line-vertex--behind {
+    fill: oklch(var(--jects-destructive));
+  }
+
+  .jects-gantt__progress-line-vertex--ahead {
+    fill: oklch(var(--jects-success));
+  }
+
+  .jects-gantt__progress-line-vertex--onTrack {
+    fill: oklch(var(--jects-muted-foreground));
+  }
+
+  /* High-contrast: thicken the polyline so it survives forced-colours mode. */
+  @media (prefers-contrast: more) {
+    .jects-gantt__progress-line-poly {
+      stroke-width: 3;
+    }
+  }
+}

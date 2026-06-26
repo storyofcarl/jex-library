@@ -1,0 +1,571 @@
+/* @jects/grid feature styles — token-pure (only --jects-* tokens), all inside
+   @layer jects.components. Covers the inline filter bar, footer summary, tree
+   affordance, search highlight, group rows, and the context-menu popup host. */
+
+@layer jects.components {
+  /* ── Filter bar (inline filter row) ─────────────────────────────────── */
+  .jects-grid-filterbar {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border-bottom: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted));
+    min-height: var(--jects-space-8);
+  }
+
+  .jects-grid-filterbar__cell {
+    display: flex;
+    align-items: center;
+    padding: var(--jects-space-1);
+    min-width: 0;
+    border-inline-end: 1px solid oklch(var(--jects-border) / 0.5);
+  }
+
+  .jects-grid-filterbar__cell--empty {
+    background: transparent;
+  }
+
+  .jects-grid-filterbar__input {
+    inline-size: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-grid-filterbar__input::placeholder {
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-grid-filterbar__input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── Footer summary row ──────────────────────────────────────────────── */
+  .jects-grid-summary {
+    display: flex;
+    align-items: stretch;
+    border-top: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted));
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-grid-summary__cell {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+    border-inline-end: 1px solid oklch(var(--jects-border) / 0.5);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-grid-summary__cell--start {
+    justify-content: flex-start;
+    text-align: start;
+  }
+  .jects-grid-summary__cell--center {
+    justify-content: center;
+    text-align: center;
+  }
+  .jects-grid-summary__cell--end {
+    justify-content: flex-end;
+    text-align: end;
+  }
+
+  /* ── Group header rows ──────────────────────────────────────────────── */
+  .jects-grid-group {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+    font-weight: var(--jects-font-weight-medium);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    cursor: pointer;
+  }
+
+  .jects-grid-group__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-5);
+    block-size: var(--jects-space-5);
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .jects-grid-group__count {
+    color: oklch(var(--jects-muted-foreground));
+    font-weight: var(--jects-font-weight-normal);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  /* ── Tree affordance (expand / collapse, indent) ────────────────────── */
+  .jects-grid-tree__cell {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    min-width: 0;
+  }
+
+  .jects-grid-tree__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-5);
+    block-size: var(--jects-space-5);
+    flex: 0 0 auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    color: oklch(var(--jects-muted-foreground));
+    cursor: pointer;
+  }
+
+  .jects-grid-tree__toggle:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-grid-tree__toggle:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-grid-tree__spacer {
+    display: inline-block;
+    inline-size: var(--jects-space-5);
+    flex: 0 0 auto;
+  }
+
+  .jects-grid-tree__chevron {
+    inline-size: 0;
+    block-size: 0;
+    border-block: 4px solid transparent;
+    border-inline-start: 6px solid currentColor;
+    transition: transform var(--jects-duration-fast) ease;
+  }
+
+  .jects-grid-tree__chevron--open {
+    transform: rotate(90deg);
+  }
+
+  .jects-grid-tree__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ── Quick-search highlight ─────────────────────────────────────────── */
+  .jects-grid-search__hl {
+    background: oklch(var(--jects-warning) / 0.45);
+    color: oklch(var(--jects-foreground));
+    border-radius: var(--jects-radius-sm);
+    padding: 0 1px;
+  }
+
+  /* Whole-cell tint for a default-rendered cell that contains a quick-search
+     match. The renderer adds this class (see quick-search-paint.ts) alongside
+     the inline <mark> so the matched cell reads as a unit — parity with the
+     Bryntum/DHTMLX QuickFind "found" cell styling. Subtle so the inline mark
+     stays the primary affordance. */
+  .jects-grid__cell--search-match {
+    background: oklch(var(--jects-warning) / 0.1);
+  }
+
+  /* Keep the inline mark legible when the matched cell is also row/cell
+     selected (selection paints its own background underneath). */
+  .jects-grid__cell--selected .jects-grid-search__hl,
+  .jects-grid__row--selected .jects-grid-search__hl {
+    background: oklch(var(--jects-warning) / 0.55);
+  }
+
+  /* ── Row resize (per-row height drag) ───────────────────────────────── */
+  .jects-grid--row-resizable .jects-grid__row {
+    /* Row elements are absolutely positioned by the renderer; the resizer is
+       pinned to the row's bottom edge below. */
+    position: absolute;
+  }
+
+  /* The `role="gridcell"` wrapper that keeps the separator a valid grid child.
+     It is the full-width positioned box pinned to the row's bottom edge (its
+     containing block is the absolutely-positioned row); the separator fills it. */
+  .jects-grid__row-resizer-cell {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    /* Height is set inline from the feature's `handleSize` option. */
+    z-index: 3;
+  }
+
+  .jects-grid__row-resizer {
+    position: absolute;
+    inset: 0;
+    cursor: row-resize;
+    touch-action: none;
+    background: transparent;
+  }
+
+  /* A subtle grab affordance on hover/focus, drawn with tokens only. */
+  .jects-grid__row-resizer::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    block-size: 2px;
+    background: transparent;
+    transition: background var(--jects-duration-fast) ease;
+  }
+
+  .jects-grid__row:hover .jects-grid__row-resizer::after,
+  .jects-grid__row-resizer:hover::after {
+    background: oklch(var(--jects-border));
+  }
+
+  .jects-grid__row-resizer:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-grid__row-resizer:focus-visible::after,
+  .jects-grid__row--resizing .jects-grid__row-resizer::after {
+    background: oklch(var(--jects-primary));
+  }
+
+  .jects-grid__row--resizing {
+    user-select: none;
+    cursor: row-resize;
+  }
+
+  /* ── Row reorder (drag-to-reorder, incl. between grids) ─────────────── */
+
+  /* The grid root while a row drag is in flight. */
+  .jects-grid--row-dragging {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  /* Floating proxy that follows the pointer during a drag. Appended to <body>
+     so it escapes the grid's overflow clipping. */
+  .jects-grid-rowdrag-proxy {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: var(--jects-z-tooltip);
+    pointer-events: none;
+    max-inline-size: 18rem;
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-popover-foreground));
+    background: oklch(var(--jects-popover) / 0.96);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-lg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Horizontal drop-position indicator drawn between rows. Positioned relative
+     to the grid root (the feature sets `position: relative` on the root). */
+  .jects-grid-rowdrag-indicator {
+    position: absolute;
+    inset-inline: 0;
+    block-size: 2px;
+    margin-block-start: -1px;
+    z-index: var(--jects-z-sticky);
+    pointer-events: none;
+    background: oklch(var(--jects-primary));
+    box-shadow: 0 0 0 1px oklch(var(--jects-primary) / 0.35);
+  }
+
+  /* Leading dot on the indicator for a clearer affordance. */
+  .jects-grid-rowdrag-indicator::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    inline-size: var(--jects-space-2);
+    block-size: var(--jects-space-2);
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: oklch(var(--jects-primary));
+  }
+
+  /* Optional drag-handle affordance (used when `handleSelector` targets it). */
+  .jects-grid-rowdrag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-5);
+    block-size: var(--jects-space-5);
+    color: oklch(var(--jects-muted-foreground));
+    cursor: grab;
+  }
+
+  .jects-grid-rowdrag-handle:active {
+    cursor: grabbing;
+  }
+
+  /* ── Context-menu popup host (wraps @jects/widgets Menu) ─────────────── */
+  .jects-grid-menu-popup {
+    position: fixed;
+    z-index: var(--jects-z-popover);
+    min-inline-size: var(--jects-space-12);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-lg);
+    overflow: hidden;
+  }
+
+  /* ── Column picker / chooser panel ──────────────────────────────────── */
+  .jects-grid-colpicker {
+    position: fixed;
+    z-index: var(--jects-z-popover);
+    display: flex;
+    flex-direction: column;
+    min-inline-size: calc(var(--jects-space-12) * 1.5);
+    max-block-size: 70vh;
+    padding: var(--jects-space-1);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-lg);
+    overflow: hidden;
+  }
+
+  .jects-grid-colpicker__title {
+    padding: var(--jects-space-2) var(--jects-space-2) var(--jects-space-1);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-grid-colpicker__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    overflow-y: auto;
+    padding: var(--jects-space-1);
+  }
+
+  .jects-grid-colpicker__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-grid-colpicker__row:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-grid-colpicker__check {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .jects-grid-colpicker__controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    flex: 0 0 auto;
+  }
+
+  .jects-grid-colpicker__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-6);
+    block-size: var(--jects-space-6);
+    padding: 0;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    line-height: 1;
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+
+  .jects-grid-colpicker__btn:hover:not(:disabled) {
+    background: oklch(var(--jects-background));
+    border-color: oklch(var(--jects-border));
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-grid-colpicker__btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .jects-grid-colpicker__btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-grid-colpicker__pin--active {
+    color: oklch(var(--jects-primary));
+    border-color: oklch(var(--jects-primary) / 0.5);
+  }
+
+  .jects-grid-colpicker__actions {
+    display: flex;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1);
+    border-top: 1px solid oklch(var(--jects-border));
+  }
+
+  .jects-grid-colpicker__action {
+    flex: 1 1 0;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-secondary));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+
+  .jects-grid-colpicker__action:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-grid-colpicker__action:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── Selection column (row-selector checkbox) ───────────────────────── */
+  .jects-grid-select {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 100%;
+    block-size: 100%;
+    cursor: pointer;
+  }
+
+  .jects-grid-select__input {
+    inline-size: var(--jects-space-4);
+    block-size: var(--jects-space-4);
+    margin: 0;
+    accent-color: oklch(var(--jects-primary));
+    cursor: pointer;
+  }
+
+  .jects-grid-select__input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-grid-cell--select {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Filter operator menu (per-column operator chooser) ─────────────── */
+  .jects-grid-filter-menu {
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    min-inline-size: 13rem;
+    padding: var(--jects-space-2);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-md);
+  }
+
+  .jects-grid-filter-menu__row {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-grid-filter-menu__op {
+    flex: 0 0 auto;
+    min-inline-size: 6.5rem;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    text-align: start;
+    color: oklch(var(--jects-foreground));
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+
+  .jects-grid-filter-menu__op:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-grid-filter-menu__op:focus-visible,
+  .jects-grid-filter-menu__input:focus-visible,
+  .jects-grid-filter-menu__clear:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-grid-filter-menu__input {
+    flex: 1 1 0;
+    min-inline-size: 0;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-grid-filter-menu__clear {
+    margin-block-start: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-secondary));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    border-top: 1px solid oklch(var(--jects-border));
+    cursor: pointer;
+  }
+
+  .jects-grid-filter-menu__clear:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+}

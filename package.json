@@ -19,7 +19,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,json,css,md}\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo run build && changeset publish"
+    "release": "turbo run build && changeset publish",
+    "matrix": "node scripts/gen-matrix.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.10",

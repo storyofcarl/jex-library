@@ -1,0 +1,69 @@
+/* Avatar styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-avatar {
+    --_avatar-size: 2.5rem;
+    --_avatar-bg: oklch(var(--jects-muted));
+    --_avatar-fg: oklch(var(--jects-muted-foreground));
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    flex: none;
+    width: var(--_avatar-size);
+    height: var(--_avatar-size);
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1;
+    user-select: none;
+    background: var(--_avatar-bg);
+    color: var(--_avatar-fg);
+  }
+
+  .jects-avatar__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .jects-avatar__fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-transform: uppercase;
+  }
+
+  .jects-avatar__fallback--icon {
+    color: oklch(var(--jects-muted-foreground) / 0.7);
+  }
+
+  /* ---- sizes ---- */
+  .jects-avatar--sm {
+    --_avatar-size: 1.75rem;
+    font-size: var(--jects-font-size-xs);
+  }
+  .jects-avatar--md {
+    --_avatar-size: 2.5rem;
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-avatar--lg {
+    --_avatar-size: 3.5rem;
+    font-size: var(--jects-font-size-lg);
+  }
+  .jects-avatar--xl {
+    --_avatar-size: 5rem;
+    font-size: var(--jects-font-size-2xl);
+  }
+
+  /* ---- shapes ---- */
+  .jects-avatar--circle {
+    border-radius: var(--jects-radius-xl);
+  }
+  .jects-avatar--square {
+    border-radius: var(--jects-radius-md);
+  }
+}

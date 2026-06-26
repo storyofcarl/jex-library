@@ -1,0 +1,96 @@
+/* Panel styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-panel {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-height: 0;
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-card-foreground));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    overflow: hidden;
+  }
+
+  .jects-panel--flat {
+    border-color: transparent;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  /* ---- header ---- */
+  .jects-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-3) var(--jects-space-4);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+  .jects-panel--collapsed .jects-panel__header {
+    border-bottom-color: transparent;
+  }
+
+  .jects-panel__title {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-panel__tools {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+
+  /* ---- collapse toggle ---- */
+  .jects-panel__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    border-radius: var(--jects-radius-sm);
+  }
+  .jects-panel__toggle:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-panel__chevron {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid oklch(var(--jects-muted-foreground));
+    border-bottom: 2px solid oklch(var(--jects-muted-foreground));
+    transform: rotate(45deg);
+    transition: transform var(--jects-duration-fast) ease;
+  }
+  .jects-panel--collapsed .jects-panel__chevron {
+    transform: rotate(-45deg);
+  }
+
+  /* ---- body ---- */
+  .jects-panel__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: var(--jects-space-4);
+    overflow: auto;
+    font-size: var(--jects-font-size-sm);
+  }
+
+  /* ---- footer ---- */
+  .jects-panel__footer {
+    padding: var(--jects-space-3) var(--jects-space-4);
+    border-top: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted) / 0.4);
+    font-size: var(--jects-font-size-sm);
+  }
+}

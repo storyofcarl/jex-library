@@ -1,0 +1,71 @@
+/* Gantt CSV export — accessible HTML table PREVIEW of the task-grid CSV export.
+
+   This styles the optional `renderCsvPreview()` / `feature.previewCsv()` table: a
+   faithful, semantic preview of exactly what the CSV download contains (same
+   columns, hierarchy indent and display formatting). It is NOT the Gantt itself
+   — the export feature otherwise ships no DOM (it produces a string + a download).
+
+   House style "Cool Zinc + Calm CMYK": a quiet card surface, muted header band,
+   hairline borders, and a faintly tinted summary (parent) row. All rules live
+   inside @layer jects.components and reference ONLY --jects-* tokens — no
+   hardcoded colour literals. */
+
+@layer jects.components {
+  .jects-gantt__csv-preview {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-card-foreground));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    overflow: hidden;
+  }
+
+  .jects-gantt__csv-preview-caption {
+    caption-side: top;
+    text-align: start;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-gantt__csv-preview thead th {
+    text-align: start;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    background: oklch(var(--jects-muted));
+    color: oklch(var(--jects-muted-foreground));
+    font-weight: var(--jects-font-weight-medium);
+    border-block-end: 1px solid oklch(var(--jects-border));
+    white-space: nowrap;
+  }
+
+  .jects-gantt__csv-preview tbody td {
+    padding: var(--jects-space-1) var(--jects-space-3);
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.5);
+    /* Preserve the leading-space outline indent on the Name cell. */
+    white-space: pre;
+  }
+
+  .jects-gantt__csv-preview-row:last-child td {
+    border-block-end: none;
+  }
+
+  /* Summary (parent) rows read slightly heavier on a faint tint. */
+  .jects-gantt__csv-preview-row--summary td {
+    font-weight: var(--jects-font-weight-medium);
+    background: oklch(var(--jects-accent) / 0.35);
+  }
+
+  .jects-gantt__csv-preview-row:hover td {
+    background: oklch(var(--jects-accent) / 0.5);
+  }
+
+  /* High-contrast: solidify the row separators for forced-colours mode. */
+  @media (prefers-contrast: more) {
+    .jects-gantt__csv-preview tbody td {
+      border-block-end-color: oklch(var(--jects-border));
+    }
+  }
+}

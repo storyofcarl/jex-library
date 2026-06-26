@@ -1,0 +1,36 @@
+/* Scheduler PRO — auto-reschedule cascade animation. Token-pure (--jects-* only). */
+@layer jects.components {
+  /*
+   * A rescheduled bar (one the engine moved as a cascade of a user change) gets
+   * this class briefly so the move reads as a deliberate, animated cascade rather
+   * than an instantaneous jump. A ring + subtle lift draws the eye to every bar
+   * the change rippled to. Colour comes only from semantic tokens.
+   */
+  .jects-scheduler__bar--rescheduled {
+    animation: jects-scheduler-reschedule var(--jects-duration-normal) ease-out;
+    box-shadow: 0 0 0 2px oklch(var(--jects-ring) / 0.85);
+    z-index: var(--jects-z-sticky);
+  }
+
+  @keyframes jects-scheduler-reschedule {
+    0% {
+      box-shadow: 0 0 0 0 oklch(var(--jects-ring) / 0.6);
+      transform: translateY(-2px);
+    }
+    60% {
+      box-shadow: 0 0 0 4px oklch(var(--jects-ring) / 0.35);
+      transform: translateY(0);
+    }
+    100% {
+      box-shadow: 0 0 0 2px oklch(var(--jects-ring) / 0.85);
+      transform: translateY(0);
+    }
+  }
+
+  /* Respect reduced-motion: keep the (static) ring indicator, drop the motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .jects-scheduler__bar--rescheduled {
+      animation: none;
+    }
+  }
+}

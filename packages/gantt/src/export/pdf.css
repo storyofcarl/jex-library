@@ -1,0 +1,57 @@
+/*
+ * @jects/gantt — PDF-export trigger chrome.
+ *
+ * Optional presentational styles for an "Export PDF" toolbar/button a consumer
+ * can surface next to the Gantt to drive `gantt.exportPdf()`. The PDF output
+ * itself is assembled as raw bytes (see `pdf.ts`) and carries no CSS; these rules
+ * only theme the in-app trigger affordance.
+ *
+ * Token-pure (only --jects-* tokens) and scoped to @layer jects.components so it
+ * composes with the rest of the package's cascade. Not aggregated into the
+ * shared styles.css barrel (kept additive / concurrency-safe); import it directly
+ * where the trigger is rendered: `import '@jects/gantt/src/export/pdf.css'` (or
+ * via the bundled stylesheet once the integrator wires it into styles.css).
+ */
+@layer jects.components {
+  .jects-gantt-pdf-toolbar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-gantt-pdf-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1.4;
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border: 1px solid oklch(var(--jects-primary));
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+    transition: background var(--jects-duration-fast) ease;
+  }
+
+  .jects-gantt-pdf-export-btn:hover:not(:disabled) {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+
+  .jects-gantt-pdf-export-btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-gantt-pdf-export-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

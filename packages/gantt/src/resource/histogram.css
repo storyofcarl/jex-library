@@ -1,0 +1,98 @@
+/* Gantt Resource Histogram — per-resource, time-bucketed allocation chart.
+
+   Rendered by `ResourceHistogramView` (and mounted by
+   `GanttResourceHistogramFeature`). Token-pure: every color is
+   `oklch(var(--jects-*))`, every size uses the --jects-* space/radius scales.
+   All rules live inside @layer jects.components so they compose with the rest of
+   the Gantt component layer. */
+@layer jects.components {
+  .jects-resource-histogram-chart {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+  }
+
+  .jects-resource-histogram-chart__empty {
+    padding: var(--jects-space-2);
+    color: oklch(var(--jects-muted-foreground));
+    font-style: italic;
+  }
+
+  /* One resource lane: a positioning context for its absolutely-placed bars. */
+  .jects-resource-histogram-chart__row {
+    position: relative;
+    inline-size: 100%;
+    border-block-end: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted) / 0.25);
+  }
+
+  .jects-resource-histogram-chart__row--over {
+    background: oklch(var(--jects-destructive) / 0.06);
+  }
+
+  /* The capacity guide line: a dashed horizontal rule at capacity*100. */
+  .jects-resource-histogram-chart__capacity {
+    position: absolute;
+    inset-inline: 0;
+    block-size: 0;
+    border-block-start: 1px dashed oklch(var(--jects-muted-foreground) / 0.7);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* One time bucket: a full-row-height column the segments grow up inside. */
+  .jects-resource-histogram-chart__bar {
+    position: absolute;
+    inset-block: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .jects-resource-histogram-chart__bar:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-resource-histogram-chart__bar:hover .jects-resource-histogram-chart__fill {
+    background: oklch(var(--jects-primary) / 0.85);
+  }
+
+  /* In-capacity allocation, grows up from the row baseline. */
+  .jects-resource-histogram-chart__fill {
+    position: absolute;
+    inset-inline: 1px;
+    inset-block-end: 0;
+    border-start-start-radius: var(--jects-radius-sm);
+    border-start-end-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-primary) / 0.65);
+  }
+
+  /* Over-allocation surplus, stacked above the in-capacity fill. */
+  .jects-resource-histogram-chart__over {
+    position: absolute;
+    inset-inline: 1px;
+    border-start-start-radius: var(--jects-radius-sm);
+    border-start-end-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-destructive) / 0.8);
+  }
+
+  .jects-resource-histogram-chart__bar--over .jects-resource-histogram-chart__fill {
+    background: oklch(var(--jects-warning) / 0.7);
+  }
+
+  /* The owned panel the feature mounts when no host is supplied. */
+  .jects-gantt__histogram-panel {
+    position: relative;
+    overflow: auto;
+    inline-size: 100%;
+    max-block-size: 16rem;
+    border-block-start: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-card));
+  }
+}

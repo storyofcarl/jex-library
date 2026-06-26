@@ -1,0 +1,40 @@
+/* @jects/gantt — PNG / image export staging styles.
+   Token-pure (only --jects-* tokens, no hardcoded color literals) and scoped to
+   @layer jects.components per house style. These rules style the optional,
+   off-screen staging container an exporter may mount the full-chart clone into
+   before rasterizing, and the expanded export-render state of the clone itself.
+   Colour is owned by the themed component CSS; here we carry structure only,
+   except the staging surface which paints the themed background so a rasterized
+   PNG has a real (theme) backdrop. */
+@layer jects.components {
+  /* Off-screen staging host: laid out (so getBoundingClientRect/scroll sizes are
+     real) but visually removed from the page and excluded from the a11y tree. */
+  .jects-gantt-export-stage {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    /* Move it off-screen rather than display:none so layout still computes. */
+    inset-inline-start: -100000px;
+    pointer-events: none;
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    font-family: var(--jects-font-family);
+  }
+
+  /* The cloned, export-rendered Gantt: full chart, no scroll clip. */
+  .jects-gantt-export-stage .jects-gantt__timeline-scroller,
+  .jects-gantt-export-stage .jects-gantt__tree-scroller,
+  .jects-gantt--exporting .jects-gantt__timeline-scroller,
+  .jects-gantt--exporting .jects-gantt__tree-scroller {
+    overflow: visible;
+    block-size: auto;
+    max-block-size: none;
+  }
+
+  /* While a live root is being captured, freeze any in-flight transition so the
+     rasterized frame is stable (structure only — no colour declared here). */
+  .jects-gantt--exporting * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

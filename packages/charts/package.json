@@ -1,0 +1,46 @@
+{
+  "name": "@jects/charts",
+  "version": "0.0.0",
+  "description": "Jects UI charts — a charting library (line/bar/area/pie/scatter/bubble and more) with numeric/time/category axes, zoom/pan, crosshair, annotations, data labels, streaming, and export.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/charts.js",
+      "require": "./dist/charts.umd.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "types": "./dist/index.d.ts",
+  "module": "./dist/charts.js",
+  "main": "./dist/charts.umd.cjs",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run",
+    "test:browser": "vitest run --config vitest.browser.config.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "peerDependencies": {
+    "@jects/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@jects/core": "workspace:*",
+    "@jects/theme": "workspace:*",
+    "@jects/vite-config": "workspace:*",
+    "@vitest/browser": "^2.1.8",
+    "axe-core": "^4.10.0",
+    "playwright": "^1.49.1",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.4.0",
+    "vitest": "^2.1.8"
+  }
+}

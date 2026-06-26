@@ -1,0 +1,63 @@
+/* Rating styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-rating {
+    --_rating-on: oklch(var(--jects-warning));
+    --_rating-off: oklch(var(--jects-muted));
+
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-lg);
+    line-height: 1;
+    cursor: pointer;
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-rating:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-rating__stars {
+    display: inline-flex;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-rating__star {
+    position: relative;
+    display: inline-block;
+    color: var(--_rating-off);
+  }
+
+  .jects-rating__glyph {
+    display: block;
+  }
+
+  /* Foreground (filled) glyph overlays the background, clipped per state. */
+  .jects-rating__glyph--fg {
+    position: absolute;
+    inset: 0;
+    color: var(--_rating-on);
+    overflow: hidden;
+    width: 0;
+  }
+
+  .jects-rating__star--full .jects-rating__glyph--fg {
+    width: 100%;
+  }
+
+  .jects-rating__star--half .jects-rating__glyph--fg {
+    width: 50%;
+  }
+
+  .jects-rating--readonly,
+  .jects-rating--disabled {
+    cursor: default;
+  }
+
+  .jects-rating--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}

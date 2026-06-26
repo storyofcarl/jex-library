@@ -1,0 +1,48 @@
+/* @jects/grid — TooltipFeature styles. Token-pure (only --jects-* tokens),
+   inside @layer jects.components. The bubble itself reuses the @jects/widgets
+   `.jects-tooltip` surface; these rules add the grid-specific `--jects-grid-tooltip`
+   variant (wider, multi-line detail cards) and the host wrapper. No hard-coded
+   colors. */
+
+@layer jects.components {
+  /* The detached host the feature appends to <body> for the shared bubble (it
+     is portaled out of the `role="grid"` root so the `role="tooltip"` bubble is
+     not a grid child). It has no box of its own — the bubble is `position:
+     fixed`. */
+  .jects-grid-tooltip-host {
+    display: contents;
+  }
+
+  /* Grid tooltip variant layered onto the widgets `.jects-tooltip` base. */
+  .jects-tooltip.jects-grid-tooltip {
+    max-width: 22rem;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  /* Detail-card layout (from the `detailTooltip()` helper). */
+  .jects-grid-tooltip__card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--jects-space-1) var(--jects-space-3);
+    align-items: baseline;
+  }
+
+  .jects-grid-tooltip__row {
+    display: contents;
+  }
+
+  .jects-grid-tooltip__label {
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-primary-foreground) / 0.85);
+  }
+
+  .jects-grid-tooltip__value {
+    color: oklch(var(--jects-primary-foreground));
+  }
+
+  /* While a tooltip is active, hint the described cell (subtle, token-driven). */
+  .jects-grid--has-tooltips .jects-grid__cell[aria-describedby] {
+    box-shadow: inset 0 0 0 1px oklch(var(--jects-ring) / 0.45);
+  }
+}

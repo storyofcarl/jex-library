@@ -1,0 +1,47 @@
+{
+  "name": "@jects/timeline-core",
+  "version": "0.0.0",
+  "description": "Jects UI timeline engine — the shared time-axis, viewport, row-virtualization, and dependency-routing foundation that Gantt and Scheduler render on.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/timeline-core.js",
+      "require": "./dist/timeline-core.umd.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "types": "./dist/index.d.ts",
+  "module": "./dist/timeline-core.js",
+  "main": "./dist/timeline-core.umd.cjs",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run",
+    "test:browser": "vitest run --config vitest.browser.config.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "peerDependencies": {
+    "@jects/core": "workspace:*",
+    "@jects/theme": "workspace:*"
+  },
+  "devDependencies": {
+    "@jects/core": "workspace:*",
+    "@jects/theme": "workspace:*",
+    "@jects/vite-config": "workspace:*",
+    "@vitest/browser": "^2.1.8",
+    "axe-core": "^4.10.0",
+    "playwright": "^1.49.1",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.4.0",
+    "vitest": "^2.1.8"
+  }
+}

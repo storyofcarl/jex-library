@@ -1,0 +1,239 @@
+/* Gantt Resource assignment — avatar/initials chips for the task-tree
+   "Resources" column, the per-bar resource labels (GanttResourceLabelsFeature),
+   and the assignment editor field (ResourceAssignmentField).
+
+   Token-pure: every colour is `oklch(var(--jects-*))`; the avatar colour is
+   driven by the per-chip custom property `--jects-avatar-color` which the
+   renderer sets to a `--jects-*` token. Sizing uses the --jects-* space/radius/
+   font scales. All rules live inside @layer jects.components so they compose
+   with the rest of the Gantt component layer. */
+@layer jects.components {
+  /* ── avatar / assignee chips (shared by column + bar label) ───────────── */
+  .jects-gantt__assignees {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+
+  .jects-gantt__assignee {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    min-inline-size: 0;
+  }
+
+  .jects-gantt__avatar {
+    --jects-avatar-color: oklch(var(--jects-primary));
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.4em;
+    block-size: 1.4em;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--jects-avatar-color);
+    color: oklch(var(--jects-background));
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    line-height: 1;
+    border: 1px solid oklch(var(--jects-background) / 0.6);
+  }
+
+  .jects-gantt__avatar--more {
+    background: oklch(var(--jects-muted));
+    color: oklch(var(--jects-muted-foreground));
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  .jects-gantt__avatar-img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .jects-gantt__assignee-name {
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── per-bar resource label (decorates a `.jects-gantt__bar`) ──────────── */
+  .jects-gantt__bar-resources {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    pointer-events: none;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+    white-space: nowrap;
+    z-index: 1;
+  }
+
+  .jects-gantt__bar-resources--after {
+    inset-inline-start: 100%;
+    inset-block: 0;
+    padding-inline-start: var(--jects-space-2);
+  }
+
+  .jects-gantt__bar-resources--below {
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    padding-block-start: 2px;
+  }
+
+  /* Resource labels next to a bar live on the surface, not the bar fill, so
+     they read against the timeline background. */
+  .jects-gantt__bar-resources .jects-gantt__assignee-name {
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  /* ── assignment editor field ──────────────────────────────────────────── */
+  .jects-gantt__assign-field {
+    display: block;
+    inline-size: 100%;
+  }
+
+  .jects-gantt__assign-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    max-block-size: 16rem;
+    overflow-y: auto;
+    padding: var(--jects-space-1);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+  }
+
+  .jects-gantt__assign-row {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-gantt__assign-row--on {
+    background: oklch(var(--jects-accent));
+  }
+
+  .jects-gantt__assign-label {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    cursor: pointer;
+  }
+
+  .jects-gantt__assign-check {
+    accent-color: oklch(var(--jects-primary));
+    inline-size: 1rem;
+    block-size: 1rem;
+    flex: 0 0 auto;
+  }
+
+  .jects-gantt__assign-check:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-gantt__assign-name {
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .jects-gantt__assign-units {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    flex: 0 0 auto;
+  }
+
+  .jects-gantt__assign-units-input {
+    inline-size: 3.5rem;
+    box-sizing: border-box;
+    padding: 2px var(--jects-space-1);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    text-align: end;
+  }
+
+  .jects-gantt__assign-units-input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    border-color: oklch(var(--jects-ring));
+  }
+
+  .jects-gantt__assign-units-input:disabled {
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted));
+    opacity: 0.6;
+  }
+
+  .jects-gantt__assign-units-pct {
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-gantt__assign-empty {
+    margin: 0;
+    padding: var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  /* ── over-allocation cue (projected total exceeds capacity) ────────────── */
+  .jects-gantt__assign-row--over {
+    background: oklch(var(--jects-destructive) / 0.12);
+    box-shadow: inset 2px 0 0 0 oklch(var(--jects-destructive));
+  }
+
+  .jects-gantt__assign-row--over .jects-gantt__assign-name {
+    color: oklch(var(--jects-destructive));
+  }
+
+  .jects-gantt__assign-over {
+    flex: 0 0 auto;
+    margin-inline-start: var(--jects-space-1);
+    padding: 0 var(--jects-space-1);
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    line-height: 1.5;
+    color: oklch(var(--jects-destructive-foreground));
+    background: oklch(var(--jects-destructive));
+    border-radius: var(--jects-radius-sm);
+    white-space: nowrap;
+  }
+
+  /* ── task-editor "Assigned resources" section wrapper ──────────────────── */
+  .jects-gantt__editor-section {
+    margin-block-start: var(--jects-space-3);
+  }
+
+  .jects-gantt__editor-section-title {
+    margin: 0 0 var(--jects-space-1);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* Over-allocated avatar chips in the tree column / bar label read with the
+     destructive ring so over-allocation is visible everywhere, not just the
+     editor. The renderer adds `--over` when the store reports over-allocation. */
+  .jects-gantt__assignee--over .jects-gantt__avatar {
+    box-shadow: 0 0 0 2px oklch(var(--jects-destructive));
+  }
+}

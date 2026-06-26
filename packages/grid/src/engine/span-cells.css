@@ -1,0 +1,33 @@
+/* Merged-cell (col/row span) styling — references ONLY --jects-* tokens.
+   The SpanDomRenderer sizes origin cells inline (width/height across the span);
+   these rules give the merge a coherent look and hide covered cells. */
+@layer jects.components {
+  /* An origin cell enlarged across its col/row span. It overlays the covered
+     rows below it (positioned absolutely from the top of its own row), so it
+     must paint on top and align its content to the top-start of the merge. */
+  .jects-grid__cell--span-origin {
+    align-items: flex-start;
+    padding-block: var(--jects-space-2);
+    /* A subtle inset border distinguishes the merged block from single cells
+       without a hard-coded color (token-driven). */
+    border-inline-end: 1px solid oklch(var(--jects-border) / 0.6);
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+    background: var(--_grid-bg, oklch(var(--jects-background)));
+  }
+
+  /* Centered/end alignment still applies horizontally for merged origins. */
+  .jects-grid__cell--span-origin.jects-grid__cell--center {
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .jects-grid__cell--span-origin.jects-grid__cell--end {
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  /* A covered cell is fully hidden (the renderer sets display:none inline; this
+     keeps the class meaningful for inspection/testing and future styling). */
+  .jects-grid__cell--span-covered {
+    pointer-events: none;
+  }
+}

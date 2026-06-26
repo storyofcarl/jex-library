@@ -1,11 +1,15 @@
 {
   "name": "@jects/theme",
   "version": "0.0.0",
-  "description": "Jects UI themes — generated CSS (light/dark/high-contrast/branded) + runtime applyTheme/setTheme. Default: Cool Zinc + Calm CMYK.",
+  "description": "Jects UI theming — shippable CSS themes (light/dark/high-contrast/branded) and the runtime theming API (applyTheme/setTheme/exportThemeCss).",
   "license": "UNLICENSED",
   "type": "module",
-  "sideEffects": ["**/*.css"],
-  "files": ["dist"],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

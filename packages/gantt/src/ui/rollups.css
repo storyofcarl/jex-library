@@ -1,0 +1,101 @@
+/* Gantt child-rollup GLYPHS + interactive tooltip — descendant leaf tasks /
+   milestones projected onto a collapsed parent summary bar, each with a
+   hover/focus tooltip surfacing the child's name, dates and progress.
+
+   This is the interactive ("Rollups + tooltip") companion to the static rollup
+   markers: glyphs are individually focusable and reveal a floating popover.
+
+   House style "Cool Zinc + Calm CMYK": the summary bar paints in
+   --jects-foreground (a dark slab), so rollup glyphs read against it in the
+   inverse --jects-background tint; child milestones reuse the calm magenta
+   milestone accent for consistency with real milestone diamonds; the tooltip
+   uses the --jects-popover surface. All rules live inside @layer jects.components
+   and reference ONLY --jects-* tokens — no hardcoded colour literals. */
+
+@layer jects.components {
+  /* The track fills the summary bar; it does NOT swallow the bar's own gestures
+     except over its glyphs, which opt back into pointer events for tooltips. */
+  .jects-gantt__rollup-track {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* A rolled-up child task glyph: a thin segment on the lower edge of the summary
+     bar, in the inverse tint so it stays legible against the dark summary slab. */
+  .jects-gantt__rollup-glyph {
+    position: absolute;
+    inset-block-end: 1px;
+    block-size: var(--jects-space-1);
+    min-inline-size: 4px;
+    background: oklch(var(--jects-background) / 0.88);
+    border-radius: var(--jects-radius-sm);
+    pointer-events: auto;
+    cursor: default;
+    transition: background var(--jects-duration-fast) ease,
+      box-shadow var(--jects-duration-fast) ease;
+  }
+
+  .jects-gantt__rollup-glyph:hover,
+  .jects-gantt__rollup-glyph:focus-visible {
+    background: oklch(var(--jects-background));
+    box-shadow: 0 0 0 1px oklch(var(--jects-ring));
+    outline: none;
+  }
+
+  /* A rolled-up child milestone: a small diamond at its instant. */
+  .jects-gantt__rollup-glyph--milestone {
+    inset-block-end: 0;
+    block-size: var(--jects-space-2);
+    border-radius: 1px;
+    background: oklch(var(--jects-cmyk-magenta));
+    transform: rotate(45deg);
+    transform-origin: center;
+  }
+
+  .jects-gantt__rollup-glyph--milestone:hover,
+  .jects-gantt__rollup-glyph--milestone:focus-visible {
+    background: oklch(var(--jects-cmyk-magenta));
+    box-shadow: 0 0 0 1px oklch(var(--jects-ring));
+  }
+
+  /* When a summary carries rollups, lift the bottom edge a touch so the glyphs
+     ride a visible rail rather than the bar's own edge. */
+  .jects-gantt__bar--summary[data-rollups] {
+    padding-block-end: var(--jects-space-1);
+  }
+
+  /* The shared floating tooltip — a small popover anchored above the active glyph.
+     Positioned by the feature in host-local coordinates (inset-*-start); the
+     translate centres it over the glyph and lifts it clear of the bar. */
+  .jects-gantt__rollup-tip {
+    position: absolute;
+    z-index: var(--jects-z-tooltip);
+    transform: translate(-50%, calc(-100% - var(--jects-space-1)));
+    max-inline-size: 18rem;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    line-height: 1.4;
+    white-space: nowrap;
+    box-shadow: var(--jects-shadow-md);
+    pointer-events: none;
+  }
+
+  .jects-gantt__rollup-tip[hidden] {
+    display: none;
+  }
+
+  /* High-contrast: give the glyphs a hairline outline so they survive
+     forced-colours mode against the summary slab. */
+  @media (prefers-contrast: more) {
+    .jects-gantt__rollup-glyph {
+      outline: 1px solid oklch(var(--jects-foreground));
+    }
+  }
+}

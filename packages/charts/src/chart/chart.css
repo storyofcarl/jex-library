@@ -1,0 +1,217 @@
+/* Chart chrome styles — references ONLY --jects-* tokens (no hard-coded colors).
+   Data-series fills are applied in JS via the house ramp tokens; this file
+   styles the container, legend, and tooltip only. */
+@layer jects.components {
+  .jects-chart {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    width: 100%;
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+    border-radius: var(--jects-radius-lg);
+  }
+
+  .jects-chart__plot {
+    position: relative;
+    width: 100%;
+    min-height: 0;
+  }
+
+  /* ---- interaction overlay (crosshair + zoom-selection) ----
+     Sits above the renderer surface, sharing its logical viewBox so coordinates
+     line up. Never intercepts pointer gestures (handled on the surface beneath). */
+  .jects-chart__overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .jects-chart__crosshair {
+    stroke: oklch(var(--jects-muted-foreground));
+    stroke-opacity: 0.6;
+  }
+  .jects-chart__zoom-rect {
+    fill: oklch(var(--jects-primary) / 0.15);
+    stroke: oklch(var(--jects-primary));
+  }
+
+  /* ---- reset-zoom affordance ---- */
+  .jects-chart__zoom-reset {
+    position: absolute;
+    top: var(--jects-space-2);
+    right: var(--jects-space-2);
+    z-index: 1;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-foreground));
+    font-family: inherit;
+    font-size: var(--jects-font-size-xs);
+    cursor: pointer;
+  }
+  .jects-chart__zoom-reset:hover {
+    background: oklch(var(--jects-muted));
+  }
+  .jects-chart__zoom-reset:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-chart__zoom-reset[hidden] {
+    display: none;
+  }
+
+  .jects-chart__svg,
+  .jects-chart__canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ---- legend ---- */
+  .jects-chart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-3);
+    padding-inline: var(--jects-space-2);
+  }
+  .jects-chart__legend--top {
+    order: -1;
+  }
+  .jects-chart__legend--left,
+  .jects-chart__legend--right {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .jects-chart__legend[hidden] {
+    display: none;
+  }
+
+  .jects-chart__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    margin: 0;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: oklch(var(--jects-muted-foreground));
+    font-size: var(--jects-font-size-xs);
+    font-family: inherit;
+    cursor: pointer;
+    transition: color var(--jects-duration-fast) ease;
+  }
+  .jects-chart__legend-item:hover {
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-chart__legend-item:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-chart__legend-item--off {
+    opacity: 0.45;
+  }
+  .jects-chart__legend-item--off .jects-chart__legend-label {
+    text-decoration: line-through;
+  }
+
+  .jects-chart__legend-swatch {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: var(--jects-radius-sm);
+    /* background-color set inline via the ramp token color */
+  }
+
+  .jects-chart__legend-label {
+    line-height: 1;
+  }
+
+  /* ---- tooltip ---- */
+  .jects-chart__tooltip {
+    position: absolute;
+    z-index: var(--jects-z-tooltip);
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    max-width: 16rem;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    pointer-events: none;
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-md);
+    font-size: var(--jects-font-size-xs);
+    white-space: nowrap;
+  }
+  .jects-chart__tooltip[hidden] {
+    display: none;
+  }
+  .jects-chart__tooltip-swatch {
+    display: inline-block;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: var(--jects-radius-sm);
+  }
+  .jects-chart__tooltip-name {
+    font-weight: var(--jects-font-weight-semibold);
+  }
+  .jects-chart__tooltip-value {
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  /* ---- accessible data table (visually hidden, keyboard-reachable) ----
+     The non-visual equivalent of the hover tooltip: clipped from sight but
+     kept in the accessibility tree and the tab order (NOT display:none, which
+     would remove it from both). Screen readers read it; keyboard users tab in. */
+  .jects-chart__data {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  .jects-chart__data:focus,
+  .jects-chart__data:focus-within {
+    /* Reveal on focus so a sighted keyboard user can read the table too. */
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
+    padding: var(--jects-space-2);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+  }
+  .jects-chart__data-table {
+    border-collapse: collapse;
+    font-size: var(--jects-font-size-xs);
+  }
+  .jects-chart__data-table caption {
+    text-align: start;
+    font-weight: var(--jects-font-weight-semibold);
+  }
+  .jects-chart__data-table th,
+  .jects-chart__data-table td {
+    padding: var(--jects-space-1) var(--jects-space-2);
+    text-align: start;
+    border: 1px solid oklch(var(--jects-border) / 0.5);
+  }
+}

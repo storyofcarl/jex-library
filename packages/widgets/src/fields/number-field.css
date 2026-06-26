@@ -1,0 +1,39 @@
+/* NumberField styles — references ONLY --jects-* tokens (no hard-coded colors).
+   Layers spinner buttons on top of the shared .jects-field structure. */
+@layer jects.components {
+  .jects-field__spinners {
+    flex: 0 0 auto;
+    display: inline-flex;
+    flex-direction: column;
+    margin-inline-start: var(--jects-space-1);
+  }
+
+  .jects-field__step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 0.85rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: oklch(var(--jects-muted-foreground));
+    cursor: pointer;
+    line-height: 1;
+    font-size: var(--jects-font-size-xs);
+  }
+  .jects-field__step:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-field__step:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+  .jects-field__step--up {
+    border-radius: var(--jects-radius-sm) var(--jects-radius-sm) 0 0;
+  }
+  .jects-field__step--down {
+    border-radius: 0 0 var(--jects-radius-sm) var(--jects-radius-sm);
+  }
+}

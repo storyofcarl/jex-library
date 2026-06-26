@@ -1,0 +1,6 @@
+{
+  "buildCommand": "echo static",
+  "installCommand": "echo static",
+  "outputDirectory": "deploy",
+  "cleanUrls": true
+}

@@ -1,0 +1,108 @@
+/* @jects/timeline-core interactions styles — token-pure (only --jects-* tokens),
+   all inside @layer jects.components. Covers drag/resize affordances on bars,
+   the dependency-line connectors + arrowheads, and the hover/drag tooltip. */
+
+@layer jects.components {
+  /* ── Bar drag / resize affordances ───────────────────────────────────── */
+
+  /* The edge zones that map to resize handles. The renderer adds these classes
+     to a bar when a pointer is over its leading/trailing edge. */
+  .jects-timeline-bar--resize-start,
+  .jects-timeline-bar--resize-end {
+    cursor: ew-resize;
+  }
+
+  .jects-timeline-bar--movable {
+    cursor: grab;
+  }
+
+  /* Active gesture state (applied to the bar while a drag/resize is live). */
+  .jects-timeline-bar--dragging {
+    cursor: grabbing;
+    opacity: 0.85;
+    box-shadow: var(--jects-shadow-lg);
+  }
+
+  .jects-timeline-bar--resizing {
+    cursor: ew-resize;
+  }
+
+  /* Ghost/preview bar shown while dragging out a new bar (drag-create). */
+  .jects-timeline-bar-ghost {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px dashed oklch(var(--jects-primary));
+    background: oklch(var(--jects-primary) / 0.12);
+    border-radius: var(--jects-radius-sm);
+    pointer-events: none;
+  }
+
+  /* ── Dependency lines ────────────────────────────────────────────────── */
+
+  .jects-timeline-deps {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .jects-timeline-dep__line {
+    fill: none;
+    stroke: oklch(var(--jects-muted-foreground));
+    stroke-width: 1.5;
+  }
+
+  .jects-timeline-dep__arrow {
+    fill: oklch(var(--jects-muted-foreground));
+    stroke: none;
+  }
+
+  /* Hover/selected emphasis (renderer toggles the modifier). */
+  .jects-timeline-dep--active .jects-timeline-dep__line,
+  .jects-timeline-dep--active .jects-timeline-dep__arrow {
+    stroke: oklch(var(--jects-primary));
+    fill: oklch(var(--jects-primary));
+  }
+
+  /* The hit-area path the renderer overlays for pointer interaction. */
+  .jects-timeline-dep__hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 8;
+    pointer-events: stroke;
+    cursor: pointer;
+  }
+
+  /* ── Tooltip ─────────────────────────────────────────────────────────── */
+
+  .jects-timeline-tooltip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: var(--jects-z-popover);
+    transform: translate(
+      calc(var(--_tt-x, 0px) - 50%),
+      calc(var(--_tt-y, 0px) - 100%)
+    );
+    max-inline-size: 22rem;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    line-height: 1.4;
+    color: oklch(var(--jects-popover-foreground));
+    background: oklch(var(--jects-popover));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    box-shadow: var(--jects-shadow-lg);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .jects-timeline-tooltip[data-placement='bottom'] {
+    transform: translate(calc(var(--_tt-x, 0px) - 50%), var(--_tt-y, 0px));
+  }
+
+  .jects-timeline-tooltip[hidden] {
+    display: none;
+  }
+}

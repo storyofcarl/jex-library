@@ -1,0 +1,203 @@
+/**
+ * `@jects/gantt` — PERT / network-diagram chart view styles.
+ *
+ * House style "Cool Zinc + Calm CMYK": node boxes are calm cards
+ * (--jects-card / --jects-border); the critical path is drawn in
+ * --jects-destructive (the universal "this is the bottleneck" accent, matching
+ * the critical-path bars in the timeline pane); milestones reuse the calm magenta
+ * accent; summaries reuse the muted accent. Dependency edges are themed via the
+ * SVG `stroke` (the arrowheads inherit it through `context-stroke`), so colour is
+ * entirely token-driven.
+ *
+ * Token-pure: every colour is `oklch(var(--jects-*))` — zero hardcoded literals.
+ * All rules live inside `@layer jects.components`.
+ *
+ * Structure:
+ *   .jects-pert-chart                  — root (role=group), clips the viewport
+ *     .jects-pert-chart__viewport      — pan/zoom surface (overflow hidden)
+ *       .jects-pert-chart__content     — transformed (translate + scale) group
+ *         .jects-pert-chart__edges     — the SVG edge layer
+ *         .jects-pert-chart__nodes     — the absolutely-positioned node boxes
+ *     .jects-pert-chart__sr            — visually-hidden a11y live region
+ */
+
+@layer jects.components {
+  .jects-pert-chart {
+    position: relative;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: hidden;
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    color: oklch(var(--jects-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+  }
+
+  .jects-pert-chart__viewport {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .jects-pert-chart--panning .jects-pert-chart__viewport {
+    cursor: grabbing;
+  }
+
+  .jects-pert-chart__content {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+
+  /* ── edge layer ──────────────────────────────────────────────────────── */
+  .jects-pert-chart__edges {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .jects-pert-chart__edge {
+    fill: none;
+    stroke: oklch(var(--jects-muted-foreground) / 0.7);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .jects-pert-chart__edge--critical {
+    stroke: oklch(var(--jects-destructive));
+    stroke-width: 2;
+  }
+
+  .jects-pert-chart--no-critical .jects-pert-chart__edge--critical {
+    stroke: oklch(var(--jects-muted-foreground) / 0.7);
+    stroke-width: 1.5;
+  }
+
+  /* ── node layer ──────────────────────────────────────────────────────── */
+  .jects-pert-chart__nodes {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+  }
+
+  .jects-pert-chart__node {
+    position: absolute;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-2);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-inline-start: 3px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-sm);
+    overflow: hidden;
+    cursor: pointer;
+    transition:
+      border-color var(--jects-duration-fast),
+      box-shadow var(--jects-duration-fast);
+  }
+
+  .jects-pert-chart__node:hover {
+    border-color: oklch(var(--jects-ring) / 0.6);
+  }
+
+  .jects-pert-chart__node:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-pert-chart__node--selected {
+    border-color: oklch(var(--jects-ring));
+    border-inline-start-color: oklch(var(--jects-ring));
+    box-shadow: var(--jects-shadow-md), 0 0 0 1px oklch(var(--jects-ring) / 0.5);
+  }
+
+  /* Critical-path nodes: destructive accent on the leading edge + tint. */
+  .jects-pert-chart__node--critical {
+    border-inline-start-color: oklch(var(--jects-destructive));
+    background: oklch(var(--jects-destructive) / 0.06);
+  }
+
+  .jects-pert-chart--no-critical .jects-pert-chart__node--critical {
+    border-inline-start-color: oklch(var(--jects-border));
+    background: oklch(var(--jects-card));
+  }
+
+  /* Milestones: calm magenta accent (a zero-duration gate). */
+  .jects-pert-chart__node--milestone {
+    border-inline-start-color: oklch(var(--jects-cmyk-magenta));
+  }
+
+  /* Summaries: muted accent (a rolled-up parent). */
+  .jects-pert-chart__node--summary {
+    border-inline-start-color: oklch(var(--jects-accent));
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+
+  /* Cycle remnants: warning accent so an accidental loop reads at a glance. */
+  .jects-pert-chart__node--cycle {
+    border-color: oklch(var(--jects-warning));
+    border-inline-start-color: oklch(var(--jects-warning));
+  }
+
+  .jects-pert-chart__node-title {
+    font-weight: var(--jects-font-weight-semibold);
+    font-size: var(--jects-font-size-sm);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .jects-pert-chart__node-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-block-start: auto;
+    color: oklch(var(--jects-muted-foreground));
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-pert-chart__node-dates {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .jects-pert-chart__node-slack {
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  .jects-pert-chart__node--critical .jects-pert-chart__node-slack {
+    color: oklch(var(--jects-destructive));
+  }
+
+  /* ── visually-hidden screen-reader live region ───────────────────────── */
+  .jects-pert-chart__sr {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

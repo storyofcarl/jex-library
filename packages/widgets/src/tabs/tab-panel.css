@@ -1,0 +1,36 @@
+/* TabPanel styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-tabpanel {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-tabpanel__strip {
+    flex: 0 0 auto;
+  }
+
+  .jects-tabpanel__panels {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .jects-tabpanel__panel {
+    box-sizing: border-box;
+    padding-block: var(--jects-space-4);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-tabpanel__panel[hidden] {
+    display: none;
+  }
+
+  .jects-tabpanel__panel:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+    border-radius: var(--jects-radius-sm);
+  }
+}

@@ -1,0 +1,58 @@
+/* Popup styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-popup {
+    position: fixed;
+    z-index: var(--jects-z-popover);
+    box-sizing: border-box;
+    min-width: 8rem;
+    max-width: min(90vw, 24rem);
+    padding: var(--jects-space-3) var(--jects-space-4);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    line-height: 1.4;
+    color: oklch(var(--jects-popover-foreground));
+    background: oklch(var(--jects-popover));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-lg);
+    outline: none;
+  }
+
+  .jects-popup[hidden] {
+    display: none;
+  }
+
+  .jects-popup:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ---- placement hooks (transform origin only; geometry is JS-driven) ---- */
+  .jects-popup--top {
+    transform-origin: bottom center;
+  }
+  .jects-popup--bottom {
+    transform-origin: top center;
+  }
+  .jects-popup--left {
+    transform-origin: center right;
+  }
+  .jects-popup--right {
+    transform-origin: center left;
+  }
+
+  /* ---- open animation ---- */
+  .jects-popup--open {
+    animation: jects-popup-in var(--jects-duration-fast) ease;
+  }
+  @keyframes jects-popup-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}

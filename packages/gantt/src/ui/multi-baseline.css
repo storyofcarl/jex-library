@@ -1,0 +1,168 @@
+/**
+ * Multi-baseline compare styles for `@jects/gantt`.
+ *
+ * Token-pure (`--jects-*` only) and scoped under `@layer jects.components` so it
+ * composes with the package's other component CSS. Provides:
+ *   • `.jects-gantt__baselines`            — the overlay layer (one per Gantt)
+ *   • `.jects-gantt__baseline-band--n{0..5}` — six visually-distinct compare
+ *     bands, each keyed to a categorical data-ramp token so overlapping
+ *     baselines read apart at a glance.
+ *   • `.jects-gantt__baseline-picker`      — the keyboard-operable picker chrome
+ *     and its colour swatches (mirroring the band variants).
+ */
+
+@layer jects.components {
+  /* ── overlay layer ───────────────────────────────────────────────────── */
+  .jects-gantt__baselines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .jects-gantt__baseline-band {
+    position: absolute;
+    block-size: var(--jects-space-1);
+    min-inline-size: 2px;
+    border-radius: var(--jects-radius-sm);
+    /* Default (slot 0 fallback) — overridden by the --n* variants below. */
+    background: oklch(var(--jects-data-1) / 0.55);
+    box-shadow: 0 0 0 1px oklch(var(--jects-data-1) / 0.85);
+    pointer-events: none;
+  }
+
+  /* Six distinct compare variants, mapped to the categorical data ramp. */
+  .jects-gantt__baseline-band--n0 {
+    background: oklch(var(--jects-data-1) / 0.55);
+    box-shadow: 0 0 0 1px oklch(var(--jects-data-1) / 0.9);
+  }
+  .jects-gantt__baseline-band--n1 {
+    background: oklch(var(--jects-data-2) / 0.55);
+    box-shadow: 0 0 0 1px oklch(var(--jects-data-2) / 0.9);
+  }
+  .jects-gantt__baseline-band--n2 {
+    background: oklch(var(--jects-data-3) / 0.55);
+    box-shadow: 0 0 0 1px oklch(var(--jects-data-3) / 0.9);
+  }
+  .jects-gantt__baseline-band--n3 {
+    background: oklch(var(--jects-data-4) / 0.55);
+    box-shadow: 0 0 0 1px oklch(var(--jects-data-4) / 0.9);
+  }
+  .jects-gantt__baseline-band--n4 {
+    background: oklch(var(--jects-data-5) / 0.55);
+    box-shadow: 0 0 0 1px oklch(var(--jects-data-5) / 0.9);
+  }
+  .jects-gantt__baseline-band--n5 {
+    background: oklch(var(--jects-data-6) / 0.55);
+    box-shadow: 0 0 0 1px oklch(var(--jects-data-6) / 0.9);
+  }
+
+  /* ── baseline picker ─────────────────────────────────────────────────── */
+  .jects-gantt__baseline-picker {
+    position: absolute;
+    inset-block-start: var(--jects-space-2);
+    inset-inline-end: var(--jects-space-2);
+    z-index: var(--jects-z-sticky);
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-2);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    box-shadow: var(--jects-shadow-md);
+  }
+
+  .jects-gantt__baseline-picker-title {
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-gantt__baseline-picker-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-gantt__baseline-picker-empty {
+    color: oklch(var(--jects-muted-foreground));
+    font-style: italic;
+  }
+
+  .jects-gantt__baseline-picker-row {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    cursor: pointer;
+  }
+
+  .jects-gantt__baseline-picker-check {
+    accent-color: oklch(var(--jects-primary));
+    cursor: pointer;
+  }
+
+  .jects-gantt__baseline-picker-check:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-gantt__baseline-picker-name {
+    color: oklch(var(--jects-card-foreground));
+  }
+
+  .jects-gantt__baseline-swatch {
+    inline-size: var(--jects-space-3);
+    block-size: var(--jects-space-2);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-muted));
+    box-shadow: 0 0 0 1px oklch(var(--jects-border));
+  }
+
+  .jects-gantt__baseline-swatch--off {
+    background: oklch(var(--jects-muted));
+  }
+  .jects-gantt__baseline-swatch--n0 {
+    background: oklch(var(--jects-data-1) / 0.75);
+  }
+  .jects-gantt__baseline-swatch--n1 {
+    background: oklch(var(--jects-data-2) / 0.75);
+  }
+  .jects-gantt__baseline-swatch--n2 {
+    background: oklch(var(--jects-data-3) / 0.75);
+  }
+  .jects-gantt__baseline-swatch--n3 {
+    background: oklch(var(--jects-data-4) / 0.75);
+  }
+  .jects-gantt__baseline-swatch--n4 {
+    background: oklch(var(--jects-data-5) / 0.75);
+  }
+  .jects-gantt__baseline-swatch--n5 {
+    background: oklch(var(--jects-data-6) / 0.75);
+  }
+
+  .jects-gantt__baseline-capture {
+    margin-block-start: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    cursor: pointer;
+  }
+
+  .jects-gantt__baseline-capture:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+
+  .jects-gantt__baseline-capture:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+}

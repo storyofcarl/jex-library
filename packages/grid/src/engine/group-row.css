@@ -1,0 +1,105 @@
+/* @jects/grid — in-body group-header band styles (Group feature parity).
+   Token-pure (only --jects-* tokens), inside @layer jects.components. Paints the
+   full-width collapsible group row the DomRenderer injects via the row-source
+   seam: a sticky lead (toggle chevron + caption + count) and per-column
+   absolutely-positioned aggregate (GroupSummary) cells aligned over columns. */
+
+@layer jects.components {
+  /* The engine recycles a `.jects-grid__row` into a group band. */
+  .jects-grid-group-row.jects-grid__row {
+    box-sizing: border-box;
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+    border-bottom: 1px solid oklch(var(--jects-border));
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .jects-grid-group-row:hover {
+    background: oklch(var(--jects-accent) / 0.85);
+  }
+
+  .jects-grid-group__lead {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    block-size: 100%;
+    padding-inline-end: var(--jects-space-3);
+    /* Inherit the band background so the sticky lead masks scrolling agg cells. */
+    background: inherit;
+  }
+
+  .jects-grid-group__chevron {
+    inline-size: 0;
+    block-size: 0;
+    border-block: 4px solid transparent;
+    border-inline-start: 6px solid currentColor;
+    transition: transform var(--jects-duration-fast) ease;
+  }
+
+  .jects-grid-group__chevron--open {
+    transform: rotate(90deg);
+  }
+
+  .jects-grid-group__caption {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--jects-space-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* De-emphasis on the accent band is carried by weight/size, NOT a lower-
+     contrast color: muted-foreground on the accent surface fails WCAG AA, so the
+     caption/count keep the band's own accessible foreground token. */
+  .jects-grid-group__label {
+    color: oklch(var(--jects-accent-foreground));
+    font-weight: var(--jects-font-weight-normal);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-grid-group__value {
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  .jects-grid-group__count {
+    color: oklch(var(--jects-accent-foreground));
+    font-weight: var(--jects-font-weight-normal);
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-grid-group__agg {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-grid-group__agg--start {
+    justify-content: flex-start;
+    text-align: start;
+  }
+  .jects-grid-group__agg--center {
+    justify-content: center;
+    text-align: center;
+  }
+  .jects-grid-group__agg--end {
+    justify-content: flex-end;
+    text-align: end;
+  }
+
+  .jects-grid-group__toggle:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    border-radius: var(--jects-radius-sm);
+  }
+}

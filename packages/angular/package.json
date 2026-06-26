@@ -1,0 +1,112 @@
+{
+  "name": "@jects/angular",
+  "version": "0.0.0",
+  "description": "Jects UI Angular wrapper — thin, typed Angular 17+ standalone bindings over the framework-agnostic @jects/* engines. One generic factory, per-component typed exports (config in, typed jectsEvent out, instance getter for imperative access). Engines run outside the Angular zone.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "test": "tsc -p tsconfig.spec.json --noEmit",
+    "test:runtime": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=17.1.0",
+    "@jects/booking": "workspace:*",
+    "@jects/calendar": "workspace:*",
+    "@jects/charts": "workspace:*",
+    "@jects/chatbot": "workspace:*",
+    "@jects/core": "workspace:*",
+    "@jects/diagram": "workspace:*",
+    "@jects/gantt": "workspace:*",
+    "@jects/grid": "workspace:*",
+    "@jects/kanban": "workspace:*",
+    "@jects/pivot": "workspace:*",
+    "@jects/scheduler": "workspace:*",
+    "@jects/spreadsheet": "workspace:*",
+    "@jects/todo": "workspace:*",
+    "@jects/widgets": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@jects/grid": {
+      "optional": true
+    },
+    "@jects/gantt": {
+      "optional": true
+    },
+    "@jects/scheduler": {
+      "optional": true
+    },
+    "@jects/calendar": {
+      "optional": true
+    },
+    "@jects/kanban": {
+      "optional": true
+    },
+    "@jects/todo": {
+      "optional": true
+    },
+    "@jects/charts": {
+      "optional": true
+    },
+    "@jects/diagram": {
+      "optional": true
+    },
+    "@jects/spreadsheet": {
+      "optional": true
+    },
+    "@jects/pivot": {
+      "optional": true
+    },
+    "@jects/booking": {
+      "optional": true
+    },
+    "@jects/chatbot": {
+      "optional": true
+    },
+    "@jects/widgets": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.6.2",
+    "@angular/build": "^19.2.27",
+    "@angular/compiler": "^19.2.25",
+    "@angular/compiler-cli": "^19.2.25",
+    "@angular/core": "^19.2.0",
+    "@angular/platform-browser": "^19.2.25",
+    "@angular/platform-browser-dynamic": "^19.2.25",
+    "@jects/booking": "workspace:*",
+    "@jects/calendar": "workspace:*",
+    "@jects/charts": "workspace:*",
+    "@jects/chatbot": "workspace:*",
+    "@jects/core": "workspace:*",
+    "@jects/diagram": "workspace:*",
+    "@jects/gantt": "workspace:*",
+    "@jects/grid": "workspace:*",
+    "@jects/kanban": "workspace:*",
+    "@jects/pivot": "workspace:*",
+    "@jects/scheduler": "workspace:*",
+    "@jects/spreadsheet": "workspace:*",
+    "@jects/todo": "workspace:*",
+    "@jects/widgets": "workspace:*",
+    "@oxc-parser/binding-win32-x64-msvc": "0.121.0",
+    "jsdom": "^25.0.1",
+    "rxjs": "^7.8.1",
+    "typescript": "^5.7.2",
+    "zone.js": "^0.15.0"
+  }
+}

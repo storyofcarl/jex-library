@@ -1,0 +1,33 @@
+/* @jects/gantt — unified export menu / format dispatcher UI.
+
+   A trigger Button (reused from @jects/widgets) pinned to the chart's top-end
+   corner that opens a popup Menu (ContextMenu) listing the available export
+   formats + print. This stylesheet only positions the wrapper and dresses the
+   caret hint — the Button / Menu visuals come from the @jects/widgets
+   stylesheet the host app loads. Every color is `oklch(var(--jects-*))`; sizing
+   uses the --jects-* space/radius scales. All rules live inside
+   @layer jects.components. No hardcoded color literals. */
+@layer jects.components {
+  /* The export-menu toolbar wrapper, floating above the panes in the top-end
+     corner. The host Gantt root is positioned, so absolute positioning anchors
+     to it. */
+  .jects-gantt__export-menu {
+    position: absolute;
+    inset-block-start: var(--jects-space-2);
+    inset-inline-end: var(--jects-space-2);
+    display: inline-flex;
+    align-items: center;
+    z-index: var(--jects-z-sticky);
+  }
+
+  /* The Button widget renders into this slot. */
+  .jects-gantt__export-menu__trigger {
+    display: inline-flex;
+  }
+
+  /* The ContextMenu builds its own fixed-position floating popup; this host is
+     just an inert anchor in the DOM and must never occupy layout space. */
+  .jects-gantt__export-menu__popup-host {
+    display: contents;
+  }
+}

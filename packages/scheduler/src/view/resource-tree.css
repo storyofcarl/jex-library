@@ -1,0 +1,85 @@
+/* Resource-tree (hierarchical / grouped lanes) styles for @jects/scheduler.
+   References ONLY --jects-* tokens (no hard-coded colors). All rules live in
+   @layer jects.components per the house style. */
+@layer jects.components {
+  /* Tree cell wrapper inside a locked resource column. */
+  .jects-scheduler-tree__cell {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  /* Group-header rows render as a heading band: bolder, on the muted surface. */
+  .jects-scheduler-tree__cell--group {
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* Expand/collapse toggle button. */
+  .jects-scheduler-tree__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: oklch(var(--jects-muted-foreground));
+    cursor: pointer;
+  }
+  .jects-scheduler-tree__toggle:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-scheduler-tree__toggle:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* Leaf nodes get a spacer matching the toggle footprint so labels align. */
+  .jects-scheduler-tree__spacer {
+    display: inline-block;
+    flex: none;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
+  /* Chevron glyph drawn with borders (no asset, no color literal). */
+  .jects-scheduler-tree__chevron {
+    inline-size: 0;
+    block-size: 0;
+    border-block-start: 0.3rem solid transparent;
+    border-block-end: 0.3rem solid transparent;
+    border-inline-start: 0.4rem solid currentColor;
+    transition: transform var(--jects-duration-fast) ease;
+  }
+  .jects-scheduler-tree__chevron--open {
+    transform: rotate(90deg);
+  }
+
+  .jects-scheduler-tree__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-inline-size: 0;
+  }
+
+  /* A resource row flagged as a group header gets a subtly distinct band. */
+  .jects-scheduler__resource-row--group {
+    background: oklch(var(--jects-muted) / 0.5);
+  }
+
+  /* Aggregated (rolled-up) event bars on a collapsed parent lane read as a
+     summary: slightly translucent + a dashed edge to distinguish from a real
+     single-lane event. */
+  .jects-scheduler__bar--aggregated {
+    background: oklch(var(--jects-primary) / 0.75);
+    border-style: dashed;
+  }
+}

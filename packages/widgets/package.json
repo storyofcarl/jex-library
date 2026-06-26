@@ -1,11 +1,15 @@
 {
   "name": "@jects/widgets",
   "version": "0.0.0",
-  "description": "Jects UI widgets — components built on @jects/core. Button is the reference component.",
+  "description": "Jects UI widgets — the enterprise widget kit: fields, choice, date/time, pickers, display, feedback, forms, layout, navigation, overlays, windows, rich text, tabs, and data views.",
   "license": "UNLICENSED",
   "type": "module",
-  "sideEffects": ["**/*.css"],
-  "files": ["dist"],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -36,6 +40,7 @@
     "@jects/theme": "workspace:*",
     "@jects/vite-config": "workspace:*",
     "@vitest/browser": "^2.1.8",
+    "axe-core": "^4.10.0",
     "playwright": "^1.49.1",
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",

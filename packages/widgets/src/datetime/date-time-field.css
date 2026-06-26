@@ -1,0 +1,19 @@
+/* DateTimeField styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-datetimefield {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    font-family: var(--jects-font-family);
+  }
+
+  .jects-datetimefield--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .jects-datetimefield__date,
+  .jects-datetimefield__time {
+    display: inline-flex;
+  }
+}

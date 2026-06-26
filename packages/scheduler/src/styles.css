@@ -1,0 +1,17 @@
+/* Aggregated scheduler styles — bundled into dist/style.css.
+   Each part's CSS lives next to its source and is imported here.
+   All rules live inside @layer jects.components and reference only
+   --jects-* tokens (no hardcoded color literals). */
+@import './view/scheduler.css';
+@import './view/vertical.css';
+@import './view/resource-tree.css';
+@import './view/event-editor.css';
+@import './view/dependency-edit.css';
+@import './view/undo-redo.css';
+@import './view/print.css';
+@import './pro/pro.css';
+@import './pro/auto-reschedule.css';
+@import './export/excel.css';
+@import './export/ics.css';
+@import './export/export.css';
+@import './export/raster-toolbar.css';

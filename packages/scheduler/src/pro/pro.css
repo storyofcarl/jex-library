@@ -1,0 +1,156 @@
+/* Scheduler PRO views — references ONLY --jects-* tokens. */
+@layer jects.components {
+  .jects-resource-histogram,
+  .jects-resource-utilization {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-3);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-resource-histogram__title,
+  .jects-resource-utilization__title {
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* ── histogram ── */
+  .jects-resource-histogram__row {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    align-items: end;
+    gap: var(--jects-space-2);
+  }
+  .jects-resource-histogram__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: oklch(var(--jects-foreground));
+    font-size: var(--jects-font-size-xs);
+  }
+  .jects-resource-histogram__track {
+    display: flex;
+    align-items: flex-end;
+    gap: 1px;
+    block-size: 3rem;
+    padding: var(--jects-space-1);
+    background: oklch(var(--jects-muted) / 0.4);
+    border-radius: var(--jects-radius-sm);
+  }
+  .jects-resource-histogram__bar {
+    position: relative;
+    flex: 1 1 0;
+    min-block-size: 1px;
+    background: oklch(var(--jects-cmyk-cyan));
+    border-radius: 1px;
+  }
+  .jects-resource-histogram__bar--over {
+    background: oklch(var(--jects-destructive));
+  }
+  /* Non-color over-capacity indicator (a glyph), so the breach is not conveyed
+     by color alone. */
+  .jects-resource-histogram__over-flag {
+    position: absolute;
+    inset-block-start: -0.85rem;
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-bold);
+    line-height: 1;
+    color: oklch(var(--jects-destructive));
+  }
+
+  /* ── utilization ── */
+  .jects-resource-utilization__row {
+    display: grid;
+    grid-template-columns: 8rem 1fr 3rem;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+  .jects-resource-utilization__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: oklch(var(--jects-foreground));
+    font-size: var(--jects-font-size-xs);
+  }
+  .jects-resource-utilization__meter {
+    block-size: 0.75rem;
+    background: oklch(var(--jects-muted) / 0.5);
+    border-radius: var(--jects-radius-sm);
+    overflow: hidden;
+  }
+  .jects-resource-utilization__fill {
+    block-size: 100%;
+    background: oklch(var(--jects-success));
+    transition: inline-size var(--jects-duration-normal) ease;
+  }
+  .jects-resource-utilization__fill--over {
+    background: oklch(var(--jects-destructive));
+  }
+  .jects-resource-utilization__value {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+    color: oklch(var(--jects-foreground));
+    font-size: var(--jects-font-size-xs);
+  }
+
+  /* ── travel time (lighter zones flanking an event bar) ── */
+  .jects-scheduler__travel {
+    position: absolute;
+    inset-block: 0;
+    /* A lighter tint than the bar, so the travel margin reads as "soft" occupied
+       time. Diagonal hatch keeps it distinguishable without relying on color. */
+    background: oklch(var(--jects-cmyk-cyan) / 0.18);
+    background-image: repeating-linear-gradient(
+      45deg,
+      oklch(var(--jects-cmyk-cyan) / 0.28) 0,
+      oklch(var(--jects-cmyk-cyan) / 0.28) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+    pointer-events: none;
+  }
+  .jects-scheduler__travel--pre {
+    border-start-start-radius: var(--jects-radius-sm);
+    border-end-start-radius: var(--jects-radius-sm);
+  }
+  .jects-scheduler__travel--post {
+    border-start-end-radius: var(--jects-radius-sm);
+    border-end-end-radius: var(--jects-radius-sm);
+  }
+
+  /* ── event buffer (setup/teardown zones) ── */
+  .jects-scheduler__buffer {
+    position: absolute;
+    inset-block: 25%;
+    background: oklch(var(--jects-muted) / 0.55);
+    border: 1px dashed oklch(var(--jects-border));
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  .jects-scheduler__buffer--leading {
+    border-inline-end: none;
+  }
+  .jects-scheduler__buffer--trailing {
+    border-inline-start: none;
+  }
+  /* A buffer that is currently violated — a striped warning fill, not color
+     alone, so the breach is conveyed without depending on hue. */
+  .jects-scheduler__buffer--violated {
+    border-color: oklch(var(--jects-destructive));
+    background-image: repeating-linear-gradient(
+      -45deg,
+      oklch(var(--jects-destructive) / 0.35) 0,
+      oklch(var(--jects-destructive) / 0.35) 3px,
+      transparent 3px,
+      transparent 7px
+    );
+  }
+}

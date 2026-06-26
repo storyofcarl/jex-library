@@ -1,0 +1,58 @@
+/* Link styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-link {
+    --_link-fg: oklch(var(--jects-primary));
+
+    display: inline;
+    font-family: var(--jects-font-family);
+    color: var(--_link-fg);
+    text-decoration-line: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    border-radius: var(--jects-radius-sm);
+    transition: color var(--jects-duration-fast) ease;
+  }
+
+  .jects-link:hover {
+    --_link-fg: oklch(var(--jects-primary) / 0.8);
+  }
+
+  .jects-link:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ---- variants ---- */
+  .jects-link--default {
+    --_link-fg: oklch(var(--jects-primary));
+  }
+
+  .jects-link--muted {
+    --_link-fg: oklch(var(--jects-muted-foreground));
+    text-decoration-line: none;
+  }
+  .jects-link--muted:hover {
+    --_link-fg: oklch(var(--jects-foreground));
+    text-decoration-line: underline;
+  }
+
+  .jects-link--underline {
+    --_link-fg: oklch(var(--jects-foreground));
+    text-decoration-line: underline;
+  }
+
+  .jects-link--plain {
+    --_link-fg: oklch(var(--jects-foreground));
+    text-decoration-line: none;
+  }
+  .jects-link--plain:hover {
+    text-decoration-line: underline;
+  }
+
+  .jects-link--disabled {
+    --_link-fg: oklch(var(--jects-muted-foreground));
+    cursor: not-allowed;
+    pointer-events: none;
+    text-decoration-line: none;
+  }
+}

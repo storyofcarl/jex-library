@@ -1,0 +1,128 @@
+/* Gantt Resource Histogram — rendered by `ResourceHistogram`.
+
+   A time-phased column chart per resource: bucket bars whose height encodes
+   allocated units, a capacity line, and an over-allocation accent. Shares the
+   Gantt time axis (bars are positioned with px lefts/widths from the axis).
+
+   Token-pure: every color is `oklch(var(--jects-*))`; sizing uses the --jects-*
+   space/radius scales. All rules live inside @layer jects.components so they
+   compose with the rest of the Gantt component layer. */
+@layer jects.components {
+  .jects-resource-histogram {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    overflow: auto;
+  }
+
+  .jects-resource-histogram__empty {
+    color: oklch(var(--jects-muted-foreground));
+    font-style: italic;
+    padding: var(--jects-space-3);
+  }
+
+  /* One lane (= one resource). */
+  .jects-resource-histogram__lane {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+    padding-block: var(--jects-space-1);
+    border-bottom: 1px solid oklch(var(--jects-border));
+  }
+
+  .jects-resource-histogram__lane-header {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+  }
+
+  .jects-resource-histogram__lane-name {
+    font-weight: var(--jects-font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .jects-resource-histogram__overflag {
+    display: inline-flex;
+    align-items: center;
+    padding-inline: var(--jects-space-1);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-destructive) / 0.15);
+    color: oklch(var(--jects-destructive));
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* The plot area: relative box the bucket bars + capacity line absolutely
+     position within. Its width comes from the shared axis content width. */
+  .jects-resource-histogram__plot {
+    position: relative;
+    width: 100%;
+    background: oklch(var(--jects-muted) / 0.35);
+    border-radius: var(--jects-radius-sm);
+    overflow: hidden;
+  }
+
+  /* The horizontal capacity line: where allocation == capacity. */
+  .jects-resource-histogram__capacity {
+    position: absolute;
+    inset-inline: 0;
+    height: 0;
+    border-top: 1px dashed oklch(var(--jects-foreground) / 0.55);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* A single bucket column, anchored to the lane floor. */
+  .jects-resource-histogram__bar {
+    position: absolute;
+    bottom: 0;
+    min-height: 1px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-inline: 1px solid oklch(var(--jects-background) / 0.6);
+    border-top-left-radius: var(--jects-radius-sm);
+    border-top-right-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-primary) / 0.8);
+    cursor: pointer;
+    transition: background var(--jects-duration-fast) ease;
+  }
+
+  .jects-resource-histogram__bar:hover {
+    background: oklch(var(--jects-primary));
+  }
+
+  .jects-resource-histogram__bar:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    z-index: 2;
+  }
+
+  /* An idle bucket (no allocation) — a faint baseline tick. */
+  .jects-resource-histogram__bar--empty {
+    background: oklch(var(--jects-muted-foreground) / 0.25);
+    cursor: default;
+  }
+
+  /* Over-allocated bucket: destructive accent, clearly above the capacity line. */
+  .jects-resource-histogram__bar--over {
+    background: oklch(var(--jects-destructive) / 0.85);
+  }
+
+  .jects-resource-histogram__bar--over:hover {
+    background: oklch(var(--jects-destructive));
+  }
+
+  /* Lane-level over-allocation cue on the header name. */
+  .jects-resource-histogram__lane--over .jects-resource-histogram__lane-name {
+    color: oklch(var(--jects-destructive));
+  }
+}

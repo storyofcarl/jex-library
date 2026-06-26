@@ -1,0 +1,18 @@
+/* Aggregated grid styles — bundled into dist/style.css.
+   Each part's CSS lives next to its source and is imported here.
+   All rules MUST live inside @layer jects.components and reference only
+   --jects-* tokens (no hardcoded color literals). */
+@import './engine/grid.css';
+@import './engine/rtl.css';
+@import './engine/group-row.css';
+@import './engine/detail-row.css';
+@import './engine/span-cells.css';
+@import './columns/columns.css';
+@import './features/features.css';
+@import './features/filter-facet.css';
+@import './features/fill.css';
+@import './features/infinite-load.css';
+@import './features/tooltip.css';
+@import './features/undo-redo.css';
+@import './features/column-auto-size.css';
+@import './header-groups/header-groups.css';

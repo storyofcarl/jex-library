@@ -1,0 +1,64 @@
+/* Slider styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-slider {
+    --_slider-track: oklch(var(--jects-muted));
+    --_slider-fill: oklch(var(--jects-primary));
+    --_slider-thumb: oklch(var(--jects-primary));
+    --_slider-thumb-ring: oklch(var(--jects-background));
+
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    min-width: 8rem;
+    height: 1.25rem;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    touch-action: none;
+  }
+
+  .jects-slider__track {
+    position: relative;
+    width: 100%;
+    height: 0.375rem;
+    border-radius: var(--jects-radius-sm);
+    background: var(--_slider-track);
+  }
+
+  .jects-slider__fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    height: 100%;
+    border-radius: var(--jects-radius-sm);
+    background: var(--_slider-fill);
+  }
+
+  .jects-slider__thumb {
+    position: absolute;
+    top: 50%;
+    width: 1rem;
+    height: 1rem;
+    border-radius: var(--jects-radius-xl);
+    background: var(--_slider-thumb);
+    border: 2px solid var(--_slider-thumb-ring);
+    box-shadow: var(--jects-shadow-sm);
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    transition: box-shadow var(--jects-duration-fast) ease;
+  }
+
+  .jects-slider__thumb:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-slider__thumb:active {
+    cursor: grabbing;
+  }
+
+  .jects-slider--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}

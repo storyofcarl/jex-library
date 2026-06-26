@@ -1,0 +1,65 @@
+/* Checkbox styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .jects-checkbox__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .jects-checkbox__box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-primary-foreground));
+    transition:
+      background-color var(--jects-duration-fast) ease,
+      border-color var(--jects-duration-fast) ease,
+      box-shadow var(--jects-duration-fast) ease;
+  }
+
+  .jects-checkbox--checked .jects-checkbox__box,
+  .jects-checkbox--indeterminate .jects-checkbox__box {
+    background: oklch(var(--jects-primary));
+    border-color: oklch(var(--jects-primary));
+  }
+
+  .jects-checkbox__input:focus-visible + .jects-checkbox__box {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-checkbox--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .jects-checkbox__label {
+    line-height: 1.2;
+  }
+}

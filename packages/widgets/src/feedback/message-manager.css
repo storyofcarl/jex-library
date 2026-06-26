@@ -1,0 +1,331 @@
+/* Feedback (MessageManager + dialogs) styles — references ONLY --jects-* tokens. */
+@layer jects.components {
+  /* ---------------------------------------------------------------------- */
+  /* Toaster region                                                          */
+  /* ---------------------------------------------------------------------- */
+  .jects-toaster {
+    position: fixed;
+    z-index: var(--jects-z-overlay);
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    width: min(22rem, calc(100vw - var(--jects-space-8)));
+    max-height: 100vh;
+    padding: var(--jects-space-4);
+    pointer-events: none;
+    box-sizing: border-box;
+  }
+  .jects-toaster > * {
+    pointer-events: auto;
+  }
+
+  .jects-toaster--top-right {
+    top: 0;
+    right: 0;
+    align-items: flex-end;
+  }
+  .jects-toaster--top-left {
+    top: 0;
+    left: 0;
+    align-items: flex-start;
+  }
+  .jects-toaster--top-center {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+  }
+  .jects-toaster--bottom-right {
+    bottom: 0;
+    right: 0;
+    align-items: flex-end;
+    flex-direction: column-reverse;
+  }
+  .jects-toaster--bottom-left {
+    bottom: 0;
+    left: 0;
+    align-items: flex-start;
+    flex-direction: column-reverse;
+  }
+  .jects-toaster--bottom-center {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+    flex-direction: column-reverse;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Toast                                                                   */
+  /* ---------------------------------------------------------------------- */
+  .jects-toast {
+    --_toast-accent: oklch(var(--jects-cmyk-cyan));
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--jects-space-3);
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--jects-space-3) var(--jects-space-4);
+    border: 1px solid oklch(var(--jects-border));
+    border-left: 3px solid var(--_toast-accent);
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    box-shadow: var(--jects-shadow-lg);
+    font-family: var(--jects-font-family);
+    animation: jects-toast-in var(--jects-duration-normal) ease;
+  }
+
+  @keyframes jects-toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .jects-toast__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.0625rem;
+    color: var(--_toast-accent);
+  }
+
+  .jects-toast__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-1);
+  }
+
+  .jects-toast__title {
+    margin: 0;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-popover-foreground));
+  }
+
+  .jects-toast__message {
+    margin: 0;
+    font-size: var(--jects-font-size-sm);
+    line-height: 1.4;
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-toast__close {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: -0.25rem -0.25rem -0.25rem 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    background: transparent;
+    color: oklch(var(--jects-muted-foreground));
+    cursor: pointer;
+    transition: background-color var(--jects-duration-fast) ease,
+      color var(--jects-duration-fast) ease;
+  }
+  .jects-toast__close:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-toast__close:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ---- toast variants ---- */
+  .jects-toast--info {
+    --_toast-accent: oklch(var(--jects-cmyk-cyan));
+  }
+  .jects-toast--success {
+    --_toast-accent: oklch(var(--jects-success));
+  }
+  .jects-toast--warning {
+    --_toast-accent: oklch(var(--jects-warning));
+  }
+  .jects-toast--error {
+    --_toast-accent: oklch(var(--jects-destructive));
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Dialog (alert / confirm / prompt)                                       */
+  /* ---------------------------------------------------------------------- */
+  .jects-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--jects-z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--jects-space-4);
+    background: oklch(var(--jects-foreground) / 0.4);
+    animation: jects-dialog-fade var(--jects-duration-fast) ease;
+  }
+
+  @keyframes jects-dialog-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .jects-dialog {
+    --_dialog-accent: oklch(var(--jects-cmyk-cyan));
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--jects-space-2) var(--jects-space-3);
+    width: min(28rem, 100%);
+    box-sizing: border-box;
+    padding: var(--jects-space-6);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    box-shadow: var(--jects-shadow-lg);
+    font-family: var(--jects-font-family);
+    animation: jects-dialog-pop var(--jects-duration-normal) ease;
+  }
+
+  @keyframes jects-dialog-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.96) translateY(0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .jects-dialog__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-muted) / 0.6);
+    color: var(--_dialog-accent);
+  }
+
+  .jects-dialog__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+    min-width: 0;
+  }
+
+  .jects-dialog__title {
+    margin: 0;
+    font-size: var(--jects-font-size-lg);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-popover-foreground));
+  }
+
+  .jects-dialog__message {
+    margin: 0;
+    font-size: var(--jects-font-size-sm);
+    line-height: 1.5;
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-dialog__input {
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: var(--jects-space-1);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    font: inherit;
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-dialog__input:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+    border-color: oklch(var(--jects-ring));
+  }
+
+  .jects-dialog__actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--jects-space-2);
+    margin-top: var(--jects-space-2);
+  }
+
+  .jects-dialog__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.25rem;
+    padding-inline: var(--jects-space-4);
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-md);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+    cursor: pointer;
+    transition: background-color var(--jects-duration-fast) ease,
+      color var(--jects-duration-fast) ease;
+  }
+  .jects-dialog__btn:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-dialog__btn--ok {
+    background: oklch(var(--jects-primary));
+    color: oklch(var(--jects-primary-foreground));
+  }
+  .jects-dialog__btn--ok:hover {
+    background: oklch(var(--jects-primary) / 0.9);
+  }
+
+  .jects-dialog__btn--cancel {
+    background: oklch(var(--jects-background));
+    color: oklch(var(--jects-foreground));
+    border-color: oklch(var(--jects-border));
+  }
+  .jects-dialog__btn--cancel:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  /* ---- dialog variants drive the icon accent + the OK button on error ---- */
+  .jects-dialog--info {
+    --_dialog-accent: oklch(var(--jects-cmyk-cyan));
+  }
+  .jects-dialog--success {
+    --_dialog-accent: oklch(var(--jects-success));
+  }
+  .jects-dialog--warning {
+    --_dialog-accent: oklch(var(--jects-warning));
+  }
+  .jects-dialog--error {
+    --_dialog-accent: oklch(var(--jects-destructive));
+  }
+  .jects-dialog--error .jects-dialog__btn--ok {
+    background: oklch(var(--jects-destructive));
+    color: oklch(var(--jects-destructive-foreground));
+  }
+  .jects-dialog--error .jects-dialog__btn--ok:hover {
+    background: oklch(var(--jects-destructive) / 0.9);
+  }
+}

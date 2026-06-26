@@ -1,0 +1,80 @@
+/* Gantt Indicators feature — small edge glyphs (constraint/deadline/late/
+   conflict/custom) painted on a task bar by `GanttIndicatorsFeature`.
+
+   Token-pure: every color is `oklch(var(--jects-*))`; sizing uses the --jects-*
+   space/radius scales. All rules live inside @layer jects.components so they
+   compose with the rest of the Gantt component layer. */
+@layer jects.components {
+  /* The per-edge cluster of indicators, vertically centred on the bar and
+     hanging just outside its start/end edge so it never hides the bar label. */
+  .jects-gantt__indicators {
+    position: absolute;
+    inset-block: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    pointer-events: none; /* the spans themselves re-enable pointer events */
+    z-index: var(--jects-z-sticky);
+  }
+
+  .jects-gantt__indicators--start {
+    inset-inline-start: 0;
+    transform: translateX(-100%);
+    padding-inline-end: var(--jects-space-1);
+  }
+
+  .jects-gantt__indicators--end {
+    inset-inline-end: 0;
+    transform: translateX(100%);
+    padding-inline-start: var(--jects-space-1);
+  }
+
+  /* A single indicator glyph. */
+  .jects-gantt__indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-4);
+    block-size: var(--jects-space-4);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-muted-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: var(--jects-shadow-sm);
+  }
+
+  .jects-gantt__indicator > .jects-icon {
+    inline-size: var(--jects-space-3);
+    block-size: var(--jects-space-3);
+    display: block;
+  }
+
+  .jects-gantt__indicator:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* Per-kind accents. */
+  .jects-gantt__indicator--constraint {
+    color: oklch(var(--jects-cmyk-cyan));
+    border-color: oklch(var(--jects-cmyk-cyan) / 0.6);
+  }
+
+  .jects-gantt__indicator--deadline {
+    color: oklch(var(--jects-warning));
+    border-color: oklch(var(--jects-warning) / 0.6);
+  }
+
+  .jects-gantt__indicator--late {
+    color: oklch(var(--jects-destructive));
+    border-color: oklch(var(--jects-destructive) / 0.6);
+    background: oklch(var(--jects-destructive) / 0.08);
+  }
+
+  .jects-gantt__indicator--conflict {
+    color: oklch(var(--jects-destructive));
+    border-color: oklch(var(--jects-destructive) / 0.6);
+  }
+}

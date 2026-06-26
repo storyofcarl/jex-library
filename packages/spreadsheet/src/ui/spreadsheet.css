@@ -1,0 +1,389 @@
+/* Spreadsheet UI — token-pure styles. All rules live inside
+   @layer jects.components and reference ONLY --jects-* tokens (no hardcoded
+   color literals). BEM-ish naming: .jects-<block>__<part>--<modifier>. */
+
+@layer jects.components {
+  /* ── shell ─────────────────────────────────────────────────────────── */
+  .jects-ss {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    overflow: hidden;
+  }
+
+  .jects-ss__toolbar {
+    flex: 0 0 auto;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-card));
+  }
+
+  .jects-ss__grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    background: oklch(var(--jects-background));
+  }
+
+  .jects-ss__tabs {
+    flex: 0 0 auto;
+    border-top: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-card));
+  }
+
+  /* Floating embedded chart object over the grid. */
+  .jects-ss__chart {
+    box-shadow: var(--jects-shadow-md, 0 2px 8px oklch(var(--jects-foreground) / 0.15));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    overflow: hidden;
+  }
+
+  /* ── formula bar ───────────────────────────────────────────────────── */
+  .jects-ss__fbar {
+    flex: 0 0 auto;
+  }
+
+  .jects-fbar {
+    display: flex;
+    align-items: stretch;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-card));
+  }
+
+  .jects-fbar__name {
+    flex: 0 0 auto;
+    width: 5rem;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family-mono);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-fbar__fx {
+    display: flex;
+    align-items: center;
+    padding-inline: var(--jects-space-1);
+    font-style: italic;
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  .jects-fbar__input {
+    flex: 1 1 auto;
+    padding: var(--jects-space-1) var(--jects-space-2);
+    font-family: var(--jects-font-family-mono);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-fbar__input:focus,
+  .jects-fbar__name:focus {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -1px;
+  }
+
+  /* ── cell grid ─────────────────────────────────────────────────────── */
+  .jects-sheet {
+    position: relative;
+    display: inline-block;
+    min-width: 100%;
+    outline: none;
+  }
+
+  .jects-sheet:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-sheet__head {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: var(--jects-z-sticky);
+    background: oklch(var(--jects-muted));
+  }
+
+  .jects-sheet__corner {
+    flex: 0 0 auto;
+    border-right: 1px solid oklch(var(--jects-border));
+    border-bottom: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-muted));
+  }
+
+  .jects-sheet__colhead,
+  .jects-sheet__rowhead {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted));
+    border-right: 1px solid oklch(var(--jects-border));
+    border-bottom: 1px solid oklch(var(--jects-border));
+    user-select: none;
+  }
+
+  .jects-sheet__colhead {
+    position: relative;
+  }
+
+  .jects-sheet__colhead--frozen {
+    box-shadow: inset -2px 0 0 oklch(var(--jects-border));
+  }
+
+  /* Sort/filter affordance in each column header. */
+  .jects-sheet__colmenu {
+    position: absolute;
+    inset-inline-end: 1px;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    padding: 0 2px;
+    font-size: var(--jects-font-size-xs);
+    line-height: 1;
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+    opacity: 0;
+  }
+
+  .jects-sheet__colhead:hover .jects-sheet__colmenu,
+  .jects-sheet__colmenu:focus-visible {
+    opacity: 1;
+  }
+
+  .jects-sheet__colmenu:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-accent));
+  }
+
+  .jects-sheet__colmenu:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -1px;
+  }
+
+  .jects-sheet__colhead--active,
+  .jects-sheet__rowhead--active {
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+  }
+
+  .jects-sheet__row {
+    display: flex;
+  }
+
+  .jects-sheet__row--frozen {
+    position: sticky;
+    z-index: calc(var(--jects-z-sticky) - 1);
+    background: oklch(var(--jects-background));
+  }
+
+  .jects-sheet__cell {
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding-inline: var(--jects-space-2);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border-right: 1px solid oklch(var(--jects-border));
+    border-bottom: 1px solid oklch(var(--jects-border));
+    cursor: cell;
+  }
+
+  .jects-sheet__cell--range {
+    background: oklch(var(--jects-accent));
+  }
+
+  .jects-sheet__cell--active {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+    z-index: 2;
+  }
+
+  .jects-sheet__cell--formula {
+    /* subtle marker for formula cells via the muted token */
+    box-shadow: inset 2px 0 0 oklch(var(--jects-primary) / 0.4);
+  }
+
+  .jects-sheet__cell--merged {
+    align-items: flex-start;
+  }
+
+  .jects-sheet__cell--bold {
+    font-weight: var(--jects-font-weight-bold);
+  }
+  .jects-sheet__cell--italic {
+    font-style: italic;
+  }
+  .jects-sheet__cell--underline {
+    text-decoration: underline;
+  }
+  .jects-sheet__cell--strike {
+    text-decoration: line-through;
+  }
+  .jects-sheet__cell--wrap {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .jects-sheet__fill-handle {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    width: 6px;
+    height: 6px;
+    background: oklch(var(--jects-primary));
+    border: 1px solid oklch(var(--jects-background));
+    cursor: crosshair;
+    z-index: 3;
+  }
+
+  .jects-sheet__editor {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: none;
+    outline: none;
+  }
+
+  /* Native <select> dropdown editor rendered for `list` validation rules. */
+  .jects-sheet__editor--select {
+    cursor: pointer;
+  }
+
+  /* ── conditional formatting ────────────────────────────────────────── */
+  /* An in-cell data bar painted behind the cell text, proportional to value. */
+  .jects-sheet__cell-databar {
+    position: absolute;
+    inset-block: 2px;
+    inset-inline-start: 2px;
+    z-index: 0;
+    border-radius: var(--jects-radius-sm);
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .jects-sheet__cell--cf-scale {
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* ── comments / protection ─────────────────────────────────────────── */
+  /* Red triangle indicator in the cell's top-right corner (Excel-style note). */
+  .jects-sheet__cell-comment {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-top: 6px solid oklch(var(--jects-destructive));
+    border-left: 6px solid transparent;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .jects-sheet__cell--locked {
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+
+  /* ── sheet tabs ────────────────────────────────────────────────────── */
+  .jects-stabs {
+    display: flex;
+    align-items: stretch;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1);
+  }
+
+  .jects-stabs__add {
+    flex: 0 0 auto;
+    padding-inline: var(--jects-space-2);
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+
+  .jects-stabs__add:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-accent));
+  }
+
+  .jects-stabs__strip {
+    display: flex;
+    align-items: stretch;
+    gap: var(--jects-space-1);
+    overflow-x: auto;
+  }
+
+  .jects-stabs__tab {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-3);
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-bottom: 2px solid transparent;
+    border-radius: var(--jects-radius-sm) var(--jects-radius-sm) 0 0;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .jects-stabs__tab--active {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+    border-bottom-color: oklch(var(--jects-primary));
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  .jects-stabs__tab:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -1px;
+  }
+
+  .jects-stabs__close {
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: none;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .jects-stabs__close:hover {
+    color: oklch(var(--jects-destructive));
+    background: oklch(var(--jects-destructive) / 0.12);
+  }
+
+  .jects-stabs__rename {
+    font: inherit;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-ring));
+    border-radius: var(--jects-radius-sm);
+  }
+}

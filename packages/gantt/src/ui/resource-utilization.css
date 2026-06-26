@@ -1,0 +1,227 @@
+/* Gantt resource utilization grid — rendered by `ResourceUtilizationView`.
+
+   The tabular, drill-down counterpart to the resource histogram: rows are
+   resources (expandable to their tasks), columns are time periods plus a
+   trailing total, cells show percent allocation with an inline heat fill.
+
+   Token-pure: every color is `oklch(var(--jects-*))`; sizing uses the --jects-*
+   space/radius scales. All rules live inside @layer jects.components so they
+   compose with the rest of the Gantt component layer. The grid template is
+   driven by the `--_ru-periods` custom prop the Widget sets per render. */
+@layer jects.components {
+  .jects-resource-utilization {
+    --_ru-name-w: 14rem;
+    --_ru-cell-w: 4.5rem;
+    display: grid;
+    grid-template-columns:
+      var(--_ru-name-w)
+      repeat(var(--_ru-periods, 1), minmax(var(--_ru-cell-w), 1fr))
+      var(--_ru-cell-w);
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+    overflow: auto;
+  }
+
+  .jects-resource-utilization:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* Each row is a sub-grid spanning all columns so cells align to the header. */
+  .jects-resource-utilization__row {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    border-block-end: 1px solid oklch(var(--jects-border) / 0.6);
+  }
+
+  .jects-resource-utilization__cell {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    padding-inline: var(--jects-space-2);
+    padding-block: var(--jects-space-1);
+    min-block-size: 1.75rem;
+    border-inline-end: 1px solid oklch(var(--jects-border) / 0.4);
+    box-sizing: border-box;
+  }
+
+  .jects-resource-utilization__cell--name {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    background: oklch(var(--jects-card));
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  .jects-resource-utilization__cell--task {
+    padding-inline-start: var(--jects-space-6);
+    font-weight: var(--jects-font-weight-normal);
+    color: oklch(var(--jects-muted-foreground));
+  }
+
+  /* ── Header row ───────────────────────────────────────────────────────── */
+  .jects-resource-utilization__row--head {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 2;
+    background: oklch(var(--jects-muted));
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  .jects-resource-utilization__cell--head {
+    background: oklch(var(--jects-muted));
+    color: oklch(var(--jects-muted-foreground));
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .jects-resource-utilization__row--head .jects-resource-utilization__cell--name {
+    background: oklch(var(--jects-muted));
+    z-index: 3;
+  }
+
+  /* ── Data cells with heat fill ────────────────────────────────────────── */
+  .jects-resource-utilization__cell--data {
+    position: relative;
+    justify-content: flex-end;
+    font-variant-numeric: tabular-nums;
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-resource-utilization__cell--data::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: var(--_ru-fill, 0%);
+    background: oklch(var(--jects-primary) / 0.18);
+    pointer-events: none;
+  }
+
+  .jects-resource-utilization__cell--data > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .jects-resource-utilization__cell--empty {
+    color: oklch(var(--jects-muted-foreground) / 0.5);
+  }
+
+  .jects-resource-utilization__cell--data[tabindex]:hover,
+  .jects-resource-utilization__cell--data[tabindex]:focus-visible {
+    background: oklch(var(--jects-accent) / 0.4);
+    outline: none;
+  }
+
+  .jects-resource-utilization__cell--data[tabindex]:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  /* Over-allocated cells: warning-tinted fill. */
+  .jects-resource-utilization__cell--over {
+    color: oklch(var(--jects-destructive-foreground));
+    font-weight: var(--jects-font-weight-semibold);
+  }
+
+  .jects-resource-utilization__cell--over::before {
+    background: oklch(var(--jects-destructive) / 0.85);
+    inline-size: 100%;
+  }
+
+  .jects-resource-utilization__row--over .jects-resource-utilization__cell--name {
+    color: oklch(var(--jects-destructive));
+  }
+
+  /* ── Disclosure toggle ────────────────────────────────────────────────── */
+  .jects-resource-utilization__toggle {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: oklch(var(--jects-muted-foreground));
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+    font-size: var(--jects-font-size-sm);
+    line-height: 1;
+  }
+
+  .jects-resource-utilization__toggle:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-resource-utilization__toggle:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-resource-utilization__toggle-spacer {
+    display: inline-block;
+    inline-size: 1.25rem;
+  }
+
+  .jects-resource-utilization__name-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ── Over-allocation badge ────────────────────────────────────────────── */
+  .jects-resource-utilization__badge {
+    margin-inline-start: auto;
+    padding-inline: var(--jects-space-1);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-destructive) / 0.15);
+    color: oklch(var(--jects-destructive));
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Total column / row ───────────────────────────────────────────────── */
+  .jects-resource-utilization__cell--total,
+  .jects-resource-utilization__cell--totals {
+    font-weight: var(--jects-font-weight-medium);
+    background: oklch(var(--jects-muted) / 0.5);
+  }
+
+  .jects-resource-utilization__cell--total::before,
+  .jects-resource-utilization__cell--totals::before {
+    display: none;
+  }
+
+  .jects-resource-utilization__row--totals {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 2;
+    background: oklch(var(--jects-muted));
+    font-weight: var(--jects-font-weight-semibold);
+    border-block-start: 2px solid oklch(var(--jects-border));
+  }
+
+  .jects-resource-utilization__row--totals .jects-resource-utilization__cell {
+    background: oklch(var(--jects-muted));
+  }
+
+  .jects-resource-utilization__cell--grand {
+    color: oklch(var(--jects-primary));
+  }
+
+  /* ── Empty state ──────────────────────────────────────────────────────── */
+  .jects-resource-utilization__empty {
+    color: oklch(var(--jects-muted-foreground));
+    font-style: italic;
+    justify-content: flex-start;
+  }
+}

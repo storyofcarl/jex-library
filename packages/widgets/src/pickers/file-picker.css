@@ -1,0 +1,166 @@
+/* FilePicker (Vault) styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-filepicker {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-3);
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* ---- drop zone ---- */
+  .jects-filepicker__zone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    min-height: 8rem;
+    padding: var(--jects-space-6);
+    text-align: center;
+    color: oklch(var(--jects-muted-foreground));
+    background: oklch(var(--jects-muted) / 0.4);
+    border: 2px dashed oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+    cursor: pointer;
+    transition:
+      border-color var(--jects-duration-fast) ease,
+      background-color var(--jects-duration-fast) ease,
+      color var(--jects-duration-fast) ease;
+  }
+  .jects-filepicker__zone:hover {
+    border-color: oklch(var(--jects-ring));
+    color: oklch(var(--jects-foreground));
+  }
+  .jects-filepicker__zone:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+  .jects-filepicker__zone--dragover {
+    border-color: oklch(var(--jects-primary));
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-filepicker__zone-icon {
+    display: inline-flex;
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-filepicker__label {
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-medium);
+  }
+  .jects-filepicker__hint {
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-filepicker__hint[hidden] {
+    display: none;
+  }
+  .jects-filepicker__input {
+    display: none;
+  }
+
+  /* ---- file list ---- */
+  .jects-filepicker__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+  }
+  .jects-filepicker__list[hidden] {
+    display: none;
+  }
+
+  .jects-filepicker__item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'info remove'
+      'progress remove';
+    align-items: center;
+    column-gap: var(--jects-space-3);
+    row-gap: var(--jects-space-1);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+  .jects-filepicker__item-info {
+    grid-area: info;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--jects-space-2);
+    min-width: 0;
+  }
+  .jects-filepicker__item-name {
+    font-size: var(--jects-font-size-sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jects-filepicker__item-size {
+    flex: none;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- progress ---- */
+  .jects-filepicker__progress {
+    grid-area: progress;
+    height: 0.375rem;
+    border-radius: var(--jects-radius-xl);
+    background: oklch(var(--jects-muted));
+    overflow: hidden;
+  }
+  .jects-filepicker__progress-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: oklch(var(--jects-primary));
+    transition: width var(--jects-duration-normal) ease;
+  }
+
+  /* ---- remove ---- */
+  .jects-filepicker__remove {
+    grid-area: remove;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    font-size: var(--jects-font-size-lg);
+    line-height: 1;
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+    transition:
+      background-color var(--jects-duration-fast) ease,
+      color var(--jects-duration-fast) ease;
+  }
+  .jects-filepicker__remove:hover {
+    color: oklch(var(--jects-destructive));
+    background: oklch(var(--jects-destructive) / 0.1);
+  }
+  .jects-filepicker__remove:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ---- disabled ---- */
+  .jects-filepicker--disabled .jects-filepicker__zone {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}

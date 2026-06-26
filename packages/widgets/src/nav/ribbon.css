@@ -1,0 +1,81 @@
+/* Ribbon styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-ribbon {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+
+  .jects-ribbon__tablist {
+    display: flex;
+    gap: var(--jects-space-1);
+    padding: var(--jects-space-1) var(--jects-space-2);
+    border-bottom: 1px solid oklch(var(--jects-border));
+  }
+
+  .jects-ribbon__tab {
+    appearance: none;
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font: inherit;
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+  .jects-ribbon__tab:hover {
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-accent));
+  }
+  .jects-ribbon__tab--active {
+    color: oklch(var(--jects-primary));
+    background: oklch(var(--jects-primary) / 0.1);
+  }
+  .jects-ribbon__tab:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-ribbon__panel {
+    display: flex;
+    align-items: stretch;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-3);
+    overflow-x: auto;
+  }
+  .jects-ribbon__panel:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: -2px;
+  }
+
+  .jects-ribbon__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+    padding-inline-end: var(--jects-space-2);
+    border-inline-end: 1px solid oklch(var(--jects-border));
+  }
+  .jects-ribbon__group:last-child {
+    border-inline-end: none;
+  }
+
+  .jects-ribbon__commands {
+    display: flex;
+    gap: var(--jects-space-1);
+    flex: 1 1 auto;
+    align-items: center;
+  }
+
+  .jects-ribbon__group-title {
+    text-align: center;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-muted-foreground));
+  }
+}

@@ -1,0 +1,124 @@
+/* Timeline axis — header bands, time grid, ticks, time ranges, non-working-time
+   shading, and column lines. Token-pure styles.
+
+   All rules live inside @layer jects.components and reference ONLY --jects-*
+   tokens (no hardcoded color literals). The layer order is declared by
+   @jects/theme: reset, tokens, base, components, utilities.
+
+   House style "Cool Zinc + Calm CMYK": chrome uses neutral semantic tokens;
+   accents use the CMYK ramp sparingly (today marker = cyan; deadlines = key). */
+
+@layer jects.components {
+  /* ── header band stack (coarse → fine) ─────────────────────────────── */
+  .jects-timeline-header {
+    display: flex;
+    flex-direction: column;
+    background: oklch(var(--jects-card));
+    color: oklch(var(--jects-card-foreground));
+    border-bottom: 1px solid oklch(var(--jects-border));
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    user-select: none;
+  }
+
+  .jects-timeline-header__band {
+    position: relative;
+    display: flex;
+    height: var(--jects-space-8);
+    border-bottom: 1px solid oklch(var(--jects-border) / 0.6);
+  }
+
+  .jects-timeline-header__band:last-child {
+    border-bottom: none;
+  }
+
+  .jects-timeline-header__cell {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding-inline: var(--jects-space-2);
+    border-inline-end: 1px solid oklch(var(--jects-border) / 0.5);
+    color: oklch(var(--jects-muted-foreground));
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .jects-timeline-header__cell--major {
+    color: oklch(var(--jects-foreground));
+    font-weight: var(--jects-font-weight-medium);
+  }
+
+  .jects-timeline-header__cell--start {
+    justify-content: flex-start;
+  }
+  .jects-timeline-header__cell--center {
+    justify-content: center;
+  }
+  .jects-timeline-header__cell--end {
+    justify-content: flex-end;
+  }
+
+  /* ── time grid body / column lines ─────────────────────────────────── */
+  .jects-timeline-grid {
+    position: relative;
+    background: oklch(var(--jects-background));
+  }
+
+  .jects-timeline-colline {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: oklch(var(--jects-border) / 0.5);
+    pointer-events: none;
+  }
+
+  .jects-timeline-colline--major {
+    background: oklch(var(--jects-border));
+  }
+
+  /* ── non-working-time shading ──────────────────────────────────────── */
+  .jects-timeline-nonworking {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: oklch(var(--jects-muted) / 0.45);
+    pointer-events: none;
+  }
+
+  /* ── time ranges (highlight / shade / marker) ──────────────────────── */
+  .jects-timeline-range {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .jects-timeline-range--highlight {
+    background: oklch(var(--jects-cmyk-cyan-soft) / 0.35);
+    border-inline: 1px solid oklch(var(--jects-cmyk-cyan) / 0.5);
+  }
+
+  .jects-timeline-range--shade {
+    background: oklch(var(--jects-muted) / 0.6);
+  }
+
+  .jects-timeline-range--marker {
+    width: 2px;
+    background: oklch(var(--jects-cmyk-cyan));
+  }
+
+  .jects-timeline-range__label {
+    position: absolute;
+    top: var(--jects-space-1);
+    inset-inline-start: var(--jects-space-1);
+    padding-inline: var(--jects-space-1);
+    border-radius: var(--jects-radius-sm);
+    background: oklch(var(--jects-popover));
+    color: oklch(var(--jects-popover-foreground));
+    font-size: var(--jects-font-size-xs);
+    white-space: nowrap;
+  }
+}

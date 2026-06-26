@@ -1,0 +1,291 @@
+/* TaskBoard layout & chrome — references ONLY --jects-* tokens. */
+@layer jects.components {
+  .jects-kanban {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+  }
+
+  /* ── toolbar ── */
+  .jects-kanban__toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    background: oklch(var(--jects-card));
+  }
+  .jects-kanban__search {
+    flex: 0 0 auto;
+    width: 16rem;
+    max-width: 100%;
+    height: 2rem;
+    box-sizing: border-box;
+    padding-inline: var(--jects-space-3);
+    font: inherit;
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+  }
+  .jects-kanban__search:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  /* ── toolbar sort control ── */
+  .jects-kanban__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-kanban__sort-label {
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-muted-foreground));
+  }
+  .jects-kanban__sort-select {
+    height: 2rem;
+    box-sizing: border-box;
+    padding-inline: var(--jects-space-2);
+    font: inherit;
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+  }
+  .jects-kanban__sort-select:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  /* ── toolbar filter chips ── */
+  .jects-kanban__filters {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--jects-space-1);
+  }
+  .jects-kanban__filter {
+    height: 2rem;
+    padding-inline: var(--jects-space-3);
+    font: inherit;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-input));
+    border-radius: var(--jects-radius-md);
+    cursor: pointer;
+  }
+  .jects-kanban__filter:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-kanban__filter:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-kanban__filter--on {
+    color: oklch(var(--jects-primary-foreground));
+    background: oklch(var(--jects-primary));
+    border-color: oklch(var(--jects-primary));
+  }
+
+  /* ── columns row ── */
+  .jects-kanban__scroller {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: var(--jects-space-3);
+  }
+  .jects-kanban__columns {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--jects-space-3);
+    height: 100%;
+    min-height: 0;
+  }
+
+  .jects-kanban-col {
+    --_kb-col-accent: oklch(var(--jects-muted-foreground));
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    max-height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    background: oklch(var(--jects-muted) / 0.5);
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-lg);
+  }
+  .jects-kanban-col--collapsed {
+    width: 2.75rem !important;
+  }
+  .jects-kanban-col--collapsed .jects-kanban-col__title {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+  .jects-kanban-col--collapsed .jects-kanban-col__count {
+    display: none;
+  }
+
+  .jects-kanban-col__header {
+    display: flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    padding: var(--jects-space-2) var(--jects-space-3);
+    border-bottom: 1px solid oklch(var(--jects-border));
+    border-top: 3px solid var(--_kb-col-accent);
+    border-top-left-radius: var(--jects-radius-lg);
+    border-top-right-radius: var(--jects-radius-lg);
+    cursor: grab;
+    user-select: none;
+    /* Header drag (column reorder) shouldn't fight browser panning until lifted. */
+    touch-action: none;
+  }
+  .jects-kanban-col--collapsed .jects-kanban-col__header {
+    flex-direction: column;
+  }
+  .jects-kanban-col__toggle {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font: inherit;
+    line-height: 1;
+    color: oklch(var(--jects-foreground));
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--jects-radius-sm);
+    cursor: pointer;
+  }
+  .jects-kanban-col__toggle:hover {
+    background: oklch(var(--jects-accent));
+    color: oklch(var(--jects-accent-foreground));
+  }
+  .jects-kanban-col__toggle:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+  .jects-kanban-col__title {
+    flex: 1 1 auto;
+    margin: 0;
+    font-size: var(--jects-font-size-sm);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jects-kanban-col__count {
+    flex: 0 0 auto;
+    padding-inline: var(--jects-space-2);
+    font-size: var(--jects-font-size-xs);
+    font-variant-numeric: tabular-nums;
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-background));
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: var(--jects-radius-sm);
+  }
+  .jects-kanban-col__count--over {
+    color: oklch(var(--jects-warning-foreground));
+    background: oklch(var(--jects-warning));
+    border-color: oklch(var(--jects-warning));
+  }
+  .jects-kanban-col__lock {
+    flex: 0 0 auto;
+    font-size: var(--jects-font-size-xs);
+  }
+
+  .jects-kanban-col__body {
+    flex: 1 1 auto;
+    min-height: 2rem;
+    overflow-y: auto;
+    padding: var(--jects-space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--jects-space-2);
+  }
+  .jects-kanban-col__empty {
+    padding: var(--jects-space-3);
+    text-align: center;
+    font-size: var(--jects-font-size-xs);
+    color: oklch(var(--jects-foreground));
+    border: 1px dashed oklch(var(--jects-border));
+    border-radius: var(--jects-radius-md);
+  }
+
+  /* ── swimlanes ── */
+  .jects-kanban-col__lane {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid oklch(var(--jects-border));
+  }
+  .jects-kanban-col__lane:last-child {
+    border-bottom: none;
+  }
+  .jects-kanban-col__lane-head {
+    padding: var(--jects-space-1) var(--jects-space-3);
+    font-size: var(--jects-font-size-xs);
+    font-weight: var(--jects-font-weight-semibold);
+    color: oklch(var(--jects-foreground));
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+
+  .jects-kanban-col--locked .jects-kanban-col__header {
+    cursor: not-allowed;
+    background: oklch(var(--jects-muted) / 0.4);
+  }
+
+  /* ── live region (visually hidden; announces keyboard moves) ── */
+  .jects-kanban__live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── drag artifacts ── */
+  .jects-kanban__ghost {
+    position: fixed;
+    z-index: var(--jects-z-tooltip);
+    transform: translate(8px, 8px) rotate(2deg);
+    pointer-events: none;
+    max-width: 14rem;
+    padding: var(--jects-space-2) var(--jects-space-3);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-card-foreground));
+    background: oklch(var(--jects-card));
+    border: 1px solid oklch(var(--jects-ring));
+    border-radius: var(--jects-radius-md);
+    box-shadow: var(--jects-shadow-lg);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .jects-kanban__placeholder {
+    height: 2.5rem;
+    border: 2px dashed oklch(var(--jects-ring));
+    border-radius: var(--jects-radius-md);
+    background: oklch(var(--jects-accent) / 0.4);
+  }
+  .jects-kanban--dragging {
+    cursor: grabbing;
+  }
+}

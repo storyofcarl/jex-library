@@ -1,0 +1,25 @@
+/* Label styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-1);
+    font-family: var(--jects-font-family);
+    font-weight: var(--jects-font-weight-medium);
+    color: oklch(var(--jects-foreground));
+  }
+
+  .jects-label__required {
+    color: oklch(var(--jects-destructive));
+  }
+
+  .jects-label--sm {
+    font-size: var(--jects-font-size-xs);
+  }
+  .jects-label--md {
+    font-size: var(--jects-font-size-sm);
+  }
+  .jects-label--lg {
+    font-size: var(--jects-font-size-md);
+  }
+}

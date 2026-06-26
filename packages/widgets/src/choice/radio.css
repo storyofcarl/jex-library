@@ -1,0 +1,75 @@
+/* Radio styles — references ONLY --jects-* tokens (no hard-coded colors). */
+@layer jects.components {
+  .jects-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jects-space-2);
+    box-sizing: border-box;
+    font-family: var(--jects-font-family);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .jects-radio__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .jects-radio__dot {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    border: 1px solid oklch(var(--jects-border));
+    border-radius: 50%;
+    background: oklch(var(--jects-background));
+    transition:
+      border-color var(--jects-duration-fast) ease,
+      box-shadow var(--jects-duration-fast) ease;
+  }
+
+  .jects-radio__dot::after {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: oklch(var(--jects-primary));
+    transform: scale(0);
+    transition: transform var(--jects-duration-fast) ease;
+  }
+
+  .jects-radio--checked .jects-radio__dot {
+    border-color: oklch(var(--jects-primary));
+  }
+  .jects-radio--checked .jects-radio__dot::after {
+    transform: scale(1);
+  }
+
+  .jects-radio__input:focus-visible + .jects-radio__dot {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 2px;
+  }
+
+  .jects-radio--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .jects-radio__label {
+    line-height: 1.2;
+  }
+}

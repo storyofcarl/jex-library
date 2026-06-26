@@ -1,0 +1,78 @@
+/* @jects/grid — in-body master-detail row styles (RowExpander feature parity).
+   Token-pure (only --jects-* tokens), inside @layer jects.components. Paints the
+   full-width detail region the DomRenderer injects beneath a master row via the
+   row-source seam: one sticky, full-width gridcell hosting consumer content. */
+
+@layer jects.components {
+  /* The engine recycles a `.jects-grid__row` into a detail band. */
+  .jects-grid-detail-row.jects-grid__row {
+    box-sizing: border-box;
+    background: oklch(var(--jects-muted));
+    color: oklch(var(--jects-foreground));
+    border-bottom: 1px solid oklch(var(--jects-border));
+    cursor: default;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .jects-grid-detail__cell {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 2;
+    display: block;
+    box-sizing: border-box;
+    block-size: 100%;
+    /* Keep the detail panel within the visible viewport width even on wide,
+       horizontally scrolled grids. */
+    inline-size: var(--jects-grid-detail-width, 100%);
+    max-inline-size: 100%;
+    /* Inherit the band background so the sticky cell masks scrolling beneath it. */
+    background: inherit;
+  }
+
+  .jects-grid-detail__body {
+    box-sizing: border-box;
+    block-size: 100%;
+    overflow: auto;
+    padding: var(--jects-space-3) var(--jects-space-4);
+    font-size: var(--jects-font-size-sm);
+    color: oklch(var(--jects-foreground));
+  }
+
+  /* The expander affordance in the master row's expander column. */
+  .jects-grid-expander__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--jects-space-5);
+    block-size: var(--jects-space-5);
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: oklch(var(--jects-muted-foreground));
+    cursor: pointer;
+    border-radius: var(--jects-radius-sm);
+  }
+
+  .jects-grid-expander__toggle:hover {
+    background: oklch(var(--jects-accent) / 0.6);
+    color: oklch(var(--jects-accent-foreground));
+  }
+
+  .jects-grid-expander__toggle:focus-visible {
+    outline: 2px solid oklch(var(--jects-ring));
+    outline-offset: 1px;
+  }
+
+  .jects-grid-expander__chevron {
+    inline-size: 0;
+    block-size: 0;
+    border-block: 4px solid transparent;
+    border-inline-start: 6px solid currentColor;
+    transition: transform var(--jects-duration-fast) ease;
+  }
+
+  .jects-grid-expander__chevron--open {
+    transform: rotate(90deg);
+  }
+}
