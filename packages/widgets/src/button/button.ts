@@ -39,6 +39,10 @@ export interface ButtonConfig extends WidgetConfig {
   loading?: boolean;
   /** Native button type. Default `button`. */
   type?: 'button' | 'submit' | 'reset';
+  /** Accessible name. Required for icon-only buttons (no `text`); also used as `title`. */
+  ariaLabel?: string;
+  /** Tooltip text. Falls back to `ariaLabel` for icon-only buttons. */
+  title?: string;
   /** Click handler convenience (also available via `.on('click', ...)`). */
   onClick?: (event: MouseEvent) => void;
 }
@@ -86,6 +90,8 @@ export class Button extends Widget<ButtonConfig, ButtonEvents> {
       disabled = false,
       loading = false,
       type = 'button',
+      ariaLabel,
+      title,
     } = this.config;
 
     const el = this.el as HTMLButtonElement;
@@ -105,6 +111,19 @@ export class Button extends Widget<ButtonConfig, ButtonEvents> {
     if (disabled) el.setAttribute('aria-disabled', 'true');
     else el.removeAttribute('aria-disabled');
     el.setAttribute('aria-busy', String(loading));
+
+    // Accessible name: prefer an explicit aria-label/title; for icon-only
+    // buttons (no visible text) an accessible name is mandatory, so derive one
+    // from ariaLabel/title and surface it as both aria-label and title.
+    const accName = ariaLabel ?? title;
+    const iconOnly = Boolean(icon) && !text;
+    if (ariaLabel) el.setAttribute('aria-label', ariaLabel);
+    else if (iconOnly && accName) el.setAttribute('aria-label', accName);
+    else el.removeAttribute('aria-label');
+
+    const titleAttr = title ?? (iconOnly ? ariaLabel : undefined);
+    if (titleAttr) el.setAttribute('title', titleAttr);
+    else el.removeAttribute('title');
 
     const parts: string[] = [];
     if (loading) {

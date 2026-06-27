@@ -207,9 +207,14 @@ export class Layout extends Widget<LayoutConfig, LayoutEvents> {
 
   /** Create a `role=region` cell element holding the given content. */
   private makeCell(region: RegionName, content: CellContent | undefined): HTMLElement {
+    // Cells are `overflow: auto`, so a region whose content overflows becomes a
+    // scroll container. A scroll container with no focusable descendant is a
+    // keyboard trap (axe `scrollable-region-focusable`), so the cell is itself
+    // keyboard-focusable (`tabindex=0`). Paired with `role=region` + an
+    // accessible name, the scroll area is reachable and announced.
     const cell = createEl('div', {
       className: `jects-layout__cell jects-layout__cell--${region}`,
-      attrs: { role: 'region', 'aria-label': region },
+      attrs: { role: 'region', 'aria-label': region, tabindex: '0' },
     });
     if (content instanceof Widget) {
       // Caller-supplied widget: track it per-region so it SURVIVES re-renders.

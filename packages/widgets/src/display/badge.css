@@ -31,6 +31,23 @@
 
   .jects-badge__label {
     display: inline-block;
+    /* Contrast-safe ink derived from the badge fill: a deep shade of the fill's
+       own hue on light fills, a near-white on dark fills. The clamp acts as a
+       binary switch on fill lightness (l<0.55 -> light ink ~0.99, else dark ink
+       ~0.22), so every variant — semantic and CMYK — clears WCAG-AA without
+       changing the brand fill. (Solid white-on-mid-green etc. previously failed,
+       e.g. 3.29:1.) Hue preserved; chroma capped so dark ink stays legible. */
+    color: oklch(
+      from var(--_badge-bg)
+      calc(0.22 + 0.77 * clamp(0, (0.55 - l) * 1000, 1))
+      min(c, 0.06)
+      h
+    );
+  }
+  /* The outline variant has a transparent fill (no usable `from` color); keep its
+     declared foreground (page foreground on the page background, already AA). */
+  .jects-badge--outline .jects-badge__label {
+    color: var(--_badge-fg);
   }
 
   .jects-badge__dismiss {

@@ -111,7 +111,7 @@ export function register() {
         }
 
         controls.appendChild(el('label', { class: 'g-note', text: 'Filter' }));
-        const filterField = el('select', { class: 'jects-select__control', style: 'min-width:120px' });
+        const filterField = el('select', { class: 'jects-select__control', style: 'min-width:120px', 'aria-label': 'Filter field' });
         [['name', 'Name'], ['dept', 'Department'], ['status', 'Status']].forEach(([v, l]) => {
           filterField.appendChild(el('option', { value: v, text: l }));
         });
@@ -128,7 +128,7 @@ export function register() {
         filterValue.addEventListener('input', () => { clearTimeout(filterTimer); filterTimer = setTimeout(applyFilter, 250); });
 
         controls.appendChild(el('label', { class: 'g-note', style: 'margin-left:.5rem', text: 'Sort' }));
-        const sortField = el('select', { class: 'jects-select__control', style: 'min-width:120px' });
+        const sortField = el('select', { class: 'jects-select__control', style: 'min-width:120px', 'aria-label': 'Sort field' });
         [['id', 'ID'], ['name', 'Name'], ['salary', 'Salary'], ['hired', 'Hired']].forEach(([v, l]) => {
           sortField.appendChild(el('option', { value: v, text: l }));
         });

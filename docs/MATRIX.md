@@ -27,7 +27,7 @@
 | `@jects/todo` | Beta | 1 | 123 (4f) | — | 5 | ✓ | ✓ | 39.7 KB | 4.5 KB | 98 |
 | `@jects/tokens` | Stable | 3 | — | — | — | — | ✓ | 1.1 KB | — | 13 |
 | `@jects/vue` | Beta | 19 | 8 (2f) | — | — | ✓ | — | 4.3 KB | — | 61 |
-| `@jects/widgets` | Stable | 9 | 588 (54f) | 73 | 86 | ✓ | ✓ | 89.9 KB | 11.0 KB | 250 |
+| `@jects/widgets` | Stable | 9 | 588 (54f) | 73 | 86 | ✓ | ✓ | 90.0 KB | 11.1 KB | 250 |
 
 **Legend** — *Maturity*: mirrors `STATUS.md`. *Subpaths*: real `exports` entries beyond `.` and
 `./style.css` (the integration surface). *Unit/Browser/A11y*: test-case counts (`Nf` = N files).

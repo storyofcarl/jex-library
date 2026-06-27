@@ -16,7 +16,7 @@ export function register() {
     grid.appendChild(card('Icons & sizes', (h) => {
       new Button(h, { text: 'Search', icon: 'search', iconAlign: 'start' });
       new Button(h, { text: 'Next', icon: 'chevron-right', iconAlign: 'end' });
-      new Button(h, { icon: 'plus', variant: 'outline' });
+      new Button(h, { icon: 'plus', variant: 'outline', ariaLabel: 'Add item' });
       new Button(h, { text: 'Small', size: 'sm' });
       new Button(h, { text: 'Large', size: 'lg' });
     }));

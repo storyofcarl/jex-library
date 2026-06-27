@@ -21,7 +21,7 @@ export function register() {
         ],
         pasteClean: true,
         value: '<h2>Quarterly report</h2>'
-          + '<p>Edit this <strong>rich</strong> <em>content</em> — try the <span style="color:#0ea5e9">color</span>, font, image and table tools.</p>'
+          + '<p>Edit this <strong>rich</strong> <em>content</em> — try the <span style="color:#0369a1">color</span>, font, image and table tools.</p>'
           + '<table><thead><tr><th>Region</th><th>Revenue</th></tr></thead>'
           + '<tbody><tr><td>West</td><td>$24,600</td></tr><tr><td>East</td><td>$18,200</td></tr></tbody></table>'
           + '<ul><li>Bullet one</li><li>Bullet two</li></ul>',

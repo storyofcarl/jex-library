@@ -23,22 +23,25 @@
     "matrix": "node scripts/gen-matrix.mjs",
     "bench": "node scripts/bench/run.mjs",
     "security:html": "node scripts/check-html-safety.mjs",
-    "visual": "node scripts/visual-smoke.mjs"
+    "visual": "node scripts/visual-smoke.mjs",
+    "a11y:routes": "node scripts/a11y-routes.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.10",
-    "@types/node": "^22.10.2",
-    "eslint": "^9.17.0",
     "@eslint/js": "^9.17.0",
-    "typescript-eslint": "^8.18.1",
+    "@types/node": "^22.10.2",
+    "@vitest/browser": "^2.1.8",
+    "axe-core": "^4.12.1",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^15.14.0",
+    "playwright": "^1.49.1",
     "prettier": "^3.4.2",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
-    "vitest": "^2.1.8",
-    "@vitest/browser": "^2.1.8",
-    "playwright": "^1.49.1"
+    "vitest": "^2.1.8"
   }
 }

@@ -106,7 +106,10 @@
   }
 
   .jects-minical__day--outside {
-    color: oklch(var(--jects-muted-foreground) / 0.6);
+    /* Subdued via the muted-foreground token (not via opacity, which blends
+       toward the background and dropped contrast to ~2.77:1). Solid token
+       keeps the day number >=4.5:1 while still reading as "other month". */
+    color: oklch(var(--jects-muted-foreground));
   }
 
   .jects-minical__day--today {

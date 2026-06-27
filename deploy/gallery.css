@@ -860,8 +860,10 @@ pre.g-code code {
   padding: 0.05rem 0.4rem;
   border-radius: var(--jects-radius-sm);
 }
-.g-cz-badge.is-pass { background: oklch(var(--jects-success) / 0.18); color: oklch(var(--jects-success)); }
-.g-cz-badge.is-fail { background: oklch(var(--jects-destructive) / 0.15); color: oklch(var(--jects-destructive)); }
+/* Deep shade of the hue so the chip text clears WCAG-AA on its pale tinted
+   fill (full-lightness success/destructive on the ~18% tint read ~3:1). */
+.g-cz-badge.is-pass { background: oklch(var(--jects-success) / 0.18); color: oklch(from oklch(var(--jects-success)) min(l, 0.42) c h); }
+.g-cz-badge.is-fail { background: oklch(var(--jects-destructive) / 0.15); color: oklch(from oklch(var(--jects-destructive)) min(l, 0.42) c h); }
 
 /* Export code area */
 .g-cz-code {

@@ -162,22 +162,30 @@ export function createComponent<Inst extends object, Config, Events>(
         const host = hostRef.current;
         if (!host) return;
 
+        // Capture the bound-handlers map locally so the cleanup uses the same
+        // (stable, never-reassigned) Map instance even if a ref read would lint
+        // as "may have changed" (react-hooks/exhaustive-deps).
+        const bound = boundRef.current;
         const inst = new Ctor(host, configRef.current as Config);
         instanceRef.current = inst;
         prevConfigRef.current = { ...configRef.current };
 
         return () => {
-          for (const unbind of boundRef.current.values()) unbind();
-          boundRef.current.clear();
+          for (const unbind of bound.values()) unbind();
+          bound.clear();
           (inst as unknown as WidgetRuntime).destroy();
           instanceRef.current = null;
           prevConfigRef.current = null;
         };
-        // Intentional: this effect mounts/unmounts the engine only on remount.
-        // (react-hooks/exhaustive-deps is not enabled in this workspace.)
+        // Mounts/unmounts the engine only on remount (token bump).
       }, [remountToken]);
 
       // --- config -> update() (or remount on a non-updatable change) ---------
+      // Intentionally runs on EVERY commit (no dep array) to reconcile the latest
+      // props against the live engine via configRef. setRemountToken is guarded by
+      // the diff/change check below, so it cannot loop — a constraint the rule
+      // can't model, hence the scoped disable.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       useLayoutEffect(() => {
         const inst = instanceRef.current as unknown as WidgetRuntime | null;
         const prev = prevConfigRef.current;
@@ -227,7 +235,9 @@ export function createComponent<Inst extends object, Config, Events>(
       }, [handlerKeys, remountToken]);
 
       // --- expose the live engine instance via the forwarded ref -------------
-      useImperativeHandle(ref, () => instanceRef.current as Inst, [remountToken]);
+      // No dep array: refresh the handle every commit so it always resolves the
+      // current instance (incl. after a remount) without an "unnecessary dep".
+      useImperativeHandle(ref, () => instanceRef.current as Inst);
 
       return <div ref={hostRef} className={className} style={style} />;
     },

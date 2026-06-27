@@ -64,6 +64,10 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       # Representative data-heavy packages on every PR (incl. a11y specs).
       - run: pnpm --filter @jects/widgets --filter @jects/grid --filter @jects/gantt --filter @jects/scheduler --filter @jects/calendar test:browser
+      # Live-route a11y gate: axe every gallery demo route (the feature COMBINATIONS
+      # the per-package specs can't cover). Fails on any serious/critical violation.
+      - name: Accessibility — live demo routes (axe)
+        run: pnpm a11y:routes
 
   nightly:
     name: nightly — all browser/a11y + bench + visual smoke
