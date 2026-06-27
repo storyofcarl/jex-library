@@ -25,6 +25,8 @@ import {
   type WidgetEvents,
   createEl,
   register,
+  setHtml,
+  trustedHtml,
 } from '@jects/core';
 import { Mask } from '../overlays/mask.js';
 
@@ -286,15 +288,14 @@ export class Window extends Widget<WindowConfig, WindowEvents> {
         ).join('')
       : '';
 
-    // jects-safe-html: title and text escaped via escapeHtml (bodyHtml above), ids internal; html config is trusted authored body by contract
-    el.innerHTML = [
+    setHtml(el, trustedHtml([
       `<header class="jects-window__header" data-window-drag${draggable && !maximized ? '' : ' data-disabled="true"'}>`,
       `<span class="jects-window__title" id="${titleId}">${title ? escapeHtml(title) : ''}</span>`,
       `<span class="jects-window__controls">${headerControls.join('')}</span>`,
       `</header>`,
       `<div class="jects-window__body">${bodyHtml}</div>`,
       handles,
-    ].join('');
+    ].join('')));
 
     if (title !== undefined) el.setAttribute('aria-labelledby', titleId);
   }

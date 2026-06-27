@@ -8,7 +8,7 @@
  * exactly one option is tabbable at a time.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 
 export interface RadioOption {
   value: string;
@@ -184,8 +184,7 @@ export class RadioGroup extends Widget<RadioGroupConfig, RadioGroupEvents> {
     const firstEnabled = options.find((o) => !disabled && !o.disabled)?.value;
     const tabbable = value ?? firstEnabled;
 
-    // jects-safe-html: option label escaped via escapeHtml, value via escapeAttr in builder; rest static
-    el.innerHTML = options
+    setHtml(el, trustedHtml(options
       .map((o) => {
         const checked = o.value === value;
         const optDisabled = disabled || !!o.disabled;
@@ -200,7 +199,7 @@ export class RadioGroup extends Widget<RadioGroupConfig, RadioGroupEvents> {
           `</div>`,
         ].join('');
       })
-      .join('');
+      .join('')));
   }
 }
 

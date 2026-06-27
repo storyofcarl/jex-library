@@ -34,6 +34,7 @@
  */
 
 import './undo.css';
+import { setHtml, trustedHtml } from '@jects/core';
 import type { Model, RecordId } from '@jects/core';
 import type { TimeSpan } from '@jects/timeline-core';
 import type {
@@ -782,8 +783,7 @@ export class GanttUndoRedo<T extends Model = Model> implements GanttFeature<T> {
     btn.setAttribute('aria-label', label);
     btn.title = label;
     btn.disabled = true;
-    // jects-safe-html: static icon SVG (UNDO_ICON/REDO_ICON consts)
-    btn.innerHTML = icon;
+    setHtml(btn, trustedHtml(icon));
     const handler = (e: Event): void => {
       e.preventDefault();
       onClick();

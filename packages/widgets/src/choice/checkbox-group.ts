@@ -6,7 +6,7 @@
  * a label, so screen readers and keyboard (Space) work natively.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 import { renderIcon } from '@jects/icons';
 
 export interface CheckboxOption {
@@ -99,8 +99,7 @@ export class CheckboxGroup extends Widget<CheckboxGroupConfig, CheckboxGroupEven
     if (ariaLabel) el.setAttribute('aria-label', ariaLabel);
     else el.removeAttribute('aria-label');
 
-    // jects-safe-html: option label escaped via escapeHtml, value via escapeAttr in builder; rest static/renderIcon
-    el.innerHTML = options
+    setHtml(el, trustedHtml(options
       .map((o) => {
         const checked = selected.has(o.value);
         const optDisabled = disabled || !!o.disabled;
@@ -112,7 +111,7 @@ export class CheckboxGroup extends Widget<CheckboxGroupConfig, CheckboxGroupEven
           `</label>`,
         ].join('');
       })
-      .join('');
+      .join('')));
   }
 }
 

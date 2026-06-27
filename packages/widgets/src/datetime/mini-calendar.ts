@@ -8,7 +8,7 @@
  * - Emits a vetoable `beforeChange` then `change` when a day is selected.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 import {
   type WeekStart,
   MONTH_NAMES,
@@ -105,8 +105,7 @@ export class MiniCalendar extends Widget<MiniCalendarConfig, MiniCalendarEvents>
     this.el.className = ['jects-minical', this.config.cls ?? ''].filter(Boolean).join(' ');
     this.el.removeAttribute('role');
     this.el.removeAttribute('aria-label');
-    // jects-safe-html: monthLabel from MONTH_NAMES constants + numeric year; headers/rows from weekday constants + numeric cells; ids internal
-    this.el.innerHTML = `
+    setHtml(this.el, trustedHtml(`
       <div class="jects-minical__header">
         <button type="button" class="jects-minical__nav jects-minical__nav--prev" data-nav="-1" aria-label="Previous month">&#8249;</button>
         <div class="jects-minical__title" id="${titleId}" aria-live="polite">${monthLabel}</div>
@@ -115,7 +114,7 @@ export class MiniCalendar extends Widget<MiniCalendarConfig, MiniCalendarEvents>
       <div class="jects-minical__grid" role="grid" aria-labelledby="${titleId}">
         <div class="jects-minical__weekdays" role="row">${headers}</div>
         ${rows}
-      </div>`;
+      </div>`));
   }
 
   private renderCell(d: Date, value: Date | null, min: Date | null, max: Date | null): string {

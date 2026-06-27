@@ -242,8 +242,7 @@ export class ProjectLines {
   /** Repaint every line for the current axis projection. Idempotent. */
   refresh(): void {
     if (this.destroyed) return;
-    // jects-safe-html: clears content; no interpolation
-    this.el.innerHTML = '';
+    this.el.replaceChildren();
     if (this.height > 0) this.el.style.height = `${this.height}px`;
 
     for (const box of this.getVisibleLines()) {

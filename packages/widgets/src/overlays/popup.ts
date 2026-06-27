@@ -19,7 +19,9 @@ import {
   type WidgetEvents,
   createEl,
   register,
-  sanitizeHtml,
+  setHtml,
+  safeHtml,
+  trustedHtml,
 } from '@jects/core';
 
 export type PopupPlacement = 'top' | 'bottom' | 'left' | 'right';
@@ -162,7 +164,7 @@ export class Popup extends Widget<PopupConfig, PopupEvents> {
     // The panel itself must be focusable so we can move focus into it on open.
     if (this.isDialogRole && !el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
 
-    if (html !== undefined) el.innerHTML = this.config.trusted ? html : sanitizeHtml(html);
+    if (html !== undefined) setHtml(el, this.config.trusted ? trustedHtml(html) : safeHtml(html));
     else if (text !== undefined) el.textContent = text;
 
     // Keep hidden state in sync with derived open-state. The constructor applies

@@ -23,6 +23,8 @@ import {
   type WidgetEvents,
   createEl,
   register,
+  setHtml,
+  trustedHtml,
 } from '@jects/core';
 import { renderIcon, type IconName } from '@jects/icons';
 
@@ -123,8 +125,7 @@ export class Menu extends Widget<MenuConfig, MenuEvents> {
       this.activeId = focusables[0]?.id ?? null;
     }
 
-    // jects-safe-html: renderItem escapes item.text/shortcut via escapeHtml and ids/submenu label via escapeAttr; icons via renderIcon
-    this.el.innerHTML = items.map((item, i) => this.renderItem(item, [i], 0)).join('');
+    setHtml(this.el, trustedHtml(items.map((item, i) => this.renderItem(item, [i], 0)).join('')));
   }
 
   private renderItem(item: MenuItem, path: number[], depth: number): string {

@@ -5,7 +5,7 @@
  * semantic set plus the calm CMYK accents (cyan/magenta/yellow/key).
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 
 export type BadgeVariant =
   | 'primary'
@@ -77,8 +77,7 @@ export class Badge extends Widget<BadgeConfig, BadgeEvents> {
         '<button type="button" class="jects-badge__dismiss" aria-label="Dismiss">&times;</button>',
       );
     }
-    // jects-safe-html: label text escaped via escapeHtml above; dot/dismiss markup static
-    this.el.innerHTML = parts.join('');
+    setHtml(this.el, trustedHtml(parts.join('')));
   }
 }
 

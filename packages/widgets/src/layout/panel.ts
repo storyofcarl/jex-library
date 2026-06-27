@@ -23,6 +23,9 @@ import {
   register,
   escape as escapeHtml,
   sanitizeHtml,
+  setHtml,
+  safeHtml,
+  trustedHtml,
 } from '@jects/core';
 
 /**
@@ -173,7 +176,7 @@ export class Panel extends Widget<PanelConfig, PanelEvents> {
     } else {
       // A string is authored HTML → sanitized by default; only the explicit
       // `trusted` opt-out injects it raw.
-      host.innerHTML = this.config.trusted ? body : sanitizeHtml(body);
+      setHtml(host, this.config.trusted ? trustedHtml(body) : safeHtml(body));
     }
   }
 
@@ -216,11 +219,9 @@ export class Panel extends Widget<PanelConfig, PanelEvents> {
           : sanitizeHtml(tools)
         : '';
       const toolsHtml = safeTools ? `<div class="jects-panel__tools">${safeTools}</div>` : '';
-      // jects-safe-html: title escaped via escapeHtml in toggle; tools sanitizeHtml'd unless trusted opt-out
-      header.innerHTML = toggle + toolsHtml;
+      setHtml(header, trustedHtml(toggle + toolsHtml));
     } else {
-      // jects-safe-html: empty clear
-      header.innerHTML = '';
+      header.replaceChildren();
     }
 
     // ---- body ----
@@ -234,11 +235,10 @@ export class Panel extends Widget<PanelConfig, PanelEvents> {
     if (footer) {
       footerEl.hidden = false;
       // Authored HTML → sanitized by default; `trusted` opt-out injects raw.
-      footerEl.innerHTML = this.config.trusted ? footer : sanitizeHtml(footer);
+      setHtml(footerEl, this.config.trusted ? trustedHtml(footer) : safeHtml(footer));
     } else {
       footerEl.hidden = true;
-      // jects-safe-html: empty clear
-      footerEl.innerHTML = '';
+      footerEl.replaceChildren();
     }
   }
 

@@ -9,7 +9,7 @@
  * - CSS lives in `button.css`, references only `--jects-*` tokens, in `@layer jects.components`
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 import { renderIcon, type IconName } from '@jects/icons';
 
 export type ButtonVariant =
@@ -137,8 +137,7 @@ export class Button extends Widget<ButtonConfig, ButtonEvents> {
     if (!loading && icon && iconAlign === 'end') {
       parts.push(`<span class="jects-btn__icon">${renderIcon(icon, { size: 16 })}</span>`);
     }
-    // jects-safe-html: parts are renderIcon SVG + static class spans; label text escaped via escapeHtml above
-    el.innerHTML = parts.join('');
+    setHtml(el, trustedHtml(parts.join('')));
   }
 }
 

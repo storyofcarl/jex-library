@@ -38,6 +38,7 @@
  */
 
 import './export-toolbar.css';
+import { setHtml, trustedHtml } from '@jects/core';
 import type { Model } from '@jects/core';
 import type { GanttApi, GanttFeature } from '../contract.js';
 import {
@@ -221,8 +222,7 @@ export class GanttExportToolbar<T extends Model = Model>
     const label = this.config.showLabel
       ? `<span class="${TOOLBAR_BLOCK}__label">${escapeHtml(this.config.label)}</span>`
       : '';
-    // jects-safe-html: static EXPORT_ICON const + label already escaped via escapeHtml above
-    btn.innerHTML = `${EXPORT_ICON}${label}`;
+    setHtml(btn, trustedHtml(`${EXPORT_ICON}${label}`));
 
     const onClick = (e: Event): void => {
       e.preventDefault();

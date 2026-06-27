@@ -11,7 +11,7 @@
  * still lives visually inside the reused Window chrome.
  */
 
-import { createEl, type RecordId } from '@jects/core';
+import { createEl, setHtml, trustedHtml, type RecordId } from '@jects/core';
 import { Window } from '@jects/widgets';
 
 import { escapeHtml } from './card.js';
@@ -177,7 +177,7 @@ function field(
   value: string,
 ): HTMLInputElement {
   const wrap = createEl('label', { className: 'jects-kanban-editor__field' });
-  wrap.innerHTML = `<span class="jects-kanban-editor__label">${escapeHtml(label)}</span>`;
+  setHtml(wrap, trustedHtml(`<span class="jects-kanban-editor__label">${escapeHtml(label)}</span>`));
   const input = createEl('input', {
     className: 'jects-kanban-editor__input',
     attrs: { type },
@@ -190,7 +190,7 @@ function field(
 
 function areaField(form: HTMLElement, label: string, value: string): HTMLTextAreaElement {
   const wrap = createEl('label', { className: 'jects-kanban-editor__field' });
-  wrap.innerHTML = `<span class="jects-kanban-editor__label">${escapeHtml(label)}</span>`;
+  setHtml(wrap, trustedHtml(`<span class="jects-kanban-editor__label">${escapeHtml(label)}</span>`));
   const area = createEl('textarea', {
     className: 'jects-kanban-editor__input jects-kanban-editor__textarea',
     attrs: { rows: '3' },

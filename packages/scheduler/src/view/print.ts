@@ -35,7 +35,7 @@
  * idempotent; it is also auto-disposed when the host scheduler is destroyed.
  */
 
-import { EventEmitter, type RecordId, type EventMap } from '@jects/core';
+import { EventEmitter, setHtml, trustedHtml, type RecordId, type EventMap } from '@jects/core';
 import type { TimeAxis, TimeSpan, ViewPreset } from '@jects/timeline-core';
 import type {
   EventModel,
@@ -752,8 +752,7 @@ function collectStyleLinks(): string {
 function stripHtml(html: string): string {
   if (typeof document === 'undefined') return html;
   const tmp = document.createElement('div');
-  // jects-safe-html: detached node never inserted into the DOM; only .textContent is read back (HTML-to-text extraction, no script/handler execution)
-  tmp.innerHTML = html;
+  setHtml(tmp, trustedHtml(html));
   return tmp.textContent ?? '';
 }
 

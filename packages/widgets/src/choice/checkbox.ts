@@ -9,7 +9,7 @@
  * indeterminate is reflected on the DOM property and aria-checked="mixed".
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 import { renderIcon } from '@jects/icons';
 
 export interface CheckboxConfig extends WidgetConfig {
@@ -121,12 +121,11 @@ export class Checkbox extends Widget<CheckboxConfig, CheckboxEvents> {
     else input.removeAttribute('aria-label');
 
     const box = el.querySelector('.jects-checkbox__box')!;
-    // jects-safe-html: assigns only renderIcon SVG (minus/check) or empty string; no untrusted data
-    box.innerHTML = indeterminate
+    setHtml(box, trustedHtml(indeterminate
       ? renderIcon('minus', { size: 14 })
       : checked
         ? renderIcon('check', { size: 14 })
-        : '';
+        : ''));
 
     const labelEl = el.querySelector('.jects-checkbox__label') as HTMLElement;
     labelEl.textContent = label;

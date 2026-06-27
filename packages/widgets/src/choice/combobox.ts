@@ -13,7 +13,7 @@
  * `input` fires on each keystroke, `change` on (de)selection.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml, staticHtml } from '@jects/core';
 import { renderIcon } from '@jects/icons';
 import { Popup } from './popup.js';
 
@@ -355,13 +355,11 @@ export class ComboBox extends Widget<ComboBoxConfig, ComboBoxEvents> {
     this.listbox.id = this.listboxId;
     this.input.setAttribute('aria-controls', this.listboxId);
     if (this.filtered.length === 0) {
-      // jects-safe-html: static literal markup, no interpolation
-      this.listbox.innerHTML = `<div class="jects-combobox__empty">No matches</div>`;
+      setHtml(this.listbox, staticHtml`<div class="jects-combobox__empty">No matches</div>`);
       this.input.removeAttribute('aria-activedescendant');
       return;
     }
-    // jects-safe-html: option label escaped via escapeHtml, value via escapeAttr in builder; rest static/ids
-    this.listbox.innerHTML = this.filtered
+    setHtml(this.listbox, trustedHtml(this.filtered
       .map((o, i) => {
         const disabled = !!o.disabled;
         const active = i === this.activeIndex;
@@ -374,7 +372,7 @@ export class ComboBox extends Widget<ComboBoxConfig, ComboBoxEvents> {
           `</div>`,
         ].join('');
       })
-      .join('');
+      .join('')));
     this.updateActiveDescendant();
   }
 
@@ -415,7 +413,7 @@ export class ComboBox extends Widget<ComboBoxConfig, ComboBoxEvents> {
       for (const o of chips.reverse()) {
         const chip = createEl('span', {
           className: 'jects-combobox__chip',
-          html: `<span class="jects-combobox__chip-label">${escapeHtml(o.label)}</span><button type="button" class="jects-combobox__chip-remove" data-remove="${escapeAttr(o.value)}" aria-label="Remove ${escapeAttr(o.label)}">${renderIcon('x', { size: 12 })}</button>`,
+          html: trustedHtml(`<span class="jects-combobox__chip-label">${escapeHtml(o.label)}</span><button type="button" class="jects-combobox__chip-remove" data-remove="${escapeAttr(o.value)}" aria-label="Remove ${escapeAttr(o.label)}">${renderIcon('x', { size: 12 })}</button>`),
         });
         this.control.insertBefore(chip, this.control.firstChild);
       }

@@ -28,6 +28,10 @@ import {
   register,
   sanitizeHtml as coreSanitizeHtml,
   escape as coreEscape,
+  setHtml,
+  insertSafeHtml,
+  trustedHtml,
+  staticHtml,
 } from '@jects/core';
 
 /** Built-in toolbar command identifiers. */
@@ -992,7 +996,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     // the caret while the user is typing (input does not call render()).
     const current = this.editable.innerHTML;
     if (current !== value && this.lastHtml !== value) {
-      this.editable.innerHTML = sanitizeHtml(value);
+      setHtml(this.editable, trustedHtml(sanitizeHtml(value)));
     }
     this.lastHtml = this.editable.innerHTML;
 
@@ -1387,13 +1391,11 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     const block = (node as HTMLElement | null) ?? this.editable;
     if (block === this.editable) {
       const wrapper = this.ownerDoc().createElement(tagName);
-      // jects-safe-html: re-parents the editable's own already-sanitized content
-      wrapper.innerHTML = this.editable.innerHTML || '<br>';
+      setHtml(wrapper, trustedHtml(this.editable.innerHTML || '<br>'));
       this.editable.replaceChildren(wrapper);
     } else {
       const replacement = this.ownerDoc().createElement(tagName);
-      // jects-safe-html: re-parents an existing in-DOM block's sanitized content
-      replacement.innerHTML = block.innerHTML;
+      setHtml(replacement, trustedHtml(block.innerHTML));
       block.replaceWith(replacement);
     }
   }
@@ -1585,15 +1587,13 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
 
     if (op === 'addRow') {
       const fresh = row.cloneNode(true) as HTMLTableRowElement;
-      // jects-safe-html: literal single nbsp, no interpolation
-      for (const c of Array.from(fresh.children)) c.innerHTML = ' ';
+      for (const c of Array.from(fresh.children)) setHtml(c, staticHtml`&nbsp;`);
       row.parentNode?.insertBefore(fresh, row.nextSibling);
     } else if (op === 'addColumn') {
       for (const r of rows) {
         const ref = r.children[colIndex] ?? null;
         const td = this.ownerDoc().createElement('td');
-        // jects-safe-html: literal single nbsp, no interpolation
-        td.innerHTML = ' ';
+        setHtml(td, staticHtml`&nbsp;`);
         r.insertBefore(td, ref ? ref.nextSibling : null);
       }
     } else if (op === 'deleteRow') {
@@ -1674,8 +1674,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
       if (p.cell === survivor) continue;
       const content = (p.cell.innerHTML ?? '').trim();
       if (content && content !== '&nbsp;' && content !== '') {
-        // jects-safe-html: appends another in-DOM cell's already-sanitized content
-        survivor.insertAdjacentHTML('beforeend', ' ' + p.cell.innerHTML);
+        insertSafeHtml(survivor, 'beforeend', trustedHtml(' ' + p.cell.innerHTML));
       }
       p.cell.remove();
     }
@@ -1706,8 +1705,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
     // Re-add the extra columns in the survivor's own row.
     for (let i = 1; i < colspan; i++) {
       const fresh = this.ownerDoc().createElement(tag);
-      // jects-safe-html: literal single space, no interpolation
-      fresh.innerHTML = ' ';
+      setHtml(fresh, staticHtml` `);
       row.insertBefore(fresh, cell.nextSibling);
     }
     // Re-add full-width rows-worth of cells in each spanned row below.
@@ -1718,8 +1716,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
       if (!target) continue;
       for (let i = 0; i < colspan; i++) {
         const fresh = this.ownerDoc().createElement(tag);
-        // jects-safe-html: literal single space, no interpolation
-        fresh.innerHTML = ' ';
+        setHtml(fresh, staticHtml` `);
         target.appendChild(fresh);
       }
     }
@@ -1744,8 +1741,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
         replacement.setAttribute(attr.name, attr.value);
       }
       if (!isHeader) replacement.setAttribute('scope', 'col');
-      // jects-safe-html: re-parents an existing cell's already-sanitized content
-      replacement.innerHTML = c.innerHTML;
+      setHtml(replacement, trustedHtml(c.innerHTML));
       c.replaceWith(replacement);
     }
   }
@@ -2228,13 +2224,13 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
   private insertHtml(html: string): void {
     const sel = this.ownerDoc().getSelection?.();
     if (!sel || sel.rangeCount === 0) {
-      this.editable.innerHTML += sanitizeHtml(html);
+      setHtml(this.editable, trustedHtml(this.editable.innerHTML + sanitizeHtml(html)));
       return;
     }
     const range = sel.getRangeAt(0);
     range.deleteContents();
     const tpl = this.ownerDoc().createElement('template');
-    tpl.innerHTML = sanitizeHtml(html);
+    setHtml(tpl, trustedHtml(sanitizeHtml(html)));
     const frag = tpl.content;
     const last = frag.lastChild;
     range.insertNode(frag);
@@ -2398,7 +2394,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
   /** Replace the editor content with sanitized HTML. Fires `change`. */
   setHTML(html: string): this {
     const clean = sanitizeHtml(html);
-    this.editable.innerHTML = clean;
+    setHtml(this.editable, trustedHtml(clean));
     this.config = { ...this.config, value: clean };
     this.notifyChange('change');
     this.refreshState();
@@ -2455,8 +2451,7 @@ export function sanitizeHtml(html: string): string {
   const secured = coreSanitizeHtml(html);
   const doc = document.implementation.createHTMLDocument('');
   const tpl = doc.createElement('template');
-  // jects-safe-html: `secured` is coreSanitizeHtml output, parsed into an inert template
-  tpl.innerHTML = secured;
+  setHtml(tpl, trustedHtml(secured));
   sanitizeNode(tpl.content);
   return tpl.innerHTML;
 }
@@ -2472,8 +2467,7 @@ export function cleanPastedHtml(html: string): string {
   if (!html) return '';
   const doc = document.implementation.createHTMLDocument('');
   const tpl = doc.createElement('template');
-  // jects-safe-html: inert detached template parse; caller runs result through sanitizeHtml
-  tpl.innerHTML = html;
+  setHtml(tpl, trustedHtml(html));
   cleanPasteNode(tpl.content);
   return tpl.innerHTML;
 }

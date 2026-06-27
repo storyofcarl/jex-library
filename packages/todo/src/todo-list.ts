@@ -23,7 +23,10 @@ import {
   createEl,
   register,
   escape,
-  sanitizeHtml,
+  safeHtml,
+  setHtml,
+  staticHtml,
+  trustedHtml,
   type RecordId,
 } from '@jects/core';
 import { TextField, DatePicker } from '@jects/widgets';
@@ -378,7 +381,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     this.addInput = input;
     const addBtn = createEl('button', {
       className: 'jects-todo__add-btn',
-      html: `${renderIcon('plus', { size: 16 })}<span class="jects-todo__sr">${escapeHtml(this.t('addTask'))}</span>`,
+      html: trustedHtml(`${renderIcon('plus', { size: 16 })}<span class="jects-todo__sr">${escapeHtml(this.t('addTask'))}</span>`),
       attrs: { type: 'button', 'data-todo-action': 'add', 'aria-label': this.t('addTask') },
     });
     addWrap.append(input, addBtn);
@@ -404,7 +407,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
 
     // ── search ──
     const searchWrap = createEl('div', { className: 'jects-todo__search' });
-    searchWrap.innerHTML = renderIcon('search', { size: 15 });
+    setHtml(searchWrap, trustedHtml(renderIcon('search', { size: 15 })));
     const search = createEl('input', {
       className: 'jects-todo__search-input',
       attrs: { type: 'search', 'data-todo-search': '', 'aria-label': this.t('search'), placeholder: this.t('search') },
@@ -424,7 +427,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     })));
     const sortDir = createEl('button', {
       className: 'jects-todo__sortdir',
-      html: renderIcon('arrow-down', { size: 15 }),
+      html: trustedHtml(renderIcon('arrow-down', { size: 15 })),
       attrs: { type: 'button', 'data-todo-action': 'sortdir', 'aria-label': 'Toggle sort direction', 'aria-pressed': 'false' },
     });
     bar.append(groupSel, sortSel, sortDir);
@@ -454,17 +457,17 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     // ── multi-sort + filter builder + table columns ──
     const multiSortBtn = createEl('button', {
       className: 'jects-todo__toolbtn',
-      html: `${renderIcon('menu', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('addSort'))}</span>`,
+      html: trustedHtml(`${renderIcon('menu', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('addSort'))}</span>`),
       attrs: { type: 'button', 'data-todo-action': 'multi-sort', 'aria-label': this.t('addSort') },
     });
     const filterBtn = createEl('button', {
       className: 'jects-todo__toolbtn',
-      html: `${renderIcon('filter', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('filterBuilder'))}</span>`,
+      html: trustedHtml(`${renderIcon('filter', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('filterBuilder'))}</span>`),
       attrs: { type: 'button', 'data-todo-action': 'filter-builder', 'aria-label': this.t('filterBuilder') },
     });
     const columnsBtn = createEl('button', {
       className: 'jects-todo__toolbtn',
-      html: `${renderIcon('more-vertical', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('columns'))}</span>`,
+      html: trustedHtml(`${renderIcon('more-vertical', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('columns'))}</span>`),
       attrs: { type: 'button', 'data-todo-action': 'columns', 'aria-label': this.t('columns') },
     });
     bar.append(multiSortBtn, filterBtn, columnsBtn);
@@ -473,7 +476,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     const savedSel = this.buildSelect('data-todo-saved', 'Saved filters', [{ value: '', label: 'Saved filters…' }]);
     const saveBtn = createEl('button', {
       className: 'jects-todo__save',
-      html: renderIcon('filter', { size: 15 }),
+      html: trustedHtml(renderIcon('filter', { size: 15 })),
       attrs: { type: 'button', 'data-todo-action': 'save-filter', 'aria-label': 'Save current filter' },
     });
     bar.append(savedSel, saveBtn);
@@ -481,12 +484,12 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     // ── undo / redo ──
     const undoBtn = createEl('button', {
       className: 'jects-todo__hist',
-      html: `${renderIcon('chevron-left', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('undo'))}</span>`,
+      html: trustedHtml(`${renderIcon('chevron-left', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('undo'))}</span>`),
       attrs: { type: 'button', 'data-todo-action': 'undo', 'aria-label': this.t('undo'), disabled: 'disabled' },
     });
     const redoBtn = createEl('button', {
       className: 'jects-todo__hist',
-      html: `${renderIcon('chevron-right', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('redo'))}</span>`,
+      html: trustedHtml(`${renderIcon('chevron-right', { size: 15 })}<span class="jects-todo__sr">${escapeHtml(this.t('redo'))}</span>`),
       attrs: { type: 'button', 'data-todo-action': 'redo', 'aria-label': this.t('redo'), disabled: 'disabled' },
     });
     bar.append(undoBtn, redoBtn);
@@ -540,7 +543,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     if (sortDir) {
       const desc = sort.dir === 'desc';
       sortDir.setAttribute('aria-pressed', String(desc));
-      sortDir.innerHTML = renderIcon(desc ? 'arrow-up' : 'arrow-down', { size: 15 });
+      setHtml(sortDir, trustedHtml(renderIcon(desc ? 'arrow-up' : 'arrow-down', { size: 15 })));
     }
     // Saved filters menu.
     const savedSel = this.el.querySelector<HTMLSelectElement>('[data-todo-saved]');
@@ -785,7 +788,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       const swatch = g.color
         ? `<span class="jects-todo__group-swatch" style="background:oklch(${g.color})"></span>`
         : '';
-      header.innerHTML = `${swatch}<span class="jects-todo__group-label">${escapeHtml(g.label)}</span><span class="jects-todo__group-count">${g.tasks.length}</span>`;
+      setHtml(header, trustedHtml(`${swatch}<span class="jects-todo__group-label">${escapeHtml(g.label)}</span><span class="jects-todo__group-count">${g.tasks.length}</span>`));
       this.bodyEl.append(header);
       for (const task of g.tasks) {
         ids.push(this.idOf(task));
@@ -881,7 +884,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     if (this.config.selectable !== false) {
       const selBox = createEl('span', {
         className: ['jects-todo__rowsel', isSelected ? 'jects-todo__rowsel--on' : ''].filter(Boolean).join(' '),
-        html: isSelected ? renderIcon('check', { size: 13 }) : '',
+        html: trustedHtml(isSelected ? renderIcon('check', { size: 13 }) : ''),
         attrs: { 'data-todo-select': '', 'aria-hidden': 'true', title: this.t('selectTask') },
       });
       rowEl.append(selBox);
@@ -901,10 +904,9 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
         'aria-label': expanded ? 'Collapse' : 'Expand',
       },
     });
-    // jects-safe-html: renderIcon output (static icon markup) or empty string
-    twisty.innerHTML = hasKids
+    setHtml(twisty, trustedHtml(hasKids
       ? renderIcon(expanded ? 'chevron-down' : 'chevron-right', { size: 16 })
-      : '';
+      : ''));
     if (!hasKids) twisty.disabled = true;
     // NOTE: the twisty is appended INSIDE the Task cell (below) so depth
     // indentation stays inside that grid column and the columns stay aligned.
@@ -932,10 +934,9 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
         title: this.t('markComplete'),
       },
     });
-    // jects-safe-html: renderIcon output + escapeHtml'd label only
-    doneBtn.innerHTML =
+    setHtml(doneBtn, trustedHtml(
       `<span class="jects-todo__done-mark" aria-hidden="true">${done ? renderIcon('check', { size: 12 }) : ''}</span>` +
-      `<span class="jects-todo__done-text">${escapeHtml(this.t('colDone'))}</span>`;
+      `<span class="jects-todo__done-text">${escapeHtml(this.t('colDone'))}</span>`));
     rowEl.append(doneBtn);
 
     // Status pill (cycles through the workflow on click). Pointer affordance —
@@ -1008,13 +1009,13 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       const eEl = createEl('span', { className: 'jects-todo__effort' });
       const spent = task.timeSpent != null ? `${task.timeSpent}h` : '0h';
       const est = task.estimate != null ? `${task.estimate}h` : '—';
-      eEl.innerHTML = `${renderIcon('clock', { size: 12 })}<span>${escapeHtml(spent)} / ${escapeHtml(est)}</span>`;
+      setHtml(eEl, trustedHtml(`${renderIcon('clock', { size: 12 })}<span>${escapeHtml(spent)} / ${escapeHtml(est)}</span>`));
       meta.append(eEl);
     }
     // Running-timer indicator.
     if (task.timerStartedAt != null) {
       const tEl = createEl('span', { className: 'jects-todo__timer-on', attrs: { title: this.t('timerRunning') } });
-      tEl.innerHTML = `${renderIcon('clock', { size: 12 })}`;
+      setHtml(tEl, trustedHtml(`${renderIcon('clock', { size: 12 })}`));
       meta.append(tEl);
     }
     // Recurrence indicator.
@@ -1027,7 +1028,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     const blockedBy = task.dependencies?.blockedBy?.length ?? 0;
     if (blockedBy > 0) {
       const dEl = createEl('span', { className: 'jects-todo__dep' });
-      dEl.innerHTML = `${renderIcon('alert-triangle', { size: 12 })}<span>${blockedBy}</span>`;
+      setHtml(dEl, trustedHtml(`${renderIcon('alert-triangle', { size: 12 })}<span>${blockedBy}</span>`));
       meta.append(dEl);
     }
     // Custom fields flagged for the row.
@@ -1053,8 +1054,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       chip.style.setProperty('--_avatar-color', avatarColor(a));
       av.append(chip);
     }
-    // jects-safe-html: static markup; no interpolation
-    if (!(task.assignees?.length)) av.innerHTML = `<span class="jects-todo__avatar jects-todo__avatar--add">+</span>`;
+    if (!(task.assignees?.length)) setHtml(av, staticHtml`<span class="jects-todo__avatar jects-todo__avatar--add">+</span>`);
     rowEl.append(av);
 
     // ── Due cell (column 6) ──────────────────────────────────────────────
@@ -1062,7 +1062,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       className: ['jects-todo__due', 'jects-todo__inline', ds !== 'none' && ds !== 'upcoming' ? `jects-todo__due--${ds}` : ''].filter(Boolean).join(' '),
       attrs: { type: 'button', tabindex: '-1', 'aria-hidden': 'true', 'data-todo-inline': 'due' },
     });
-    dueEl.innerHTML = `${renderIcon('calendar', { size: 13 })}<span>${escapeHtml(task.due ? this.fmtDate(task.due) : '—')}</span>`;
+    setHtml(dueEl, trustedHtml(`${renderIcon('calendar', { size: 13 })}<span>${escapeHtml(task.due ? this.fmtDate(task.due) : '—')}</span>`));
     rowEl.append(dueEl);
 
     // ── Priority cell (column 7) ─────────────────────────────────────────
@@ -1139,7 +1139,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     const label = this.t('addSubtask');
     return createEl('button', {
       className: 'jects-todo__addsub',
-      html: `${renderIcon('plus', { size: 14 })}<span class="jects-todo__addsub-text">${escapeHtml(label)}</span>`,
+      html: trustedHtml(`${renderIcon('plus', { size: 14 })}<span class="jects-todo__addsub-text">${escapeHtml(label)}</span>`),
       attrs: {
         type: 'button',
         tabindex: '-1',
@@ -1158,7 +1158,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     // with no separately-focusable interactive descendants in the a11y tree.
     return createEl('button', {
       className: 'jects-todo__action',
-      html: `${renderIcon(icon, { size: 15 })}<span class="jects-todo__sr">${escapeHtml(label)}</span>`,
+      html: trustedHtml(`${renderIcon(icon, { size: 15 })}<span class="jects-todo__sr">${escapeHtml(label)}</span>`),
       attrs: {
         type: 'button',
         tabindex: '-1',
@@ -2483,7 +2483,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       const laneEl = createEl('div', { className: 'jects-todo__lane' });
       const label = createEl('div', { className: 'jects-todo__lane-label' });
       const swatch = lane.color ? `<span class="jects-todo__group-swatch" style="background:oklch(${lane.color})"></span>` : '';
-      label.innerHTML = `${swatch}<span>${escapeHtml(lane.label)}</span>`;
+      setHtml(label, trustedHtml(`${swatch}<span>${escapeHtml(lane.label)}</span>`));
       laneEl.append(label);
       const cols = createEl('div', { className: 'jects-todo__cols' });
       for (const s of statuses) {
@@ -2503,7 +2503,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     });
     const swatch = s.color ? `<span class="jects-todo__group-swatch" style="background:oklch(${s.color})"></span>` : '';
     const countText = s.wipLimit != null ? `${count} / ${s.wipLimit}` : String(count);
-    head.innerHTML = `${swatch}<span class="jects-todo__col-title">${escapeHtml(s.label)}</span><span class="jects-todo__group-count">${countText}</span>`;
+    setHtml(head, trustedHtml(`${swatch}<span class="jects-todo__col-title">${escapeHtml(s.label)}</span><span class="jects-todo__group-count">${countText}</span>`));
     return head;
   }
 
@@ -2547,7 +2547,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     if (this.config.selectable !== false) {
       const selBox = createEl('span', {
         className: ['jects-todo__rowsel', this.selected.has(id) ? 'jects-todo__rowsel--on' : ''].filter(Boolean).join(' '),
-        html: this.selected.has(id) ? renderIcon('check', { size: 13 }) : '',
+        html: trustedHtml(this.selected.has(id) ? renderIcon('check', { size: 13 }) : ''),
         attrs: { 'data-todo-select': '', 'aria-hidden': 'true', title: this.t('selectTask') },
       });
       card.append(selBox);
@@ -2571,7 +2571,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       const dueEl = createEl('span', {
         className: ['jects-todo__due', ds !== 'none' && ds !== 'upcoming' ? `jects-todo__due--${ds}` : ''].filter(Boolean).join(' '),
       });
-      dueEl.innerHTML = `${renderIcon('calendar', { size: 12 })}<span>${escapeHtml(formatDue(task.due))}</span>`;
+      setHtml(dueEl, trustedHtml(`${renderIcon('calendar', { size: 12 })}<span>${escapeHtml(formatDue(task.due))}</span>`));
       meta.append(dueEl);
     }
     if (priority !== 'none') {
@@ -2612,7 +2612,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     const mk = (label: string, bulk: string, icon?: IconName): HTMLElement =>
       createEl('button', {
         className: 'jects-todo__bulk-btn',
-        html: `${icon ? renderIcon(icon, { size: 14 }) : ''}<span>${escapeHtml(label)}</span>`,
+        html: trustedHtml(`${icon ? renderIcon(icon, { size: 14 }) : ''}<span>${escapeHtml(label)}</span>`),
         attrs: { type: 'button', 'data-todo-bulk': bulk },
       });
     const statusSel = this.buildSelect('data-todo-bulk-status', this.t('setStatus'), [
@@ -2655,7 +2655,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       const box = el.querySelector<HTMLElement>('[data-todo-select]');
       if (box) {
         box.classList.toggle('jects-todo__rowsel--on', on);
-        box.innerHTML = on ? renderIcon('check', { size: 13 }) : '';
+        setHtml(box, trustedHtml(on ? renderIcon('check', { size: 13 }) : ''));
         if (box.getAttribute('role') === 'checkbox') box.setAttribute('aria-checked', String(on));
       }
     }
@@ -2668,7 +2668,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     for (const selAll of this.el.querySelectorAll<HTMLElement>('[data-todo-select-all]')) {
       selAll.classList.toggle('jects-todo__rowsel--on', all);
       selAll.classList.toggle('jects-todo__rowsel--some', some);
-      selAll.innerHTML = all ? renderIcon('check', { size: 13 }) : some ? renderIcon('minus', { size: 13 }) : '';
+      setHtml(selAll, trustedHtml(all ? renderIcon('check', { size: 13 }) : some ? renderIcon('minus', { size: 13 }) : ''));
       if (selAll.getAttribute('role') === 'checkbox') {
         selAll.setAttribute('aria-checked', some ? 'mixed' : String(all));
       }
@@ -2734,7 +2734,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     titleInput.value = task.title ?? '';
     const close = createEl('button', {
       className: 'jects-todo__detail-close',
-      html: `${renderIcon('x', { size: 16 })}<span class="jects-todo__sr">Close details</span>`,
+      html: trustedHtml(`${renderIcon('x', { size: 16 })}<span class="jects-todo__sr">Close details</span>`),
       attrs: { type: 'button', 'data-todo-action': 'detail-close', 'aria-label': 'Close details' },
     });
     header.append(titleInput, close);
@@ -2746,7 +2746,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     if (!isLeaf(task)) {
       const p = subtreeProgress(task);
       const prog = createEl('div', { className: 'jects-todo__detail-field jects-todo__detail-field--full' });
-      prog.innerHTML = `<span class="jects-todo__detail-label">${escapeHtml(this.t('progress'))}</span><span class="jects-todo__pbadge"><span class="jects-todo__pbadge-track"><span class="jects-todo__pbadge-fill" style="inline-size:${p.percent}%"></span></span><span class="jects-todo__pbadge-num">${p.done}/${p.total}</span></span>`;
+      setHtml(prog, trustedHtml(`<span class="jects-todo__detail-label">${escapeHtml(this.t('progress'))}</span><span class="jects-todo__pbadge"><span class="jects-todo__pbadge-track"><span class="jects-todo__pbadge-fill" style="inline-size:${p.percent}%"></span></span><span class="jects-todo__pbadge-num">${p.done}/${p.total}</span></span>`));
       body.append(prog);
     }
     // Status + priority (selects).
@@ -2835,13 +2835,12 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     const lab = createEl('span', { className: 'jects-todo__detail-label' });
     lab.textContent = `${this.t('timeSpentH')}: ${spent}${est ? ` / ${est}` : ''}`;
     const barWrap = createEl('div', { className: 'jects-todo__timer-bar' });
-    // jects-safe-html: static template; numeric pct only
-    barWrap.innerHTML = `<span class="jects-todo__timer-fill${pct > 100 ? ' jects-todo__timer-fill--over' : ''}" style="inline-size:${pct}%"></span>`;
+    setHtml(barWrap, trustedHtml(`<span class="jects-todo__timer-fill${pct > 100 ? ' jects-todo__timer-fill--over' : ''}" style="inline-size:${pct}%"></span>`));
     const btn = createEl('button', {
       className: ['jects-todo__timer-btn', running ? 'jects-todo__timer-btn--on' : ''].filter(Boolean).join(' '),
       attrs: { type: 'button', 'data-todo-action': 'timer', 'data-todo-id': String(id) },
     });
-    btn.innerHTML = `${renderIcon('clock', { size: 14 })}<span>${escapeHtml(running ? this.t('stopTimer') : this.t('startTimer'))}</span>`;
+    setHtml(btn, trustedHtml(`${renderIcon('clock', { size: 14 })}<span>${escapeHtml(running ? this.t('stopTimer') : this.t('startTimer'))}</span>`));
     wrap.append(lab, barWrap, btn);
     return wrap;
   }
@@ -2865,7 +2864,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
         open.textContent = dep?.title ?? String(depId);
         if (dep && !effectiveDone(dep) && kind === 'blockedBy') chip.classList.add('jects-todo__dep-chip--open');
         const rm = createEl('button', { className: 'jects-todo__dep-rm', attrs: { type: 'button', 'data-dep-rm': String(depId), 'data-dep-kind': kind, 'aria-label': this.t('delete') } });
-        rm.innerHTML = renderIcon('x', { size: 12 });
+        setHtml(rm, trustedHtml(renderIcon('x', { size: 12 })));
         chip.append(open, rm);
         listEl.append(chip);
       }
@@ -2895,7 +2894,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     // Open-blocker warning when this task is started while blockers remain open.
     if (!effectiveDone(task) && hasOpenBlockers(task, byId)) {
       const warn = createEl('div', { className: 'jects-todo__dep-warn' });
-      warn.innerHTML = `${renderIcon('alert-triangle', { size: 13 })}<span>${escapeHtml(this.t('blockedWarning'))}</span>`;
+      setHtml(warn, trustedHtml(`${renderIcon('alert-triangle', { size: 13 })}<span>${escapeHtml(this.t('blockedWarning'))}</span>`));
       wrap.append(warn);
     }
     return wrap;
@@ -2915,11 +2914,11 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       // sanitizer so an untrusted attachment URL with a `javascript:` (or other
       // unsafe) scheme is neutralized rather than rendered as a live link.
       const name = att.url
-        ? sanitizeHtml(`<a href="${escapeAttr(att.url)}" target="_blank" rel="noopener">${escapeHtml(att.name)}</a>`)
-        : `<span>${escapeHtml(att.name)}</span>`;
-      item.innerHTML = name;
+        ? safeHtml(`<a href="${escapeAttr(att.url)}" target="_blank" rel="noopener">${escapeHtml(att.name)}</a>`)
+        : trustedHtml(`<span>${escapeHtml(att.name)}</span>`);
+      setHtml(item, name);
       const rm = createEl('button', { className: 'jects-todo__attach-rm', attrs: { type: 'button', 'data-attach-rm': att.id, 'aria-label': this.t('delete') } });
-      rm.innerHTML = renderIcon('x', { size: 12 });
+      setHtml(rm, trustedHtml(renderIcon('x', { size: 12 })));
       item.append(rm);
       listEl.append(item);
     }
@@ -2927,7 +2926,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     const row = createEl('div', { className: 'jects-todo__attach-add' });
     const input = createEl('input', { className: 'jects-todo__detail-input', attrs: { type: 'text', 'data-attach-input': '', placeholder: this.t('addAttachment'), 'aria-label': this.t('addAttachment') } }) as HTMLInputElement;
     const btn = createEl('button', { className: 'jects-todo__attach-btn', attrs: { type: 'button', 'data-attach-add': String(id) } });
-    btn.innerHTML = renderIcon('plus', { size: 14 });
+    setHtml(btn, trustedHtml(renderIcon('plus', { size: 14 })));
     row.append(input, btn);
     wrap.append(row);
     return wrap;
@@ -2946,8 +2945,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       const meta = createEl('div', { className: 'jects-todo__comment-meta' });
       meta.textContent = `${c.author} · ${formatDateLocale(new Date(c.createdAt).toISOString().slice(0, 10), this.locale())}`;
       const text = createEl('div', { className: 'jects-todo__comment-text' });
-      // jects-safe-html: renderMentions escapes text + mention labels
-      text.innerHTML = this.renderMentions(c.text, c.mentions ?? []);
+      setHtml(text, trustedHtml(this.renderMentions(c.text, c.mentions ?? [])));
       item.append(meta, text);
       thread.append(item);
     }
@@ -2958,7 +2956,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       if (e.key === 'Enter' && input.value.trim()) { e.preventDefault(); this.addComment(id, input.value.trim()); }
     });
     const btn = createEl('button', { className: 'jects-todo__comment-btn', attrs: { type: 'button', 'data-comment-add': String(id) } });
-    btn.innerHTML = renderIcon('plus', { size: 14 });
+    setHtml(btn, trustedHtml(renderIcon('plus', { size: 14 })));
     row.append(input, btn);
     wrap.append(row);
     return wrap;
@@ -3234,7 +3232,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
   private navButton(action: string, label: string, icon: IconName | null): HTMLElement {
     return createEl('button', {
       className: 'jects-todo__navbtn',
-      html: icon ? `${renderIcon(icon, { size: 15 })}<span class="jects-todo__sr">${escapeHtml(label)}</span>` : escapeHtml(label),
+      html: trustedHtml(icon ? `${renderIcon(icon, { size: 15 })}<span class="jects-todo__sr">${escapeHtml(label)}</span>` : escapeHtml(label)),
       attrs: { type: 'button', 'data-todo-action': action, 'aria-label': label },
     });
   }
@@ -3556,7 +3554,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
         const s = effectiveStatus(task, this.statuses());
         cell.classList.add('jects-todo__inline'); cell.dataset.todoInline = 'status';
         if (s.color) cell.style.setProperty('--_status-color', s.color);
-        cell.innerHTML = `<span class="jects-todo__status">${escapeHtml(s.label)}</span>`;
+        setHtml(cell, trustedHtml(`<span class="jects-todo__status">${escapeHtml(s.label)}</span>`));
         break;
       }
       case 'priority':
@@ -3673,7 +3671,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
         attrs: { type: 'button', role: 'option', 'aria-selected': String(!!o.current) },
       });
       const swatch = o.color ? `<span class="jects-todo__group-swatch" style="background:oklch(${o.color})"></span>` : '';
-      item.innerHTML = `${swatch}<span>${escapeHtml(o.label)}</span>`;
+      setHtml(item, trustedHtml(`${swatch}<span>${escapeHtml(o.label)}</span>`));
       item.addEventListener('click', () => { onPick(o.value); this.closePopover(); });
       list.append(item);
     }
@@ -3743,7 +3741,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
           className: ['jects-todo__picker-item', on ? 'jects-todo__picker-item--on' : ''].filter(Boolean).join(' '),
           attrs: { type: 'button', role: 'option', 'aria-selected': String(on) },
         });
-        item.innerHTML = `<span class="jects-todo__avatar" style="--_avatar-color:${avatarColor(a)}">${escapeHtml(initials(a))}</span><span>${escapeHtml(a)}</span>${on ? renderIcon('check', { size: 13 }) : ''}`;
+        setHtml(item, trustedHtml(`<span class="jects-todo__avatar" style="--_avatar-color:${avatarColor(a)}">${escapeHtml(initials(a))}</span><span>${escapeHtml(a)}</span>${on ? renderIcon('check', { size: 13 }) : ''}`));
         item.addEventListener('click', () => {
           if (selected.has(a)) selected.delete(a); else selected.add(a);
           onCommit([...selected]);
@@ -3795,7 +3793,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
           attrs: { type: 'button', role: 'option', 'aria-selected': String(on) },
         });
         const sw = tag.color ? `<span class="jects-todo__group-swatch" style="background:oklch(${tag.color})"></span>` : '';
-        item.innerHTML = `${sw}<span>${escapeHtml(tag.text)}</span>${on ? renderIcon('check', { size: 13 }) : ''}`;
+        setHtml(item, trustedHtml(`${sw}<span>${escapeHtml(tag.text)}</span>${on ? renderIcon('check', { size: 13 }) : ''}`));
         item.addEventListener('click', () => {
           if (selected.has(tag.text)) selected.delete(tag.text); else selected.set(tag.text, { ...tag });
           onCommit([...selected.values()]);
@@ -3859,13 +3857,13 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
         sel.value = crit.field;
         sel.addEventListener('change', () => { sort[i] = { field: sel.value as TodoSortField, dir: crit.dir ?? 'asc' }; this.setSort(sort); draw(); });
         const dir = createEl('button', { className: 'jects-todo__sortdir', attrs: { type: 'button', 'aria-label': this.t('toggleSortDir') } });
-        dir.innerHTML = renderIcon(crit.dir === 'desc' ? 'arrow-up' : 'arrow-down', { size: 14 });
+        setHtml(dir, trustedHtml(renderIcon(crit.dir === 'desc' ? 'arrow-up' : 'arrow-down', { size: 14 })));
         dir.addEventListener('click', () => { sort[i] = { field: crit.field, dir: crit.dir === 'desc' ? 'asc' : 'desc' }; this.setSort(sort); draw(); });
         const up = createEl('button', { className: 'jects-todo__builder-move', attrs: { type: 'button', 'aria-label': this.t('prev'), disabled: i === 0 ? 'disabled' : '' } });
-        up.innerHTML = renderIcon('chevron-up', { size: 14 });
+        setHtml(up, trustedHtml(renderIcon('chevron-up', { size: 14 })));
         up.addEventListener('click', () => { if (i > 0) { [sort[i - 1], sort[i]] = [sort[i]!, sort[i - 1]!]; this.setSort(sort); draw(); } });
         const rm = createEl('button', { className: 'jects-todo__builder-rm', attrs: { type: 'button', 'aria-label': this.t('delete') } });
-        rm.innerHTML = renderIcon('x', { size: 14 });
+        setHtml(rm, trustedHtml(renderIcon('x', { size: 14 })));
         rm.addEventListener('click', () => { sort.splice(i, 1); this.setSort(sort.length ? sort : [{ field: 'manual' }]); draw(); });
         row.append(sel, dir, up, rm);
         rows.append(row);
@@ -3873,7 +3871,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     };
 
     const addBtn = createEl('button', { className: 'jects-todo__builder-add', attrs: { type: 'button' } });
-    addBtn.innerHTML = `${renderIcon('plus', { size: 14 })}<span>${escapeHtml(this.t('addSort'))}</span>`;
+    setHtml(addBtn, trustedHtml(`${renderIcon('plus', { size: 14 })}<span>${escapeHtml(this.t('addSort'))}</span>`));
     addBtn.addEventListener('click', () => {
       const sort = this.getSort().filter((s) => s.field !== 'manual');
       const used = new Set(sort.map((s) => s.field));
@@ -3986,7 +3984,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
         const span = createEl('span'); span.textContent = this.tableColLabel(c);
         lab.append(cb, span);
         const up = createEl('button', { className: 'jects-todo__builder-move', attrs: { type: 'button', 'aria-label': this.t('prev'), disabled: i === 0 ? 'disabled' : '' } });
-        up.innerHTML = renderIcon('chevron-up', { size: 14 });
+        setHtml(up, trustedHtml(renderIcon('chevron-up', { size: 14 })));
         up.addEventListener('click', () => { if (i > 0) { [cols[i - 1], cols[i]] = [cols[i]!, cols[i - 1]!]; this.setTableColumns(cols); draw(); } });
         row.append(lab, up);
         rows.append(row);
@@ -4005,8 +4003,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
       className: 'jects-todo__pbadge',
       attrs: { 'aria-hidden': 'true', title: `${p.done} / ${p.total}` },
     });
-    // jects-safe-html: static template; numeric values only
-    badge.innerHTML = `<span class="jects-todo__pbadge-track"><span class="jects-todo__pbadge-fill" style="inline-size:${p.percent}%"></span></span><span class="jects-todo__pbadge-num">${p.done}/${p.total}</span>`;
+    setHtml(badge, trustedHtml(`<span class="jects-todo__pbadge-track"><span class="jects-todo__pbadge-fill" style="inline-size:${p.percent}%"></span></span><span class="jects-todo__pbadge-num">${p.done}/${p.total}</span>`));
     return badge;
   }
 

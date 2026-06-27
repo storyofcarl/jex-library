@@ -110,8 +110,7 @@ export class Toolbar extends Widget<ToolbarConfig, ToolbarEvents> {
       .join(' ');
     this.el.setAttribute('aria-orientation', orientation);
     this.el.setAttribute('aria-label', this.config.label ?? 'Toolbar');
-    // jects-safe-html: empty clear; items built below as DOM nodes / Button widgets
-    this.el.innerHTML = '';
+    this.el.replaceChildren();
 
     const visible = overflowAfter > 0 ? items.slice(0, overflowAfter) : items;
     const overflow = overflowAfter > 0 ? items.slice(overflowAfter) : [];

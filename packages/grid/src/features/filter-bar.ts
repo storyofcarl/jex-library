@@ -12,7 +12,7 @@
  */
 
 import type { Model } from '@jects/core';
-import { createEl } from '@jects/core';
+import { createEl, setHtml, trustedHtml } from '@jects/core';
 import type { ColumnDef, FilterState, GridApi, GridFeature } from '../contract.js';
 import { Disposers, colId, escapeHtml, toNumber } from './shared.js';
 import { type FilterFeature, makeFilterPredicate } from './filter.js';
@@ -99,8 +99,7 @@ export class FilterBarFeature<Row extends Model = Model> implements GridFeature<
       .filter((c) => !c.hidden)
       .map((c) => this.renderCell(c))
       .join('');
-    // jects-safe-html: cells built by renderCell with all column data (id/header/placeholder) escaped via escapeHtml; widths are numeric
-    this.root.innerHTML = cells;
+    setHtml(this.root, trustedHtml(cells));
     for (const c of this.api.columns) {
       if (c.hidden) continue;
       const id = colId(c);

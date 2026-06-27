@@ -8,7 +8,7 @@
  * Chrome (axes/legend/tooltip) is styled token-pure via chart.css. Data-series
  * fills come from the house CMYK ramp tokens, resolved in JS so Canvas works too.
  */
-import { Widget, createEl, register, sanitizeHtml } from '@jects/core';
+import { Widget, createEl, register, safeHtml, setHtml } from '@jects/core';
 
 import type {
   ChartConfig,
@@ -1733,7 +1733,7 @@ export class Chart extends Widget<ChartConfig, ChartEvents> {
       // `html` and route it through the shared core sanitizer so injected
       // <script>/on*-handlers/js: URLs are stripped while legitimate formatting
       // (e.g. <b>, <span>) survives.
-      this.tooltipEl.innerHTML = sanitizeHtml(fmt(ctx));
+      setHtml(this.tooltipEl, safeHtml(fmt(ctx)));
     } else {
       // Build the default tooltip via the DOM API (no HTML parsing). ctx.color is
       // user-supplied (SeriesConfig.color) — interpolating it into an

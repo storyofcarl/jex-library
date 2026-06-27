@@ -96,6 +96,9 @@ export {
   sanitizeHtml,
   safeHtml,
   staticHtml,
+  trustedHtml,
+  setHtml,
+  insertSafeHtml,
   type SafeHtml,
   type SanitizeOptions,
 } from './sanitize.js';

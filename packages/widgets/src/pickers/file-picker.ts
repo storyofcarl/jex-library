@@ -15,7 +15,7 @@
  * + drag state live in a small state object stashed on the root element.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, trustedHtml } from '@jects/core';
 
 export interface FilePickerConfig extends WidgetConfig {
   /** Accept filter, mirrors the native input `accept` (e.g. `image/*,.pdf`). */
@@ -111,7 +111,7 @@ export class FilePicker extends Widget<FilePickerConfig, FilePickerEvents> {
     const icon = createEl('span', {
       className: 'jects-filepicker__zone-icon',
       attrs: { 'aria-hidden': 'true' },
-      html: uploadIcon(),
+      html: trustedHtml(uploadIcon()),
     });
 
     // hidden native input
@@ -325,8 +325,7 @@ export class FilePicker extends Widget<FilePickerConfig, FilePickerEvents> {
 
   private renderList(): void {
     const listEl = this.listEl;
-    // jects-safe-html: empty clear; rows built below as DOM nodes
-    listEl.innerHTML = '';
+    listEl.replaceChildren();
     const entries = this.state.entries;
     listEl.hidden = entries.length === 0;
     for (const entry of entries) {

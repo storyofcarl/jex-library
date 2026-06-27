@@ -19,6 +19,8 @@ import {
   createEl,
   register,
   escape as esc,
+  setHtml,
+  trustedHtml,
   type RecordId,
 } from '@jects/core';
 import type {
@@ -361,8 +363,7 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
       .filter(Boolean)
       .join(' ');
 
-    // jects-safe-html: static empty string clears container
-    this.el.innerHTML = '';
+    this.el.replaceChildren();
 
     if (cfg.toolbar !== false) {
       this.toolbarEl = this.buildToolbar();
@@ -418,8 +419,7 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
     const mk = (label: string, aria: string, cls: string, onClick: () => void): HTMLButtonElement => {
       const b = createEl('button', { className: `jects-cal__btn ${cls}` });
       b.type = 'button';
-      // jects-safe-html: display text escaped via esc()
-      b.innerHTML = esc(label);
+      setHtml(b, trustedHtml(esc(label)));
       b.setAttribute('aria-label', aria);
       b.addEventListener('click', onClick);
       return b;
@@ -498,8 +498,7 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
     const head = createEl('div', { className: 'jects-cal__mini-head' });
     const prev = createEl('button', { className: 'jects-cal__btn jects-cal__mini-nav' });
     prev.type = 'button';
-    // jects-safe-html: static glyph
-    prev.innerHTML = '‹';
+    setHtml(prev, trustedHtml('‹'));
     prev.setAttribute('aria-label', 'Previous month');
     prev.addEventListener('click', () => {
       this.miniMonth = addMonths(this.miniMonth, -1);
@@ -507,8 +506,7 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
     });
     const next = createEl('button', { className: 'jects-cal__btn jects-cal__mini-nav' });
     next.type = 'button';
-    // jects-safe-html: static glyph
-    next.innerHTML = '›';
+    setHtml(next, trustedHtml('›'));
     next.setAttribute('aria-label', 'Next month');
     next.addEventListener('click', () => {
       this.miniMonth = addMonths(this.miniMonth, 1);
@@ -688,8 +686,7 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
     // Load-on-demand: ensure the visible window is fetched before painting.
     const r = this.viewRange();
     this.loadRange(r.start, r.end);
-    // jects-safe-html: static empty string clears container
-    this.viewEl.innerHTML = '';
+    this.viewEl.replaceChildren();
     switch (this.activeView) {
       case 'month': return this.renderMonth();
       case 'week': return this.renderTimeGrid(weekDays(this.anchor, this.weekStart()));
@@ -908,10 +905,14 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
     chip.style.setProperty('--_cal-event', this.colorVar(o.event));
     chip.dataset.eventId = String(o.event.id);
     const time = o.event.allDay ? '' : `${this.clockLabel(o.start)} `;
-    // jects-safe-html: static spans; user fields escaped via esc()
-    chip.innerHTML = compact
-      ? `<span class="jects-cal__event-dot" aria-hidden="true"></span><span class="jects-cal__event-time">${time}</span><span class="jects-cal__event-title">${esc(o.event.title)}</span>`
-      : `<span class="jects-cal__event-title">${esc(o.event.title)}</span>`;
+    setHtml(
+      chip,
+      trustedHtml(
+        compact
+          ? `<span class="jects-cal__event-dot" aria-hidden="true"></span><span class="jects-cal__event-time">${time}</span><span class="jects-cal__event-title">${esc(o.event.title)}</span>`
+          : `<span class="jects-cal__event-title">${esc(o.event.title)}</span>`,
+      ),
+    );
     chip.setAttribute('aria-label', `${o.event.title}${time ? ` at ${time.trim()}` : ', all day'}`);
     chip.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -949,8 +950,12 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
     for (const day of days) {
       const dh = createEl('div', { className: 'jects-cal__tg-daycol-head' });
       if (isSameDay(day, today)) dh.classList.add('jects-cal__tg-daycol-head--today');
-      // jects-safe-html: static spans; internal weekday/date values only
-      dh.innerHTML = `<span class="jects-cal__tg-dow">${this.wd(day.getDay())}</span><span class="jects-cal__tg-date">${day.getDate()}</span>`;
+      setHtml(
+        dh,
+        trustedHtml(
+          `<span class="jects-cal__tg-dow">${this.wd(day.getDay())}</span><span class="jects-cal__tg-date">${day.getDate()}</span>`,
+        ),
+      );
       const captured = new Date(day);
       dh.addEventListener('click', () => {
         if (days.length > 1) {
@@ -1067,11 +1072,14 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
     ev.style.left = `${lo.column * widthPct}%`;
     ev.style.width = `calc(${widthPct}% - 2px)`;
     const time = this.clockLabel(o.start);
-    // jects-safe-html: static spans; user fields escaped via esc()
-    ev.innerHTML =
-      `<span class="jects-cal__event-time">${time}</span>` +
-      `<span class="jects-cal__event-title">${esc(o.event.title)}</span>` +
-      (o.event.readOnly ? '' : '<span class="jects-cal__event-resize" aria-hidden="true"></span>');
+    setHtml(
+      ev,
+      trustedHtml(
+        `<span class="jects-cal__event-time">${time}</span>` +
+          `<span class="jects-cal__event-title">${esc(o.event.title)}</span>` +
+          (o.event.readOnly ? '' : '<span class="jects-cal__event-resize" aria-hidden="true"></span>'),
+      ),
+    );
     ev.setAttribute('aria-label', `${o.event.title} at ${time}`);
     ev.addEventListener('click', (e) => {
       if ((e.target as HTMLElement).classList.contains('jects-cal__event-resize')) return;
@@ -1190,12 +1198,15 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
         row.style.setProperty('--_cal-event', this.colorVar(o.event));
         row.dataset.eventId = String(o.event.id);
         const time = o.event.allDay ? 'All day' : this.clockLabel(o.start);
-        // jects-safe-html: static spans; user fields escaped via esc()
-        row.innerHTML =
-          `<span class="jects-cal__agenda-time">${esc(time)}</span>` +
-          `<span class="jects-cal__agenda-dot" aria-hidden="true"></span>` +
-          `<span class="jects-cal__agenda-title">${esc(o.event.title)}</span>` +
-          (o.event.location ? `<span class="jects-cal__agenda-loc">${esc(o.event.location)}</span>` : '');
+        setHtml(
+          row,
+          trustedHtml(
+            `<span class="jects-cal__agenda-time">${esc(time)}</span>` +
+              `<span class="jects-cal__agenda-dot" aria-hidden="true"></span>` +
+              `<span class="jects-cal__agenda-title">${esc(o.event.title)}</span>` +
+              (o.event.location ? `<span class="jects-cal__agenda-loc">${esc(o.event.location)}</span>` : ''),
+          ),
+        );
         row.setAttribute('aria-label', `${o.event.title}, ${time}`);
         row.addEventListener('click', () => {
           this.emit('eventClick', { event: o.event, occurrence: o });
@@ -1241,8 +1252,7 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
     header.append(createEl('div', { className: 'jects-cal__tg-corner' }));
     for (const r of resources) {
       const dh = createEl('div', { className: 'jects-cal__tg-daycol-head' });
-      // jects-safe-html: static span; resource name escaped via esc()
-      dh.innerHTML = `<span class="jects-cal__tg-dow">${esc(r.name)}</span>`;
+      setHtml(dh, trustedHtml(`<span class="jects-cal__tg-dow">${esc(r.name)}</span>`));
       if (r.color) dh.style.setProperty('--_cal-res', `var(--jects-${r.color})`);
       header.append(dh);
     }
@@ -1357,10 +1367,13 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
         bar.style.left = `${left}%`;
         bar.style.width = `${width}%`;
         bar.dataset.eventId = String(o.event.id);
-        // jects-safe-html: static spans; user fields escaped via esc()
-        bar.innerHTML =
-          `<span class="jects-cal__event-time">${this.clockLabel(o.start)}</span>` +
-          `<span class="jects-cal__event-title">${esc(o.event.title)}</span>`;
+        setHtml(
+          bar,
+          trustedHtml(
+            `<span class="jects-cal__event-time">${this.clockLabel(o.start)}</span>` +
+              `<span class="jects-cal__event-title">${esc(o.event.title)}</span>`,
+          ),
+        );
         bar.setAttribute('aria-label', `${o.event.title} at ${this.clockLabel(o.start)}`);
         bar.addEventListener('click', (ev) => {
           ev.stopPropagation();

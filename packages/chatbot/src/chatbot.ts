@@ -30,7 +30,10 @@ import {
   createEl,
   register,
   escapeHtml,
-  sanitizeHtml,
+  setHtml,
+  safeHtml,
+  staticHtml,
+  trustedHtml,
   type WidgetConfig,
   type WidgetEvents,
   type RecordId,
@@ -377,19 +380,22 @@ export class Chatbot extends Widget<ChatbotConfig, ChatbotEvents> {
     const show = list.length > 0 && !this.s.suggestionsDismissed && !this.s.busy;
     wrap.hidden = !show;
     if (!show) {
-      // jects-safe-html: static empty string clears container
-      wrap.innerHTML = '';
+      wrap.replaceChildren();
       return;
     }
-    // jects-safe-html: static button markup; suggestion text escaped via escapeAttr/escapeHtml
-    wrap.innerHTML = list
-      .map(
-        (s) =>
-          `<button type="button" class="jects-chatbot__chip" data-text="${escapeAttr(s)}">${escapeHtml(
-            s,
-          )}</button>`,
-      )
-      .join('');
+    setHtml(
+      wrap,
+      trustedHtml(
+        list
+          .map(
+            (s) =>
+              `<button type="button" class="jects-chatbot__chip" data-text="${escapeAttr(s)}">${escapeHtml(
+                s,
+              )}</button>`,
+          )
+          .join(''),
+      ),
+    );
   }
 
   // ---- public API ---------------------------------------------------------
@@ -404,8 +410,7 @@ export class Chatbot extends Widget<ChatbotConfig, ChatbotEvents> {
     for (const av of this.s.avatars.values()) av.destroy();
     this.s.avatars.clear();
     this.store.parse([]);
-    // jects-safe-html: static empty string clears container
-    this.listEl.innerHTML = '';
+    this.listEl.replaceChildren();
     this.statusEl.textContent = '';
     this.s.suggestionsDismissed = false;
     this.renderSuggestions();
@@ -580,7 +585,7 @@ export class Chatbot extends Widget<ChatbotConfig, ChatbotEvents> {
       const copy = createEl('button', {
         className: 'jects-chatbot__copy',
         attrs: { type: 'button', 'aria-label': 'Copy message', 'data-msg-id': String(m.id) },
-        html: '<span aria-hidden="true">Copy</span>',
+        html: staticHtml`<span aria-hidden="true">Copy</span>`,
       });
       bubbleWrap.append(copy);
     }
@@ -592,11 +597,10 @@ export class Chatbot extends Widget<ChatbotConfig, ChatbotEvents> {
   private fillBubble(bubble: HTMLElement, m: ChatMessage): void {
     if (m.role === 'assistant') {
       const render = this.config.renderMarkdown ?? defaultRenderMarkdown;
-      bubble.innerHTML = sanitizeHtml(render(m.text)) || (m.streaming ? '' : '');
+      setHtml(bubble, safeHtml(render(m.text) || (m.streaming ? '' : '')));
       bubble.classList.toggle('jects-chatbot__bubble--streaming', !!m.streaming);
       if (m.streaming && !m.text) {
-        // jects-safe-html: static template, no interpolation
-        bubble.innerHTML = typingIndicatorHtml();
+        setHtml(bubble, trustedHtml(typingIndicatorHtml()));
       }
       // While streaming, mark the bubble busy and hide its partial/growing text
       // from assistive tech so the polite log doesn't re-announce each token.
@@ -610,7 +614,7 @@ export class Chatbot extends Widget<ChatbotConfig, ChatbotEvents> {
       }
     } else {
       // User/system text is escaped, with line breaks preserved.
-      bubble.innerHTML = escapeHtml(m.text).replace(/\n/g, '<br>');
+      setHtml(bubble, trustedHtml(escapeHtml(m.text).replace(/\n/g, '<br>')));
     }
   }
 

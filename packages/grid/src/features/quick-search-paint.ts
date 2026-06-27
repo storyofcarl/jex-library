@@ -28,6 +28,7 @@
  */
 
 import type { Model } from '@jects/core';
+import { setHtml, trustedHtml } from '@jects/core';
 import type { GridApi } from '../contract.js';
 
 /** CSS class applied to a cell whose value matches the active quick-search. */
@@ -119,8 +120,7 @@ export function applyQuickSearchHighlight(
   // Active match: replace the plain text node with the feature's escaped
   // `<mark>` markup. `highlight()` HTML-escapes every non-matched span, so this
   // is XSS-safe even for values containing `<`, `>`, `&`, or quotes.
-  // jects-safe-html: highlight() escapes text before marking
-  cellEl.innerHTML = search.highlight(text);
+  setHtml(cellEl, trustedHtml(search.highlight(text)));
   cellEl.classList.add(SEARCH_MATCH_CELL_CLASS);
   // A non-visual hook for AT / tests / custom styling to detect a match without
   // re-running the matcher.

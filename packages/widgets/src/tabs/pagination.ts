@@ -12,7 +12,7 @@
  * CSS lives in pagination.css (token-only, @layer jects.components).
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 import { renderIcon } from '@jects/icons';
 import { Select } from '../choice/select.js';
 
@@ -326,8 +326,7 @@ export class Pagination extends Widget<PaginationConfig, PaginationEvents> {
       parts.push(this.navBtn('last', 'Last page', 'chevrons-up-down', atEnd || disabled, true));
     }
 
-    // jects-safe-html: page items interpolate only numeric page numbers; labels static; icons via renderIcon
-    nav.innerHTML = parts.join('');
+    setHtml(nav, trustedHtml(parts.join('')));
 
     this.renderSizeSelect(pageSizeOptions, disabled);
   }

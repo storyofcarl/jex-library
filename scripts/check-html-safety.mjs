@@ -54,6 +54,9 @@ const SAFETY_MARKERS = [
   'escape(',
   'safeHtml',
   'staticHtml',
+  'trustedHtml',
+  'setHtml',
+  'insertSafeHtml',
   'renderIcon',
   'textContent',
   '// jects-safe-html:',
@@ -72,6 +75,9 @@ function collectFiles(dir) {
     }
     if (!/\.tsx?$/.test(entry)) continue;
     if (/\.test\./.test(entry) || /\.stories\./.test(entry) || entry.endsWith('.d.ts')) continue;
+    // sanitize.ts defines the sanctioned setHtml/insertSafeHtml sinks themselves
+    // (and documents insertAdjacentHTML in prose) — the only place raw sinks live.
+    if (full.replace(/\\/g, '/').endsWith('packages/core/src/sanitize.ts')) continue;
     out.push(full);
   }
   return out;

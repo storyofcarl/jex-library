@@ -15,7 +15,9 @@ import {
   type WidgetEvents,
   createEl,
   register,
-  sanitizeHtml,
+  setHtml,
+  safeHtml,
+  trustedHtml,
 } from '@jects/core';
 
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
@@ -97,7 +99,7 @@ export class Tooltip extends Widget<TooltipConfig, TooltipEvents> {
       .join(' ');
     el.setAttribute('data-placement', placement);
     el.id ||= this.id;
-    if (html !== undefined) el.innerHTML = this.config.trusted ? html : sanitizeHtml(html);
+    if (html !== undefined) setHtml(el, this.config.trusted ? trustedHtml(html) : safeHtml(html));
     else if (text !== undefined) el.textContent = text;
 
     if (!wasVisible) el.hidden = true;

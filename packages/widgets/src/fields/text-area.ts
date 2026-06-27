@@ -9,7 +9,7 @@
  * Events: input / change / focus / blur.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 import type { FieldSize } from './text-field.js';
 
 export interface TextAreaConfig extends WidgetConfig {
@@ -180,7 +180,7 @@ export class TextArea extends Widget<TextAreaConfig, TextAreaEvents> {
         labelEl = createEl('label', { className: 'jects-textarea__label', attrs: { for: this.inputId } });
         this.el.insertBefore(labelEl, textarea);
       }
-      labelEl.innerHTML = `${escapeHtml(label)}${required ? '<span class="jects-textarea__required" aria-hidden="true">*</span>' : ''}`;
+      setHtml(labelEl, trustedHtml(`${escapeHtml(label)}${required ? '<span class="jects-textarea__required" aria-hidden="true">*</span>' : ''}`));
     } else if (labelEl) {
       labelEl.remove();
     }

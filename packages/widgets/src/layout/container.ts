@@ -18,6 +18,7 @@ import {
   createEl,
   register,
   create,
+  safeHtml,
   type TypedConfig,
 } from '@jects/core';
 
@@ -137,7 +138,7 @@ export class Container extends Widget<ContainerConfig, ContainerEvents> {
       return undefined;
     }
     if (typeof item === 'string') {
-      const wrap = createEl('div', { className: 'jects-container__html', html: item });
+      const wrap = createEl('div', { className: 'jects-container__html', html: safeHtml(item) });
       this.el.appendChild(wrap);
       return undefined;
     }

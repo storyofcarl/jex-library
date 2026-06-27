@@ -22,7 +22,9 @@ import {
   type WidgetEvents,
   createEl,
   register,
-  sanitizeHtml,
+  setHtml,
+  safeHtml,
+  trustedHtml,
 } from '@jects/core';
 
 export type SplitterOrientation = 'horizontal' | 'vertical';
@@ -281,7 +283,7 @@ export class Splitter extends Widget<SplitterConfig, SplitterEvents> {
     }
     // A string is authored HTML → sanitized by default; only the explicit
     // `trusted` opt-out injects it raw.
-    host.innerHTML = this.config.trusted ? pane : sanitizeHtml(pane);
+    setHtml(host, this.config.trusted ? trustedHtml(pane) : safeHtml(pane));
     return null;
   }
 

@@ -7,7 +7,7 @@
  * Home/End jump to bounds.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 
 export interface RatingConfig extends WidgetConfig {
   /** Number of stars. Default `5`. */
@@ -156,8 +156,7 @@ export class Rating extends Widget<RatingConfig, RatingEvents> {
           `</span>`,
       );
     }
-    // jects-safe-html: parts interpolate only numeric index and static state class names + literal star glyphs
-    this.starsEl.innerHTML = parts.join('');
+    setHtml(this.starsEl, trustedHtml(parts.join('')));
 
     this.el.setAttribute('aria-valuemin', '0');
     this.el.setAttribute('aria-valuemax', String(max));

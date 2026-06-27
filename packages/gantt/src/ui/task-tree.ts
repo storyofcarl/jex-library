@@ -213,8 +213,7 @@ export class GanttTaskTree<T extends Model = Model> {
       };
 
       const gridHost = createEl('div', { className: 'jects-gantt__tree-grid' });
-      // jects-safe-html: clears content; no interpolation
-      this.el.innerHTML = '';
+      this.el.replaceChildren();
       this.el.append(gridHost);
 
       const columns = this.columns.map((c) => ({
@@ -400,8 +399,7 @@ export class GanttTaskTree<T extends Model = Model> {
 
   /** A token-pure, accessible HTML-table fallback (also the a11y baseline). */
   private renderFallback(): void {
-    // jects-safe-html: clears content; no interpolation
-    this.el.innerHTML = '';
+    this.el.replaceChildren();
     const scroller = createEl('div', { className: 'jects-gantt__tree-scroller' });
     const table = createEl('table', { className: 'jects-gantt__tree-table' });
     table.setAttribute('role', 'treegrid');

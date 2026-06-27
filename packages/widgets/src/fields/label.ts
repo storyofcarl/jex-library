@@ -3,7 +3,7 @@
  * to a form control via `htmlFor`.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, register, setHtml, trustedHtml } from '@jects/core';
 import type { FieldSize } from './text-field.js';
 
 export interface LabelConfig extends WidgetConfig {
@@ -39,7 +39,7 @@ export class Label extends Widget<LabelConfig, LabelEvents> {
     if (htmlFor) el.htmlFor = htmlFor;
     else el.removeAttribute('for');
 
-    el.innerHTML = `${escapeHtml(text)}${required ? '<span class="jects-label__required" aria-hidden="true">*</span>' : ''}`;
+    setHtml(el, trustedHtml(`${escapeHtml(text)}${required ? '<span class="jects-label__required" aria-hidden="true">*</span>' : ''}`));
   }
 }
 

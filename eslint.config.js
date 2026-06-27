@@ -38,6 +38,41 @@ export default tseslint.config(
     },
   },
   {
+    // Type-enforced HTML injection discipline: raw innerHTML assignment and
+    // insertAdjacentHTML are banned in package source. The ONLY sanctioned sinks
+    // are setHtml / insertSafeHtml from @jects/core, which require a branded
+    // SafeHtml value (produced by safeHtml / staticHtml / trustedHtml). This makes
+    // unsafe HTML injection impossible to write, not merely grep-discouraged.
+    files: ['packages/**/src/**/*.{ts,tsx}'],
+    ignores: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/*.stories.ts',
+      '**/*.stories.tsx',
+      // sanitize.ts defines setHtml/insertSafeHtml themselves — the only place
+      // raw innerHTML / insertAdjacentHTML may be written.
+      'packages/core/src/sanitize.ts',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "AssignmentExpression[left.type='MemberExpression'][left.property.name='innerHTML']",
+          message:
+            'Use setHtml(el, safeHtml|trustedHtml|staticHtml(...)) from @jects/core instead of raw innerHTML.',
+        },
+        {
+          selector: "CallExpression[callee.property.name='insertAdjacentHTML']",
+          message:
+            'Use insertSafeHtml(el, pos, safeHtml|trustedHtml|staticHtml(...)) from @jects/core instead of raw insertAdjacentHTML.',
+        },
+      ],
+    },
+  },
+  {
     // The signals engine intentionally aliases `this` to the current reactive
     // node (the dependency-tracking primitive); this is by design.
     files: ['**/signals.ts'],

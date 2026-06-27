@@ -28,6 +28,8 @@ import {
   getFocusable,
   trapFocus,
   type Unbind,
+  setHtml,
+  trustedHtml,
 } from '@jects/core';
 import { renderIcon, type IconName } from '@jects/icons';
 
@@ -180,8 +182,7 @@ export class MessageManager extends Widget<MessageManagerConfig, MessageManagerE
       dataset: { toastId: id },
     });
 
-    // jects-safe-html: title/message escaped via escapeHtml below; icons via renderIcon; rest static
-    el.innerHTML =
+    setHtml(el, trustedHtml(
       `<span class="jects-toast__icon" aria-hidden="true">${renderIcon(VARIANT_ICON[variant], { size: 18 })}</span>` +
       `<div class="jects-toast__body">` +
       (title ? `<p class="jects-toast__title">${escapeHtml(title)}</p>` : '') +
@@ -189,7 +190,7 @@ export class MessageManager extends Widget<MessageManagerConfig, MessageManagerE
       `</div>` +
       (closable
         ? `<button type="button" class="jects-toast__close" data-jects-toast-close aria-label="Dismiss notification">${renderIcon('x', { size: 16 })}</button>`
-        : '');
+        : '')));
 
     this.el.appendChild(el);
 
@@ -423,8 +424,7 @@ function openDialog<R>(
     const showCancel = kind === 'confirm' || kind === 'prompt';
     const showInput = kind === 'prompt';
 
-    // jects-safe-html: title/message escaped via escapeHtml, placeholder/defaultValue via escapeAttr below; icons via renderIcon; rest static
-    panel.innerHTML =
+    setHtml(panel, trustedHtml(
       `<span class="jects-dialog__icon" aria-hidden="true">${renderIcon(VARIANT_ICON[variant], { size: 22 })}</span>` +
       `<div class="jects-dialog__content">` +
       (title ? `<h2 class="jects-dialog__title" id="${labelId}">${escapeHtml(title)}</h2>` : '') +
@@ -446,7 +446,7 @@ function openDialog<R>(
         ? `<button type="button" class="jects-dialog__btn jects-dialog__btn--cancel" data-jects-dialog-cancel>${escapeHtml(cancelText ?? 'Cancel')}</button>`
         : '') +
       `<button type="button" class="jects-dialog__btn jects-dialog__btn--ok" data-jects-dialog-ok>${escapeHtml(okText ?? 'OK')}</button>` +
-      `</div>`;
+      `</div>`));
 
     overlay.appendChild(panel);
     document.body.appendChild(overlay);

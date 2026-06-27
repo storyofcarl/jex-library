@@ -10,7 +10,7 @@
  * writes raw color literals. Styles map `DiagramStyle` token NAMES onto those
  * variables.
  */
-import { createEl, sanitizeHtml } from '@jects/core';
+import { createEl, insertSafeHtml, safeHtml, setHtml, trustedHtml } from '@jects/core';
 import type {
   ConnectorModel,
   DiagramEngine,
@@ -157,7 +157,7 @@ function bodyNode(geo: ShapeGeometry): SVGElement {
       wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
       // HTML (`foreignObject`) shape bodies carry caller-supplied markup; route
       // through the shared allow-list sanitizer (docs/SECURITY.md surface #5).
-      wrap.innerHTML = sanitizeHtml(geo.html);
+      setHtml(wrap, safeHtml(geo.html));
       fo.appendChild(wrap);
       return fo;
     }
@@ -350,12 +350,10 @@ export function renderConnector(
   const second = pts[1] ?? b;
   const penult = pts[pts.length - 2] ?? a;
   if (arrows.end && arrows.end !== 'none') {
-    // jects-safe-html: SVG arrow marker from internal geometry, no user data
-    g.insertAdjacentHTML('beforeend', arrowMarker(arrows.end, b, penult));
+    insertSafeHtml(g, 'beforeend', trustedHtml(arrowMarker(arrows.end, b, penult)));
   }
   if (arrows.start && arrows.start !== 'none') {
-    // jects-safe-html: SVG arrow marker from internal geometry, no user data
-    g.insertAdjacentHTML('beforeend', arrowMarker(arrows.start, a, second));
+    insertSafeHtml(g, 'beforeend', trustedHtml(arrowMarker(arrows.start, a, second)));
   }
 
   if (connector.label) {

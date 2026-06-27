@@ -19,6 +19,8 @@ import {
   type Model,
   type RecordId,
   computeWindow,
+  setHtml,
+  trustedHtml,
 } from '@jects/core';
 
 export type ListSelectionMode = 'single' | 'multi' | 'none';
@@ -148,7 +150,7 @@ export class List<T extends Model = Model> extends Widget<ListConfig<T>, ListEve
       this.el.removeAttribute('aria-multiselectable');
       this.spacer.style.height = '0px';
       this.content.style.transform = 'translateY(0px)';
-      this.content.innerHTML = `<div class="jects-list__empty" role="status">${escapeHtml(emptyText)}</div>`;
+      setHtml(this.content, trustedHtml(`<div class="jects-list__empty" role="status">${escapeHtml(emptyText)}</div>`));
       this.syncActiveDescendant();
       return;
     }
@@ -196,8 +198,7 @@ export class List<T extends Model = Model> extends Widget<ListConfig<T>, ListEve
           ` style="height:${itemSize}px" tabindex="-1">${inner}</div>`,
       );
     }
-    // jects-safe-html: default label escaped via escapeHtml, ids via escapeAttr; itemTemplate is trusted library-controlled renderer (see config doc)
-    this.content.innerHTML = rows.join('');
+    setHtml(this.content, trustedHtml(rows.join('')));
     this.syncActiveDescendant();
   }
 

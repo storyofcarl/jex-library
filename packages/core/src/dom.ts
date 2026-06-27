@@ -3,6 +3,8 @@
  * binding, text measurement, scrollbar width, focus trap, and RTL detection.
  */
 
+import { setHtml, type SafeHtml } from './sanitize.js';
+
 export type ClassValue = string | false | null | undefined | Record<string, boolean> | ClassValue[];
 
 /** Combine class values (string | array | {name:bool}) into a single className string. */
@@ -24,8 +26,8 @@ export interface CreateElOptions {
   className?: ClassValue;
   /** Plain text content (escaped by the DOM). */
   text?: string;
-  /** Trusted HTML — only pass library-controlled markup. */
-  html?: string;
+  /** Trusted/sanitized HTML — must be branded {@link SafeHtml} (via safeHtml/staticHtml/trustedHtml). */
+  html?: SafeHtml;
   attrs?: Record<string, string | number | boolean | null | undefined>;
   dataset?: Record<string, string | number | boolean>;
   style?: Partial<CSSStyleDeclaration> | Record<string, string>;
@@ -41,7 +43,7 @@ export function createEl<K extends keyof HTMLElementTagNameMap>(
   const el = document.createElement(tag);
   if (options.className) el.className = classNames(options.className);
   if (options.text !== undefined) el.textContent = options.text;
-  if (options.html !== undefined) el.innerHTML = options.html;
+  if (options.html !== undefined) setHtml(el, options.html);
   if (options.attrs) {
     for (const [k, v] of Object.entries(options.attrs)) {
       if (v === null || v === undefined || v === false) continue;

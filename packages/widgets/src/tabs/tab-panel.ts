@@ -19,7 +19,9 @@ import {
   type WidgetEvents,
   createEl,
   register,
-  sanitizeHtml,
+  setHtml,
+  safeHtml,
+  trustedHtml,
 } from '@jects/core';
 import { Tabbar, type TabItem, type TabbarConfig, panelElementId } from './tabbar.js';
 
@@ -233,7 +235,7 @@ export class TabPanel extends Widget<TabPanelConfig, TabPanelEvents> {
     } else if (typeof content === 'string') {
       // A string is authored HTML → sanitized by default; only the explicit
       // `trusted` opt-out injects it raw.
-      panel.innerHTML = this.config.trusted ? content : sanitizeHtml(content);
+      setHtml(panel, this.config.trusted ? trustedHtml(content) : safeHtml(content));
     } else {
       panel.append(content);
     }

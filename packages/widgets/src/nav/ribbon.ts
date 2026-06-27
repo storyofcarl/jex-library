@@ -94,8 +94,7 @@ export class Ribbon extends Widget<RibbonConfig, RibbonEvents> {
     }
 
     this.el.className = ['jects-ribbon', this.config.cls ?? ''].filter(Boolean).join(' ');
-    // jects-safe-html: empty clear; tabs built below as DOM nodes with textContent
-    this.el.innerHTML = '';
+    this.el.replaceChildren();
 
     // Tablist
     const tablist = createEl('div', { className: 'jects-ribbon__tablist' });

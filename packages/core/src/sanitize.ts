@@ -269,3 +269,41 @@ export function staticHtml(strings: TemplateStringsArray, ...values: never[]): S
   void values;
   return strings.join('') as SafeHtml;
 }
+
+/**
+ * Brand `input` as {@link SafeHtml} **without sanitizing it**.
+ *
+ * This is the typed equivalent of the old `// jects-safe-html:` annotation: it
+ * asserts — on the author's responsibility — that the markup is trusted internal
+ * output whose interpolated values are either library-controlled or already
+ * escaped (via {@link escape}/{@link escapeHtml}) / produced by a trusted factory
+ * (e.g. an icon renderer). Use it for fixed templates or templates that splice in
+ * only such values, where routing through {@link safeHtml} would strip needed
+ * `style`/`data-*`/structural attributes and corrupt the rendered output.
+ *
+ * Never pass raw user/config/record/template data here — sanitize that with
+ * {@link safeHtml}. Misuse re-introduces the XSS vector this discipline removes.
+ */
+export function trustedHtml(input: string): SafeHtml {
+  return input as SafeHtml;
+}
+
+/**
+ * The only sanctioned way to assign to `Element.innerHTML`. The `html` argument
+ * must be {@link SafeHtml}, so it has provably passed through {@link safeHtml}
+ * (sanitized), {@link staticHtml} (interpolation-free), or {@link trustedHtml}
+ * (author-asserted trusted internal markup).
+ */
+export function setHtml(el: Element, html: SafeHtml): void {
+  // jects-safe-html: html is branded SafeHtml; this is the single sanctioned innerHTML sink.
+  el.innerHTML = html;
+}
+
+/**
+ * The only sanctioned way to call `Element.insertAdjacentHTML`. Like
+ * {@link setHtml}, requires {@link SafeHtml} so the markup has been proven safe.
+ */
+export function insertSafeHtml(el: Element, position: InsertPosition, html: SafeHtml): void {
+  // jects-safe-html: html is branded SafeHtml; this is the single sanctioned insertAdjacentHTML sink.
+  el.insertAdjacentHTML(position, html);
+}

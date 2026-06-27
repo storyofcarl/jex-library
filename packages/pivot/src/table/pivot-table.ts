@@ -203,8 +203,7 @@ export class PivotTable<Row extends Model = Model> extends Widget<
 
     const el = this.el;
     el.classList.add('jects-pivot');
-    // jects-safe-html: clears content; no interpolation
-    el.innerHTML = '';
+    el.replaceChildren();
 
     this.panelEl = createEl('div', { className: 'jects-pivot__panel' });
     this.panelEl.setAttribute('role', 'group');
@@ -473,8 +472,7 @@ export class PivotTable<Row extends Model = Model> extends Widget<
 
   private rebuildPanel(): void {
     if (!this.panelEl || this.config.showPanel === false) return;
-    // jects-safe-html: clears content; no interpolation
-    this.panelEl.innerHTML = '';
+    this.panelEl.replaceChildren();
 
     // Source field list.
     const source = createEl('div', { className: 'jects-pivot__zone jects-pivot__zone--source' });

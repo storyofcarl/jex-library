@@ -17,7 +17,7 @@
  * Events: input / change / focus / blur / clear.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml, staticHtml } from '@jects/core';
 
 export type FieldSize = 'sm' | 'md' | 'lg';
 
@@ -231,7 +231,7 @@ export class TextField extends Widget<TextFieldConfig, TextFieldEvents> {
         labelEl = createEl('label', { className: 'jects-field__label', attrs: { for: this.inputId } });
         this.el.insertBefore(labelEl, control);
       }
-      labelEl.innerHTML = `${escapeHtml(label)}${required ? '<span class="jects-field__required" aria-hidden="true">*</span>' : ''}`;
+      setHtml(labelEl, trustedHtml(`${escapeHtml(label)}${required ? '<span class="jects-field__required" aria-hidden="true">*</span>' : ''}`));
     } else if (labelEl) {
       labelEl.remove();
     }
@@ -275,7 +275,7 @@ export class TextField extends Widget<TextFieldConfig, TextFieldEvents> {
       if (!clearBtn) {
         clearBtn = createEl('button', {
           className: 'jects-field__clear',
-          html: '&times;',
+          html: staticHtml`&times;`,
           attrs: { type: 'button', 'aria-label': 'Clear', tabindex: '-1' },
         });
       }

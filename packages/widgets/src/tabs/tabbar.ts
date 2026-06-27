@@ -12,7 +12,7 @@
  * CSS lives in tabbar.css (token-only, @layer jects.components).
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 import { renderIcon } from '@jects/icons';
 
 export interface TabItem {
@@ -237,8 +237,7 @@ export class Tabbar extends Widget<TabbarConfig, TabbarEvents> {
     if (ariaLabel) el.setAttribute('aria-label', ariaLabel);
     else el.removeAttribute('aria-label');
 
-    // jects-safe-html: tab label escaped via escapeHtml, ids via escapeAttr in builder; close icon via renderIcon
-    el.innerHTML = items
+    setHtml(el, trustedHtml(items
       .map((t) => {
         const selected = t.id === active;
         const disabled = !!t.disabled;
@@ -271,7 +270,7 @@ export class Tabbar extends Widget<TabbarConfig, TabbarEvents> {
           '</button>',
         ].join('');
       })
-      .join('');
+      .join('')));
   }
 }
 

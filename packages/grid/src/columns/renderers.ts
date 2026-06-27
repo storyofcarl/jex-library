@@ -10,7 +10,7 @@
  * winning.
  */
 
-import { createEl, escape, sanitizeHtml, type Model } from '@jects/core';
+import { createEl, escape, safeHtml, setHtml, trustedHtml, type Model } from '@jects/core';
 import type {
   CellRenderContext,
   CellRenderer,
@@ -118,8 +118,7 @@ export const checkRenderer: CellRenderer = (ctx) => {
     className: `jects-grid-cell__check${checked ? ' jects-grid-cell__check--on' : ''}`,
     attrs: { role: 'img', 'aria-label': checked ? 'checked' : 'unchecked' },
   });
-  // jects-safe-html: static check SVG const
-  if (checked) mark.innerHTML = CHECK_SVG;
+  if (checked) setHtml(mark, trustedHtml(CHECK_SVG));
   ctx.el.appendChild(mark);
 };
 
@@ -151,7 +150,7 @@ export const actionRenderer: CellRenderer = (ctx) => {
         title: action.label,
       },
     });
-    if (action.iconHtml) btn.innerHTML = sanitizeHtml(action.iconHtml);
+    if (action.iconHtml) setHtml(btn, safeHtml(action.iconHtml));
     else btn.textContent = action.label;
     if (action.onClick) {
       btn.addEventListener('click', (e) => {

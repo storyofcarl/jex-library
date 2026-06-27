@@ -16,7 +16,7 @@
  * (visible `<label for>` when supplied, else `aria-label`).
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, staticHtml } from '@jects/core';
 
 let tagsSeq = 0;
 
@@ -190,7 +190,7 @@ export class TagsField extends Widget<TagsFieldConfig, TagsFieldEvents> {
       if (this.interactive) {
         const remove = createEl('button', {
           className: 'jects-tags__remove',
-          html: '&times;',
+          html: staticHtml`&times;`,
           attrs: { type: 'button', 'aria-label': `Remove ${tag}`, tabindex: '-1', 'data-tag': tag },
         });
         chip.append(remove);

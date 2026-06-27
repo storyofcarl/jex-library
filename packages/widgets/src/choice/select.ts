@@ -8,7 +8,7 @@
  * select; Escape closes; Home/End jump; typeahead by first letter.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, setHtml, trustedHtml } from '@jects/core';
 import { renderIcon } from '@jects/icons';
 import { Popup } from './popup.js';
 
@@ -302,8 +302,7 @@ export class Select extends Widget<SelectConfig, SelectEvents> {
     const value = this.config.value;
     this.listbox.id = this.listboxId;
     this.trigger.setAttribute('aria-controls', this.listboxId);
-    // jects-safe-html: option label escaped via escapeHtml, value via escapeAttr in builder; rest static/renderIcon
-    this.listbox.innerHTML = opts
+    setHtml(this.listbox, trustedHtml(opts
       .map((o, i) => {
         const selected = o.value === value;
         const disabled = !!o.disabled;
@@ -317,7 +316,7 @@ export class Select extends Widget<SelectConfig, SelectEvents> {
           `</div>`,
         ].join('');
       })
-      .join('');
+      .join('')));
   }
 
   protected override render(): void {
@@ -351,8 +350,7 @@ export class Select extends Widget<SelectConfig, SelectEvents> {
     trigger.setAttribute('aria-label', ariaLabel ?? 'Select');
 
     const showClear = clearable && hasValue && !disabled;
-    // jects-safe-html: selected label / placeholder escaped via escapeHtml below; rest static/renderIcon
-    trigger.innerHTML = [
+    setHtml(trigger, trustedHtml([
       `<span class="jects-select__value${hasValue ? '' : ' jects-select__value--placeholder'}">`,
       escapeHtml(hasValue ? selectedOpt!.label : placeholder),
       `</span>`,
@@ -360,7 +358,7 @@ export class Select extends Widget<SelectConfig, SelectEvents> {
         ? `<span class="jects-select__clear" aria-hidden="true" data-clear="1">${renderIcon('x', { size: 14 })}</span>`
         : '',
       `<span class="jects-select__chevron" aria-hidden="true">${renderIcon('chevron-down', { size: 16 })}</span>`,
-    ].join('');
+    ].join('')));
 
     if (this._popup?.isOpen) this.renderListbox();
   }

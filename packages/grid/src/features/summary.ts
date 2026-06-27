@@ -10,7 +10,7 @@
  */
 
 import type { Model } from '@jects/core';
-import { createEl } from '@jects/core';
+import { createEl, setHtml, trustedHtml } from '@jects/core';
 import type { GridApi, GridFeature } from '../contract.js';
 import {
   type AggregatorSpec,
@@ -143,8 +143,7 @@ export class SummaryFeature<Row extends Model = Model> implements GridFeature<Ro
       );
       first = false;
     }
-    // jects-safe-html: cell text escaped via escapeHtml; widths/align are numeric/internal
-    this.root.innerHTML = cells.join('');
+    setHtml(this.root, trustedHtml(cells.join('')));
   }
 
   /** The footer root element. */

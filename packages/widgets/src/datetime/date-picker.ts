@@ -10,7 +10,7 @@
  *   committed value changes.
  */
 
-import { Widget, type WidgetConfig, type WidgetEvents, createEl, register } from '@jects/core';
+import { Widget, type WidgetConfig, type WidgetEvents, createEl, register, staticHtml } from '@jects/core';
 import { MiniCalendar } from './mini-calendar.js';
 import { Popover } from './popover.js';
 import {
@@ -85,7 +85,7 @@ export class DatePicker extends Widget<DatePickerConfig, DatePickerEvents> {
     this.trigger = createEl('button', {
       className: 'jects-datepicker__trigger',
       attrs: { type: 'button', 'aria-label': 'Open calendar', tabindex: '-1' },
-      html: '&#128197;',
+      html: staticHtml`&#128197;`,
     });
     this.trigger.addEventListener('click', () => this.toggle());
 

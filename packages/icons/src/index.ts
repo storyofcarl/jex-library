@@ -11,6 +11,38 @@ import { icons, iconNames, type IconName, type IconDef } from './icons.js';
 
 export { icons, iconNames, type IconName, type IconDef };
 
+/**
+ * Branded trusted HTML — local mirror of `@jects/core`'s `SafeHtml` discipline.
+ *
+ * `@jects/icons` is a zero-dependency leaf package (it must not depend on
+ * `@jects/core`, which would invert the suite's layering and risk a cycle, since
+ * higher packages depend on both). So the SafeHtml branding is defined inline
+ * here. The brand is structurally identical to `@jects/core`'s, so the values
+ * interoperate at runtime; only the compile-time guard is local.
+ */
+type SafeHtml = string & { readonly __jectsSafeHtml: unique symbol };
+
+/**
+ * Brand a string of trusted, library-controlled markup as {@link SafeHtml}
+ * WITHOUT sanitizing it. Icon output is fixed SVG produced by {@link renderIcon}
+ * (the only dynamic parts are numeric sizes and an attribute-escaped label), so
+ * it must never be routed through an HTML sanitizer — that would strip the SVG.
+ */
+function trustedHtml(input: string): SafeHtml {
+  return input as SafeHtml;
+}
+
+/**
+ * The only sanctioned `innerHTML` sink in this package — the local mirror of
+ * `@jects/core`'s `setHtml`. Defined here (rather than imported) to keep
+ * `@jects/icons` a zero-dependency leaf; `html` is branded {@link SafeHtml}, so
+ * this is the single place a raw assignment is permitted (cf. core/sanitize.ts).
+ */
+function setHtml(el: Element, html: SafeHtml): void {
+  // eslint-disable-next-line no-restricted-syntax -- sanctioned SafeHtml sink (local mirror of @jects/core setHtml)
+  el.innerHTML = html;
+}
+
 export interface RenderIconOptions {
   /** Rendered pixel size (width=height). Default 24. */
   size?: number;
@@ -41,7 +73,7 @@ export function renderIcon(name: IconName, options: RenderIconOptions = {}): str
 /** Render an icon to a detached SVGElement (DOM contexts). */
 export function createIconEl(name: IconName, options: RenderIconOptions = {}): SVGElement {
   const tpl = document.createElement('template');
-  tpl.innerHTML = renderIcon(name, options).trim();
+  setHtml(tpl, trustedHtml(renderIcon(name, options).trim()));
   return tpl.content.firstChild as SVGElement;
 }
 

@@ -16,6 +16,9 @@ import {
   Store,
   createEl,
   register,
+  setHtml,
+  staticHtml,
+  trustedHtml,
   type RecordId,
 } from '@jects/core';
 
@@ -380,8 +383,7 @@ export class TaskBoard extends Widget<TaskBoardConfig, TaskBoardEvents> {
     el.className = ['jects-kanban', this.config.cls ?? ''].filter(Boolean).join(' ');
     el.setAttribute('aria-label', this.config.label ?? 'Task board');
 
-    // jects-safe-html: clears content; no interpolation
-    el.innerHTML = '';
+    el.replaceChildren();
 
     // Keep a persistent live region attached across re-renders. Created lazily
     // here (the field set in buildEl() may be reset by class-field init order).
@@ -430,8 +432,7 @@ export class TaskBoard extends Widget<TaskBoardConfig, TaskBoardEvents> {
   /** Toolbar sort `<select>` — picks the field cards are ordered by within columns. */
   private buildSortControl(): HTMLElement {
     const wrap = createEl('label', { className: 'jects-kanban__sort' });
-    // jects-safe-html: static markup; no interpolation
-    wrap.innerHTML = `<span class="jects-kanban__sort-label">Sort</span>`;
+    setHtml(wrap, staticHtml`<span class="jects-kanban__sort-label">Sort</span>`);
     const select = createEl('select', {
       className: 'jects-kanban__sort-select',
       attrs: { 'aria-label': 'Sort cards by' },
@@ -591,8 +592,7 @@ export class TaskBoard extends Widget<TaskBoardConfig, TaskBoardEvents> {
   }
 
   private fillBody(body: HTMLElement, column: RecordId, lane: RecordId | undefined): void {
-    // jects-safe-html: clears content; no interpolation
-    body.innerHTML = '';
+    body.replaceChildren();
     const cards = this.cardsIn(column, lane);
     for (const card of cards) body.appendChild(this.buildCard(card));
     if (cards.length === 0) {
@@ -623,8 +623,7 @@ export class TaskBoard extends Widget<TaskBoardConfig, TaskBoardEvents> {
         ...(this.selected.has(card.id) ? { 'aria-current': 'true' } : {}),
       },
     });
-    // jects-safe-html: renderCardBody escapes card fields / sanitizes bodyItems html
-    el.innerHTML = renderCardBody(card, this.config.cardRenderer);
+    setHtml(el, trustedHtml(renderCardBody(card, this.config.cardRenderer)));
     return el;
   }
 

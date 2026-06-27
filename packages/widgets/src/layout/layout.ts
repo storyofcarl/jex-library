@@ -30,7 +30,9 @@ import {
   type WidgetEvents,
   createEl,
   register,
-  sanitizeHtml,
+  setHtml,
+  safeHtml,
+  trustedHtml,
 } from '@jects/core';
 import { Splitter, type SplitterConfig } from './splitter.js';
 
@@ -228,7 +230,7 @@ export class Layout extends Widget<LayoutConfig, LayoutEvents> {
     } else if (typeof content === 'string') {
       // A string is authored HTML → sanitized by default; only the explicit
       // `trusted` opt-out injects it raw.
-      cell.innerHTML = this.config.trusted ? content : sanitizeHtml(content);
+      setHtml(cell, this.config.trusted ? trustedHtml(content) : safeHtml(content));
     }
     return cell;
   }
