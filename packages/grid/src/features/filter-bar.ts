@@ -120,11 +120,11 @@ export class FilterBarFeature<Row extends Model = Model> implements GridFeature<
     const filterable = column.filterable !== false && !!column.field;
     const width = column.width != null ? `style="flex:0 0 ${column.width}px"` : 'style="flex:1 1 0"';
     if (!filterable) {
-      return `<div class="jects-grid-filterbar__cell jects-grid-filterbar__cell--empty" ${width}></div>`;
+      return `<div role="gridcell" class="jects-grid-filterbar__cell jects-grid-filterbar__cell--empty" ${width}></div>`;
     }
     const type = column.type === 'number' ? 'number' : column.type === 'date' ? 'date' : 'text';
     return [
-      `<div class="jects-grid-filterbar__cell" ${width}>`,
+      `<div role="gridcell" class="jects-grid-filterbar__cell" ${width}>`,
       `<input class="jects-grid-filterbar__input" type="${type}" `,
       `data-filter-input="${escapeHtml(id)}" `,
       `aria-label="${escapeHtml(`Filter ${column.header ?? id}`)}" `,
