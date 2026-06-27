@@ -75,9 +75,9 @@
       "a11y": "—",
       "demo": "✓",
       "doc": "✓",
-      "jsgz": "8.1 KB",
+      "jsgz": "8.2 KB",
       "cssgz": "—",
-      "exportNames": 60
+      "exportNames": 63
     },
     {
       "name": "@jects/diagram",
@@ -127,7 +127,7 @@
       "a11y": "22",
       "demo": "✓",
       "doc": "✓",
-      "jsgz": "91.0 KB",
+      "jsgz": "91.1 KB",
       "cssgz": "5.4 KB",
       "exportNames": 316
     },
@@ -283,7 +283,7 @@
       "a11y": "86",
       "demo": "✓",
       "doc": "✓",
-      "jsgz": "90.0 KB",
+      "jsgz": "90.3 KB",
       "cssgz": "11.1 KB",
       "exportNames": 250
     }
