@@ -296,13 +296,17 @@
   .jects-scheduler__bar--complete {
     border-color: oklch(var(--jects-success) / 0.8);
   }
+  /* Light CMYK/data fills carry DARK text so the label stays WCAG-AA legible —
+     near-white (primary-foreground) fails on cyan/magenta/success/yellow. */
   .jects-scheduler__bar[data-color='cyan'] {
     background: oklch(var(--jects-cmyk-cyan));
     border-color: oklch(var(--jects-cmyk-cyan) / 0.7);
+    color: oklch(var(--jects-foreground));
   }
   .jects-scheduler__bar[data-color='magenta'] {
     background: oklch(var(--jects-cmyk-magenta));
     border-color: oklch(var(--jects-cmyk-magenta) / 0.7);
+    color: oklch(var(--jects-foreground));
   }
   .jects-scheduler__bar[data-color='yellow'] {
     background: oklch(var(--jects-cmyk-yellow));
@@ -312,6 +316,7 @@
   .jects-scheduler__bar[data-color='success'] {
     background: oklch(var(--jects-success));
     border-color: oklch(var(--jects-success) / 0.7);
+    color: oklch(var(--jects-foreground));
   }
   .jects-scheduler__bar-label {
     overflow: hidden;

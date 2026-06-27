@@ -173,13 +173,19 @@ export function register() {
             const root = gantt.el || gantt.timeline.el;
             const bars = root?.querySelector?.('.jects-gantt__bars');
             if (!bars) return false;
-            if (projLines.el.parentElement !== bars) bars.appendChild(projLines.el);
+            // Mount the project-lines overlay as a SIBLING of the bars layer (into
+            // the positioned timeline content), not a child: the bars layer is
+            // role="list" and may only contain its task-bar listitems, so a
+            // role="list" overlay nested inside it trips aria-required-children.
+            // The overlay is position:absolute; inset:0, so a sibling overlays it.
+            const mount = bars.parentElement || bars;
+            if (projLines.el.parentElement !== mount) mount.appendChild(projLines.el);
             try { projLines.setHeight(bars.scrollHeight || 360); } catch (_) {}
             try { projLines.refresh(); } catch (_) {}
             if (!lineObserver && window.MutationObserver) {
               lineObserver = new MutationObserver(() => {
-                if (projLines && projLines.el.parentElement !== bars) {
-                  bars.appendChild(projLines.el);
+                if (projLines && projLines.el.parentElement !== mount) {
+                  mount.appendChild(projLines.el);
                   try { projLines.setHeight(bars.scrollHeight || 360); projLines.refresh(); } catch (_) {}
                 }
               });

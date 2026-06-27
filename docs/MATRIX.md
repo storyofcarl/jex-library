@@ -21,10 +21,10 @@
 | `@jects/pivot` | Beta | 3 | 78 (10f) | — | 2 | ✓ | ✓ | 14.6 KB | 1.1 KB | 61 |
 | `@jects/react` | Beta | 18 | 8 (2f) | — | — | ✓ | — | 4.4 KB | — | 60 |
 | `@jects/scheduler` | Beta | 4 | 369 (33f) | 46 | 13 | ✓ | ✓ | 44.8 KB | 4.0 KB | 60 |
-| `@jects/spreadsheet` | Beta | 2 | 388 (37f) | — | 7 | ✓ | ✓ | 52.1 KB | 1.8 KB | 112 |
+| `@jects/spreadsheet` | Beta | 2 | 388 (37f) | — | 7 | ✓ | ✓ | 52.9 KB | 1.8 KB | 112 |
 | `@jects/theme` | Stable | 6 | — | — | — | ✓ | ✓ | 0.6 KB | 1.3 KB | 11 |
 | `@jects/timeline-core` | Beta | — | 136 (11f) | 4 | 2 | ✓ | ✓ | 9.4 KB | 1.0 KB | 32 |
-| `@jects/todo` | Beta | 1 | 123 (4f) | — | 5 | ✓ | ✓ | 39.7 KB | 4.4 KB | 98 |
+| `@jects/todo` | Beta | 1 | 123 (4f) | — | 5 | ✓ | ✓ | 39.7 KB | 4.5 KB | 98 |
 | `@jects/tokens` | Stable | 3 | — | — | — | — | ✓ | 1.1 KB | — | 13 |
 | `@jects/vue` | Beta | 19 | 8 (2f) | — | — | ✓ | — | 4.3 KB | — | 61 |
 | `@jects/widgets` | Stable | 9 | 588 (54f) | 73 | 86 | ✓ | ✓ | 89.9 KB | 11.0 KB | 250 |

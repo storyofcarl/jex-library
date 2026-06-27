@@ -668,7 +668,10 @@
     block-size: 1.25rem;
     font-size: var(--jects-font-size-xs);
     font-weight: var(--jects-font-weight-medium);
-    color: oklch(var(--_status-color));
+    /* Cap text lightness to a dark shade of the status hue so the label stays
+       WCAG-AA legible on the pale status-color fill (light hues like cyan/yellow
+       otherwise fail). Identity-preserving: same hue, just a deeper shade. */
+    color: oklch(from oklch(var(--_status-color)) min(l, 0.42) c h);
     background: oklch(var(--_status-color) / 0.14);
     border: var(--jects-border-width) solid oklch(var(--_status-color) / 0.3);
     border-radius: var(--jects-radius-xl);
@@ -696,7 +699,9 @@
     padding: 0 var(--jects-space-2);
     block-size: 1.125rem;
     font-size: var(--jects-font-size-xs);
-    color: oklch(var(--_tag-color));
+    /* Same dark-shade cap as status pills so colored tags stay AA-legible on
+       their pale tinted fill. */
+    color: oklch(from oklch(var(--_tag-color)) min(l, 0.42) c h);
     background: oklch(var(--_tag-color) / 0.14);
     border-radius: var(--jects-radius-sm);
   }
@@ -715,8 +720,11 @@
     margin-inline-start: -0.35rem;
     font-size: 0.625rem;
     font-weight: var(--jects-font-weight-bold);
-    color: oklch(var(--jects-background));
-    background: oklch(var(--_avatar-color));
+    /* Soft tinted disc carrying the assignee hue, with a deep-shade initial.
+       White-on-solid failed WCAG-AA on light data hues (yellow/cyan); a light
+       tint + dark same-hue text guarantees contrast while keeping the color. */
+    color: oklch(from oklch(var(--_avatar-color)) min(l, 0.42) c h);
+    background: oklch(from oklch(var(--_avatar-color)) max(l, 0.93) min(c, 0.05) h);
     border: 1.5px solid oklch(var(--jects-card));
     border-radius: 50%;
   }

@@ -609,6 +609,12 @@ export class CellGrid extends Widget<CellGridConfig, CellGridEvents> {
     if (deco?.backgroundToken) {
       cellEl.classList.add('jects-sheet__cell--cf-scale');
       cellEl.style.backgroundColor = `oklch(var(${deco.backgroundToken}))`;
+      // Pick a readable text color for the (possibly saturated) scale fill so
+      // the cell value stays WCAG AA contrasted regardless of which ramp stop
+      // it landed on. Dark/saturated fills (e.g. the destructive endpoint) get
+      // light text; pale fills keep the dark foreground.
+      const ink = cfScaleInk(deco.backgroundToken, cellEl);
+      if (ink) cellEl.style.color = ink;
     }
     cellEl.textContent = display;
     // dataBar: an in-cell horizontal bar proportional to the value.
@@ -1235,4 +1241,64 @@ function parseForValidation(input: string): CellValue {
 /** Clamp + round a header drag size into `[min, max]` (integral px). */
 function clampSize(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, Math.round(value)));
+}
+
+/**
+ * Choose a contrasting ink (text) color for a conditional-format colorScale
+ * cell whose background is the `--jects-*` token `bgToken`. Resolves the token's
+ * OKLCH lightness off computed styles and returns an `oklch()` string for the
+ * foreground or background token, whichever reads better — keeping the cell
+ * value WCAG-AA legible on dark/saturated scale fills (the default near-black
+ * `foreground` fails on the destructive red endpoint). Returns null when the
+ * environment can't resolve styles (SSR/tests) so the CSS default applies.
+ */
+function cfScaleInk(bgToken: string, ref: HTMLElement): string | null {
+  if (typeof getComputedStyle !== 'function') return null;
+  const root = ref.ownerDocument?.documentElement ?? ref;
+  const read = (name: string): [number, number, number] | null => {
+    const raw = getComputedStyle(root).getPropertyValue(name).trim();
+    if (!raw) return null;
+    const parts = raw.split(/[\s/]+/).map(Number);
+    const [l, c, h] = parts;
+    if (l === undefined || c === undefined || h === undefined || Number.isNaN(l) || Number.isNaN(c) || Number.isNaN(h)) return null;
+    return [l, c, h];
+  };
+  const oklchToLin = (L: number, C: number, H: number): number => {
+    const hr = (H * Math.PI) / 180;
+    const a = C * Math.cos(hr);
+    const b = C * Math.sin(hr);
+    const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+    const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+    const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+    const lin = (c: number): number => {
+      const cc = Math.min(1, Math.max(0, c));
+      return cc <= 0.0031308 ? 12.92 * cc : 1.055 * Math.pow(cc, 1 / 2.4) - 0.055;
+    };
+    const r = lin(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s);
+    const g = lin(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s);
+    const bl = lin(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s);
+    const ch = (v: number): number =>
+      v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(bl);
+  };
+  const ratio = (a: number, b: number): number =>
+    (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+  const bg = read(bgToken);
+  if (!bg) return null;
+  const bgY = oklchToLin(bg[0], bg[1], bg[2]);
+  const fg = read('--jects-foreground');
+  const fgY = fg ? oklchToLin(fg[0], fg[1], fg[2]) : 0;
+  // Light text candidate (the foreground's mirror): use background token (page
+  // bg, near-white) which contrasts with dark fills.
+  const lightY = oklchToLin(0.985, 0, 0);
+  const darkContrast = ratio(fgY, bgY);
+  const lightContrast = ratio(lightY, bgY);
+  if (darkContrast >= 4.5) return null; // CSS default (foreground) is fine
+  // Foreground fails — switch to the better of light-on-fill / pure-black.
+  if (lightContrast >= darkContrast && lightContrast >= 4.5) {
+    return 'oklch(var(--jects-background))';
+  }
+  // Neither reaches 4.5 from the token pair; pick whichever is higher so the
+  // result is still the most legible option available.
+  return lightContrast > darkContrast ? 'oklch(var(--jects-background))' : null;
 }

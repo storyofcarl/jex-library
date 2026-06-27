@@ -153,7 +153,10 @@ async function buildApp(grid) {
   /* panes */
   const kanbanPane = el('div', { class: 'jects-app-pane', style: 'display:flex;flex-direction:column' });
   const ganttPane = el('div', { class: 'jects-app-pane', style: 'display:flex;flex-direction:column' });
-  const inspectorPane = el('div', { class: 'jects-app-pane jects-app-pane--muted' });
+  // tabindex=0 + label: the inspector is a scroll container whose content isn't
+  // otherwise focusable, so keyboard users need it focusable to scroll (axe
+  // scrollable-region-focusable).
+  const inspectorPane = el('div', { class: 'jects-app-pane jects-app-pane--muted', tabindex: '0', 'aria-label': 'Task inspector' });
   const schedulerPane = el('div', { class: 'jects-app-pane', style: 'grid-column: 1 / -1; display:flex;flex-direction:column' });
   shell.appendChild(kanbanPane);
   shell.appendChild(ganttPane);
