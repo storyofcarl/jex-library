@@ -2377,7 +2377,7 @@ export class RichText extends Widget<RichTextConfig, RichTextEvents> {
    * Mirrors the footer counts and excludes the transient find highlights.
    */
   getStats(): RichTextStats {
-    const text = (this.editable.textContent ?? '').replace(/ /g, ' ');
+    const text = (this.editable.textContent ?? '').replace(/\u00A0/g, ' ');
     const trimmed = text.trim();
     const words = trimmed === '' ? 0 : trimmed.split(/\s+/).length;
     return {

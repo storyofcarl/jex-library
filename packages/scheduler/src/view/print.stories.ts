@@ -10,7 +10,7 @@
 import { Scheduler } from './scheduler.js';
 import {
   installPrint,
-  PrintController,
+  type PrintController,
   type PrintConfig,
   type PrintHost,
   type PrintPlan,

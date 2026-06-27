@@ -12,7 +12,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import '@jects/widgets'; // register editor controls (textfield/numberfield/…)
-import { editingFeature, EditingFeature } from './editing-feature.js';
+import { editingFeature, type EditingFeature } from './editing-feature.js';
 import { makeFakeApi, makeCellEl } from './test-api.js';
 import type { Model } from '@jects/core';
 import type { ColumnDef } from '../contract.js';

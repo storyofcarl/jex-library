@@ -135,7 +135,7 @@ export class SummaryFeature<Row extends Model = Model> implements GridFeature<Ro
           : '';
       cells.push(
         [
-          `<div class="jects-grid-summary__cell jects-grid-summary__cell--${align}" `,
+          `<div role="gridcell" class="jects-grid-summary__cell jects-grid-summary__cell--${align}" `,
           `style="${width}">`,
           escapeHtml(text),
           `</div>`,

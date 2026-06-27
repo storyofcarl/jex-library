@@ -498,6 +498,7 @@ export class Scheduler extends Widget<SchedulerConfig, SchedulerEvents> {
     // Getters keep the references live across repaints (axis is stable, but
     // `visibleBars`/`rowTops`/`dependencyStore` are reassigned/cleared each paint,
     // so plain properties would snapshot stale references).
+    // eslint-disable-next-line @typescript-eslint/no-this-alias -- captured so the returned host object's getters resolve the live widget at call time
     const widget = this;
     return {
       get axis() {

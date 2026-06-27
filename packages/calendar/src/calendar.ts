@@ -337,11 +337,6 @@ export class Calendar extends Widget<CalendarConfig, CalendarEvents> implements 
       case 'agenda':
         return addDays(this.anchor, dir * 7);
       case 'month':
-      case 'week':
-        return addDays(this.anchor, dir * 7);
-      case 'agenda':
-        return addDays(this.anchor, dir * 7);
-      case 'month':
         return addMonths(this.anchor, dir);
       case 'year':
         return addYears(this.anchor, dir);

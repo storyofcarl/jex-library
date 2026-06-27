@@ -99,6 +99,7 @@ const SAFE_DATA_IMAGE =
   /^data:image\/(png|jpe?g|gif|webp|bmp|avif|x-icon|vnd\.microsoft\.icon)(;|,)/;
 
 /** Control chars and ASCII whitespace browsers strip when resolving a scheme. */
+// eslint-disable-next-line no-control-regex -- intentional: strip control chars when resolving URL schemes
 const URL_NOISE = new RegExp('[\u0000-\u0020\u007f-\u00a0]+', 'g')
 
 /**

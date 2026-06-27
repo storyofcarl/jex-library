@@ -7,12 +7,12 @@
  * auto-prepended column, the delegated click wiring, and teardown all run against
  * the same selection model the engine drives.
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import '@jects/widgets';
 import { EventEmitter, Store, type Model } from '@jects/core';
 import { DefaultSelectionModel } from '../engine/selection.js';
 import {
-  SelectionColumnFeature,
+  type SelectionColumnFeature,
   selectionColumnFeature,
   SELECT_INPUT_CLASS,
 } from './selection-column.js';

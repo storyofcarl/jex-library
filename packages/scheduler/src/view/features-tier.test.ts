@@ -117,7 +117,6 @@ describe('Scheduler Tier-1/2 features', () => {
 
   describe('drag event between resources', () => {
     function drag(s: Scheduler, eventId: string, toClientY: number): void {
-      const content = s.el.querySelector<HTMLElement>('.jects-scheduler__content')!;
       const bar = s.el.querySelector<HTMLElement>(`[data-event-id="${eventId}"]`)!;
       // pointerdown originates on the bar (mid-body), routed via content listener.
       const downX = parseFloat(bar.style.left) + parseFloat(bar.style.width) / 2;

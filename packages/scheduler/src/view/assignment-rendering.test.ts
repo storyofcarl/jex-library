@@ -22,12 +22,6 @@ function events(): EventModel[] {
   ];
 }
 
-function barsFor(sched: Scheduler, eventId: string): HTMLElement[] {
-  return Array.from(
-    sched.el.querySelectorAll<HTMLElement>(`.jects-scheduler__bar[data-event-id^="${eventId}"]`),
-  ).filter((el) => el.dataset.eventId === eventId || el.dataset.eventId?.startsWith(`${eventId}`));
-}
-
 function allBars(sched: Scheduler): HTMLElement[] {
   return Array.from(sched.el.querySelectorAll<HTMLElement>('.jects-scheduler__bar'));
 }

@@ -3,7 +3,6 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   register,
   elementDefinitions,
-  JectsButtonElement,
   type JectsElement,
 } from './index.js';
 // Per-component subpath entry: pulls ONLY @jects/grid + the shared factory, no siblings.

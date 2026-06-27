@@ -9,7 +9,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import type { Model } from '@jects/core';
 import { makeHarness, makeStore, type FeatureHarness } from './test-harness.js';
 import type { ColumnDef } from '../contract.js';
-import { ResponsiveFeature, responsiveFeature } from './responsive.js';
+import { type ResponsiveFeature, responsiveFeature } from './responsive.js';
 
 interface Row extends Model {
   id: number;

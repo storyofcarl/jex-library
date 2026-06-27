@@ -48,6 +48,7 @@ function allElements(root: HTMLElement): HTMLElement[] {
 }
 
 // Control chars / whitespace browsers ignore when resolving a URL scheme.
+// eslint-disable-next-line no-control-regex -- intentionally matches C0 control chars used in URL-scheme obfuscation attacks
 const URL_NOISE = new RegExp('[\u0000-\u0020]+', 'g');
 
 /** Assert the rendered DOM contains no executable injection vector. */

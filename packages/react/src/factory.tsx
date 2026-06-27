@@ -173,7 +173,8 @@ export function createComponent<Inst extends object, Config, Events>(
           instanceRef.current = null;
           prevConfigRef.current = null;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // Intentional: this effect mounts/unmounts the engine only on remount.
+        // (react-hooks/exhaustive-deps is not enabled in this workspace.)
       }, [remountToken]);
 
       // --- config -> update() (or remount on a non-updatable change) ---------
@@ -221,7 +222,8 @@ export function createComponent<Inst extends object, Config, Events>(
             typeof off === 'function' ? off : () => inst.off(evt),
           );
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // Intentional: reconcile bound handlers only when the key set or
+        // remount token changes. (react-hooks/exhaustive-deps is not enabled.)
       }, [handlerKeys, remountToken]);
 
       // --- expose the live engine instance via the forwarded ref -------------

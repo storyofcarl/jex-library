@@ -109,7 +109,10 @@ export class DomRenderer<Row extends Model = Model> implements Renderer<Row> {
     this.rowsLayer = createEl('div', { className: 'jects-grid__rows' });
 
     this.emptyEl = createEl('div', { className: 'jects-grid__empty' });
-    this.emptyEl.setAttribute('role', 'status');
+    // No `role=status` here: this element lives inside the `role=rowgroup`/`role=grid`
+    // subtree, whose ARIA contract forbids non-row children (aria-required-children).
+    // Emptiness is already announced to assistive tech via aria-rowcount=0 on the
+    // grid root (see grid.ts). The text remains a visible affordance.
     this.emptyEl.textContent = this.engine.emptyText;
     this.emptyEl.hidden = true;
 

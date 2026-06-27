@@ -38,7 +38,7 @@ const PAYLOADS: readonly string[] = [
 ];
 
 declare global {
-  // eslint-disable-next-line no-var
+   
   var __xss: boolean | undefined;
 }
 

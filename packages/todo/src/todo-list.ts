@@ -430,21 +430,19 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     bar.append(groupSel, sortSel, sortDir);
 
     // ── view toggle ──
-    if (true) {
-      const views = createEl('div', {
-        className: 'jects-todo__views',
-        attrs: { role: 'group', 'aria-label': 'View' },
+    const views = createEl('div', {
+      className: 'jects-todo__views',
+      attrs: { role: 'group', 'aria-label': 'View' },
+    });
+    for (const v of VIEWS) {
+      const btn = createEl('button', {
+        className: 'jects-todo__view',
+        attrs: { type: 'button', 'data-todo-view': v, 'aria-pressed': 'false' },
       });
-      for (const v of VIEWS) {
-        const btn = createEl('button', {
-          className: 'jects-todo__view',
-          attrs: { type: 'button', 'data-todo-view': v, 'aria-pressed': 'false' },
-        });
-        btn.textContent = this.viewLabel(v);
-        views.append(btn);
-      }
-      bar.append(views);
+      btn.textContent = this.viewLabel(v);
+      views.append(btn);
     }
+    bar.append(views);
 
     // ── board swimlane (second axis) ──
     const swimSel = this.buildSelect('data-todo-swimlane', this.t('swimlanePrefix'), SWIMLANE_OPTIONS.map((g) => ({
@@ -3914,19 +3912,19 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
 
     section(this.t('status'), this.statuses().map((s) => ({ value: s.id, label: s.label })), f.status ?? [], (v, on) => {
       const cur = new Set(this.getFilters().status ?? []);
-      on ? cur.add(v) : cur.delete(v);
+      if (on) cur.add(v); else cur.delete(v);
       this.setFilters({ ...this.getFilters(), status: [...cur] });
     });
     section(this.t('priority'), PRIORITIES.map((p) => ({ value: p, label: priorityLabel(p) })), (f.priority ?? []) as string[], (v, on) => {
       const cur = new Set((this.getFilters().priority ?? []) as string[]);
-      on ? cur.add(v) : cur.delete(v);
+      if (on) cur.add(v); else cur.delete(v);
       this.setFilters({ ...this.getFilters(), priority: [...cur] as TodoPriority[] });
     });
     const people = this.config.assignees ?? [];
     if (people.length) {
       section(this.t('assignees'), people.map((a) => ({ value: a, label: a })), f.assignees ?? [], (v, on) => {
         const cur = new Set(this.getFilters().assignees ?? []);
-        on ? cur.add(v) : cur.delete(v);
+        if (on) cur.add(v); else cur.delete(v);
         this.setFilters({ ...this.getFilters(), assignees: [...cur] });
       });
     }
@@ -3934,7 +3932,7 @@ export class TodoList extends Widget<TodoListConfig, TodoListEvents> implements 
     if (tags.length) {
       section(this.t('tags'), tags.map((t) => ({ value: t.text, label: t.text })), f.tags ?? [], (v, on) => {
         const cur = new Set(this.getFilters().tags ?? []);
-        on ? cur.add(v) : cur.delete(v);
+        if (on) cur.add(v); else cur.delete(v);
         this.setFilters({ ...this.getFilters(), tags: [...cur] });
       });
     }

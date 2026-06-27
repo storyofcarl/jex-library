@@ -10,9 +10,9 @@ import { describe, it, expect, afterEach, vi } from 'vitest';
 import type { Model } from '@jects/core';
 import { makeHarness, makeStore, type FeatureHarness } from './test-harness.js';
 import type { ColumnDef, FilterState } from '../contract.js';
-import { filterFeature, FilterFeature } from './filter.js';
+import { filterFeature, type FilterFeature } from './filter.js';
 import {
-  FilterMenuFeature,
+  type FilterMenuFeature,
   filterMenuFeature,
   operatorsForColumn,
 } from './filter-menu.js';
