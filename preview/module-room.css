@@ -1,0 +1,252 @@
+/* Jects UI module room pass.
+   Loaded after polish.css. Goal: stop module demos from feeling trapped in
+   cramped fixed cards while keeping the existing demo/component code intact. */
+
+:root {
+  --g-module-host: clamp(520px, calc(100vh - 230px), 980px);
+  --g-module-host-tall: clamp(620px, calc(100vh - 190px), 1120px);
+  --g-module-host-medium: clamp(440px, 58vh, 760px);
+  --g-module-card-pad: clamp(1rem, 1.4vw, 1.35rem);
+}
+
+/* Core product modules get a one-card-per-row rhythm. The old auto-fill grid was
+   good for widget samples but made enterprise modules feel squeezed. */
+.g-section:is(#grid,#pivot,#spreadsheet,#gantt,#scheduler,#calendar,#booking,#kanban,#todo,#charts,#diagram,#chatbot) .g-grid:not(.g-home-modules):not(.g-home-solutions) {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+}
+
+/* The main page breathes on wide displays while remaining bounded enough for docs. */
+.g-main {
+  --g-page-host: var(--g-module-host);
+}
+
+.g-page:has(.g-section:is(#grid,#pivot,#spreadsheet,#gantt,#scheduler,#calendar,#booking,#kanban,#todo,#charts,#diagram)) {
+  max-width: 100%;
+}
+
+.g-page:has(.g-section:is(#grid,#pivot,#spreadsheet,#gantt,#scheduler,#calendar,#booking,#kanban,#todo,#charts,#diagram)) .g-tabs {
+  margin-bottom: 1.25rem;
+}
+
+/* Cards that contain real app surfaces should read as panels, not tiny samples. */
+.g-section:is(#grid,#pivot,#spreadsheet,#gantt,#scheduler,#calendar,#booking,#kanban,#todo,#charts,#diagram) .g-card {
+  border-radius: clamp(0.75rem, 1vw, 1rem);
+}
+
+.g-section:is(#grid,#pivot,#spreadsheet,#gantt,#scheduler,#calendar,#booking,#kanban,#todo,#charts,#diagram) .g-card__hd {
+  min-height: 2.65rem;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--g-module-card-pad);
+  font-size: 0.78rem;
+}
+
+.g-section:is(#grid,#pivot,#spreadsheet,#gantt,#scheduler,#calendar,#booking,#kanban,#todo,#charts,#diagram) .g-card__bd {
+  min-width: 0;
+  padding: var(--g-module-card-pad);
+  overflow: visible;
+}
+
+/* Heavy surfaces take the full card width and receive real working height. */
+.g-card:has(.g-host-grid),
+.g-card:has(.g-host-chart),
+.g-card:has(.jects-grid),
+.g-card:has(.jects-gantt),
+.g-card:has(.jects-scheduler),
+.g-card:has(.jects-calendar),
+.g-card:has(.jects-kanban),
+.g-card:has(.jects-diagram),
+.g-card:has(.jects-spreadsheet),
+.g-card:has(.jects-sheet),
+.g-card:has(.jects-pivot),
+.g-card:has(.jects-booking),
+.g-card:has(.jects-todo) {
+  grid-column: 1 / -1;
+}
+
+.g-card__bd:has(.g-host-grid),
+.g-card__bd:has(.jects-grid),
+.g-card__bd:has(.jects-gantt),
+.g-card__bd:has(.jects-scheduler),
+.g-card__bd:has(.jects-calendar),
+.g-card__bd:has(.jects-kanban),
+.g-card__bd:has(.jects-diagram),
+.g-card__bd:has(.jects-spreadsheet),
+.g-card__bd:has(.jects-sheet),
+.g-card__bd:has(.jects-pivot),
+.g-card__bd:has(.jects-booking),
+.g-card__bd:has(.jects-todo) {
+  display: block;
+  padding: 0;
+}
+
+.g-host-grid,
+.g-card__bd > .jects-grid,
+.g-card__bd > .jects-gantt,
+.g-card__bd > .jects-scheduler,
+.g-card__bd > .jects-calendar,
+.g-card__bd > .jects-kanban,
+.g-card__bd > .jects-diagram,
+.g-card__bd > .jects-spreadsheet,
+.g-card__bd > .jects-sheet,
+.g-card__bd > .jects-pivot,
+.g-card__bd > .jects-booking,
+.g-card__bd > .jects-todo {
+  min-height: var(--g-module-host);
+  width: 100%;
+}
+
+/* Planning/scheduling/editing surfaces need extra vertical room. */
+.g-section:is(#gantt,#scheduler,#calendar,#spreadsheet,#diagram) .g-host-grid,
+.g-section:is(#gantt,#scheduler,#calendar,#spreadsheet,#diagram) .g-card__bd > :is(.jects-gantt,.jects-scheduler,.jects-calendar,.jects-spreadsheet,.jects-sheet,.jects-diagram) {
+  min-height: var(--g-module-host-tall);
+}
+
+/* Charts and analytics should be wide, but not absurdly tall. */
+.g-host-chart,
+.g-card__bd > .jects-chart {
+  min-height: var(--g-module-host-medium);
+}
+
+.g-section#charts .g-card__bd,
+.g-section#pivot .g-card__bd {
+  align-items: stretch;
+}
+
+.g-section#charts .g-host-chart,
+.g-section#pivot .g-host-chart {
+  width: 100%;
+}
+
+/* Smaller widget-style module sub-surfaces still get more breathing room. */
+.g-host-layout,
+.g-host-splitter,
+.g-host-sidebar {
+  min-height: clamp(300px, 42vh, 560px);
+}
+
+.g-flow {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+  gap: 1.25rem;
+}
+
+.g-flow__panel {
+  padding: 1rem;
+  border-radius: var(--jects-radius-lg);
+}
+
+.g-flow-host--scroll {
+  max-height: min(72vh, 820px);
+}
+
+/* Flagship app demos should feel like applications, not screenshots in boxes. */
+.g-section:is(#planning-control-center,#operations-dispatch,#analytics-workspace,#workflow-delivery) .g-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.g-section:is(#planning-control-center,#operations-dispatch,#analytics-workspace,#workflow-delivery) .jects-app-shell {
+  min-height: clamp(680px, calc(100vh - 185px), 1180px);
+}
+
+.g-section:is(#planning-control-center,#operations-dispatch,#analytics-workspace,#workflow-delivery) .jects-app-pane {
+  min-height: 0;
+}
+
+/* Docs/code panels should not be narrow while demos are full-width. */
+.g-doc {
+  max-width: min(100%, 98ch);
+}
+
+.g-code-panel,
+.g-docs-panel {
+  max-width: min(100%, 1180px);
+}
+
+pre.g-code {
+  max-height: min(70vh, 820px);
+}
+
+/* Toolbars and status strips wrap gracefully instead of forcing content into a
+   narrow horizontal line. */
+.g-flow-toolbar,
+.jects-commandbar,
+.g-rt-bar,
+.g-code-head {
+  row-gap: 0.55rem;
+}
+
+.jects-commandbar > * {
+  min-width: 0;
+}
+
+.jects-commandbar__title {
+  min-width: min(100%, 14rem);
+}
+
+/* Tables in proof/comparison pages need room but must scroll internally on small screens. */
+.g-perf-table,
+.g-doc table {
+  min-width: min(820px, 100%);
+}
+
+@media (min-width: 1500px) {
+  :root {
+    --g-module-host: clamp(620px, calc(100vh - 220px), 1080px);
+    --g-module-host-tall: clamp(720px, calc(100vh - 175px), 1220px);
+  }
+
+  .g-main {
+    padding-inline: clamp(2rem, 3.5vw, 4.5rem);
+  }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --g-module-host: clamp(380px, 62vh, 680px);
+    --g-module-host-tall: clamp(440px, 68vh, 760px);
+    --g-module-host-medium: clamp(320px, 54vh, 560px);
+  }
+
+  .g-section:is(#grid,#pivot,#spreadsheet,#gantt,#scheduler,#calendar,#booking,#kanban,#todo,#charts,#diagram) .g-card__hd {
+    min-height: auto;
+  }
+
+  .g-section:is(#grid,#pivot,#spreadsheet,#gantt,#scheduler,#calendar,#booking,#kanban,#todo,#charts,#diagram) .g-card__bd {
+    padding: 0.85rem;
+  }
+
+  .g-card__bd:has(.g-host-grid),
+  .g-card__bd:has(.jects-grid),
+  .g-card__bd:has(.jects-gantt),
+  .g-card__bd:has(.jects-scheduler),
+  .g-card__bd:has(.jects-calendar),
+  .g-card__bd:has(.jects-kanban),
+  .g-card__bd:has(.jects-diagram),
+  .g-card__bd:has(.jects-spreadsheet),
+  .g-card__bd:has(.jects-sheet),
+  .g-card__bd:has(.jects-pivot),
+  .g-card__bd:has(.jects-booking),
+  .g-card__bd:has(.jects-todo) {
+    padding: 0;
+  }
+
+  .g-section:is(#planning-control-center,#operations-dispatch,#analytics-workspace,#workflow-delivery) .jects-app-shell {
+    min-height: clamp(560px, 78vh, 860px);
+  }
+}
+
+@media (max-width: 560px) {
+  :root {
+    --g-module-host: 440px;
+    --g-module-host-tall: 520px;
+  }
+
+  .g-section:is(#grid,#pivot,#spreadsheet,#gantt,#scheduler,#calendar,#booking,#kanban,#todo,#charts,#diagram) .g-card {
+    border-radius: var(--jects-radius-md);
+  }
+
+  .g-flow {
+    gap: 0.9rem;
+  }
+}
