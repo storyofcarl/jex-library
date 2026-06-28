@@ -1,26 +1,122 @@
 /**
- * Route: home — the product landing / overview page (default route).
+ * Route: home — product-grade landing page (default route).
  *
- * A wide section that answers, in the first viewport at 1440px: what Jects is,
- * why it's credible (real numbers fetched at runtime from ./matrix.json), and
- * where to click first. Pure DOM/CSS + house tokens — no @jects component
- * module, so it has no SECTION_LOADER and builds instantly.
+ * The first viewport now sells the product, not the gallery: a clear value prop,
+ * proof read from matrix.json, a polished suite preview, solution routes, and a
+ * guided evaluation path. Pure DOM/CSS + house tokens — no @jects component
+ * module, so it stays instant and route-lazy.
  */
 import { el } from '../shell/dom.js';
 import { section } from '../shell/registry.js';
 
-/* Modules surfaced in the compact module grid → their matrix.json package name. */
 const MODULES = [
-  ['grid', 'Grid', '@jects/grid'],
-  ['gantt', 'Gantt', '@jects/gantt'],
-  ['scheduler', 'Scheduler', '@jects/scheduler'],
-  ['calendar', 'Calendar', '@jects/calendar'],
-  ['kanban', 'Kanban', '@jects/kanban'],
-  ['spreadsheet', 'Spreadsheet', '@jects/spreadsheet'],
-  ['pivot', 'Pivot', '@jects/pivot'],
-  ['charts', 'Charts', '@jects/charts'],
-  ['diagram', 'Diagram', '@jects/diagram'],
+  ['grid', 'Grid', '@jects/grid', 'Virtual data console'],
+  ['gantt', 'Gantt', '@jects/gantt', 'Project planning'],
+  ['scheduler', 'Scheduler', '@jects/scheduler', 'Resource dispatch'],
+  ['calendar', 'Calendar', '@jects/calendar', 'Multi-view events'],
+  ['kanban', 'Kanban', '@jects/kanban', 'Workflow board'],
+  ['spreadsheet', 'Spreadsheet', '@jects/spreadsheet', 'Workbook modeling'],
+  ['pivot', 'Pivot', '@jects/pivot', 'Cross-tab analytics'],
+  ['charts', 'Charts', '@jects/charts', 'Business visuals'],
+  ['diagram', 'Diagram', '@jects/diagram', 'Process modeling'],
 ];
+
+const SOLUTIONS = [
+  ['planning-control-center', 'Planning Control Center', 'Gantt · Scheduler · Grid · Risk analytics', 'Plan critical work, inspect dependencies, and see capacity pressure in one application surface.'],
+  ['operations-dispatch', 'Operations Dispatch', 'Scheduler · Booking · Calendar', 'Assign unplanned work, respect availability, and expose utilization before the day breaks.'],
+  ['analytics-workspace', 'Analytics Workspace', 'Grid · Pivot · Charts · Spreadsheet', 'Move from operational rows to cross-tabs, dashboards, and forecast models without changing UI stacks.'],
+  ['workflow-delivery', 'Workflow Delivery', 'Kanban · To-Do · Gantt · Scheduler', 'Connect delivery boards to dated plans, assignments, activity, and execution KPIs.'],
+];
+
+const EVAL_STEPS = [
+  ['1', 'Run proof', 'Use the live benchmarks and matrix to check scale, bundle cost, tests, and coverage.'],
+  ['2', 'Mount one module', 'Start with Grid, Gantt, or Scheduler through a framework subpath import.'],
+  ['3', 'Compose a workflow', 'Connect planning, dispatch, analytics, and workflow screens on one theme system.'],
+];
+
+function cta(href, label, primary = false) {
+  return el('a', { class: 'g-home-cta' + (primary ? ' is-primary' : ''), href, text: label });
+}
+
+function proofCard(value, label, note) {
+  return el('div', { class: 'g-home-proof-card' }, [
+    el('div', { class: 'g-home-proof-value', text: value }),
+    el('div', { class: 'g-home-proof-label', text: label }),
+    note ? el('div', { class: 'g-home-proof-note', text: note }) : null,
+  ]);
+}
+
+function previewPanel() {
+  const taskRows = [
+    ['Discovery', 'Complete', '100%'],
+    ['Platform build', 'On track', '68%'],
+    ['Integration', 'Capacity risk', '42%'],
+    ['Launch', 'Blocked', '18%'],
+  ];
+  const timeline = [
+    ['Research', '12%', '28%', 'ok'],
+    ['Build', '33%', '42%', 'ok'],
+    ['Integrate', '58%', '24%', 'warn'],
+    ['Launch', '82%', '12%', 'risk'],
+  ];
+
+  return el('div', { class: 'g-home-preview', 'aria-label': 'Integrated Jects suite preview' }, [
+    el('div', { class: 'g-home-preview-top' }, [
+      el('div', { class: 'g-home-window-dots', 'aria-hidden': 'true' }, [
+        el('span', { class: 'is-red' }), el('span', { class: 'is-yellow' }), el('span', { class: 'is-green' }),
+      ]),
+      el('div', { class: 'g-home-preview-title', text: 'Enterprise Planning Console' }),
+      el('span', { class: 'jects-status-chip', 'data-tone': 'ok', text: 'Live model' }),
+    ]),
+    el('div', { class: 'g-home-preview-kpis' }, [
+      el('div', { class: 'g-home-mini-kpi' }, [el('b', { text: '93%' }), el('span', { text: 'resource fit' })]),
+      el('div', { class: 'g-home-mini-kpi' }, [el('b', { text: '7' }), el('span', { text: 'risk items' })]),
+      el('div', { class: 'g-home-mini-kpi' }, [el('b', { text: '4.2k' }), el('span', { text: 'tests' })]),
+    ]),
+    el('div', { class: 'g-home-preview-grid' }, [
+      el('div', { class: 'g-home-preview-pane is-table' }, [
+        el('div', { class: 'g-home-pane-title', text: 'Work plan' }),
+        ...taskRows.map(([name, status, pct]) => el('div', { class: 'g-home-task-row' }, [
+          el('span', { text: name }),
+          el('em', { text: status }),
+          el('b', { text: pct }),
+        ])),
+      ]),
+      el('div', { class: 'g-home-preview-pane is-timeline' }, [
+        el('div', { class: 'g-home-pane-title', text: 'Timeline + capacity' }),
+        ...timeline.map(([label, left, width, tone]) => el('div', { class: 'g-home-time-row' }, [
+          el('span', { text: label }),
+          el('div', { class: 'g-home-time-track' }, [
+            el('i', { class: 'g-home-time-bar', 'data-tone': tone, style: `left:${left};width:${width}` }),
+          ]),
+        ])),
+      ]),
+    ]),
+    el('div', { class: 'g-home-preview-footer' }, [
+      el('span', { text: 'Grid → Gantt → Scheduler → Pivot → Chart' }),
+      el('strong', { text: 'one theme · one API' }),
+    ]),
+  ]);
+}
+
+function solutionCard([id, title, stack, desc]) {
+  return el('a', { class: 'g-home-solution', href: '#' + id }, [
+    el('span', { class: 'g-home-solution-kicker', text: stack }),
+    el('strong', { text: title }),
+    el('p', { text: desc }),
+    el('span', { class: 'g-home-solution-link', text: 'Open scenario →' }),
+  ]);
+}
+
+function moduleCard([id, label, pkg, desc]) {
+  return el('a', { class: 'g-home-module', href: '#' + id }, [
+    el('div', { class: 'g-home-module-top' }, [
+      el('div', { class: 'g-home-module-name', text: label }),
+      el('div', { class: 'g-home-module-maturity', 'data-pkg': pkg, text: '' }),
+    ]),
+    el('div', { class: 'g-home-module-desc', text: desc }),
+  ]);
+}
 
 export function register() {
   section(
@@ -28,76 +124,83 @@ export function register() {
     'Jects UI',
     null,
     (grid) => {
-      /* ── Hero ─────────────────────────────────────────────────────────── */
-      const hero = el('div', { class: 'g-home-hero' });
+      grid.classList.add('g-home-shell');
 
-      hero.appendChild(el('div', { class: 'g-home-eyebrow' }, [
-        el('span', { class: 'g-home-eyebrow-dot' }),
-        el('span', { text: 'Jects UI — the planning-and-data suite' }),
-      ]));
-
-      hero.appendChild(el('h1', { class: 'g-home-headline',
-        text: 'One core. One design language. The whole planning-and-data surface.' }));
-
-      hero.appendChild(el('p', { class: 'g-home-subhead',
-        text: 'A framework-agnostic, zero-dependency suite themed by one OKLCH token system.' }));
-
-      const ctaRow = el('div', { class: 'g-home-ctas' });
-      const cta = (href, label, primary) => el('a', {
-        class: 'g-home-cta' + (primary ? ' is-primary' : ''), href, text: label });
-      ctaRow.appendChild(cta('#performance', 'See it perform', true));
-      ctaRow.appendChild(cta('#compare', 'How it compares', false));
-      ctaRow.appendChild(cta('#grid', 'Explore the Grid', false));
-      hero.appendChild(ctaRow);
-
+      const hero = el('section', { class: 'g-home-hero' }, [
+        el('div', { class: 'g-home-hero-copy' }, [
+          el('div', { class: 'g-home-eyebrow' }, [
+            el('span', { class: 'g-home-eyebrow-dot' }),
+            el('span', { text: 'Jects UI — enterprise planning and data suite' }),
+          ]),
+          el('h1', { class: 'g-home-headline', text: 'Build the planning cockpit without stitching five UI stacks together.' }),
+          el('p', { class: 'g-home-subhead', text: 'Grid, Gantt, Scheduler, Calendar, Kanban, Pivot, Charts, Spreadsheet, Diagram, Forms, and productivity modules on one TypeScript core, one token system, and one integration model.' }),
+          el('div', { class: 'g-home-ctas' }, [
+            cta('#planning-control-center', 'Open flagship demo', true),
+            cta('#performance', 'Run performance proof'),
+            cta('#grid/code', 'Copy starter code'),
+          ]),
+        ]),
+        previewPanel(),
+      ]);
       grid.appendChild(hero);
 
-      /* ── Proof cards — REAL numbers fetched at runtime from ./matrix.json ── */
       const proofRow = el('div', { class: 'g-home-proof', hidden: 'hidden' });
       grid.appendChild(proofRow);
 
-      const proofCard = (value, label) => el('div', { class: 'g-home-proof-card' }, [
-        el('div', { class: 'g-home-proof-value', text: value }),
-        el('div', { class: 'g-home-proof-label', text: label }),
-      ]);
+      const matrixPromise = fetch('./matrix.json')
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('matrix ' + r.status))));
 
-      // matrix.json is served alongside the gallery (page-relative, like docs-content).
-      fetch('./matrix.json')
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('matrix ' + r.status))))
+      matrixPromise
         .then((m) => {
           const t = (m && m.totals) || {};
-          if (t.packages == null && t.unitCases == null) return; // nothing credible to show
-          const cards = [];
-          if (t.packages != null) cards.push(proofCard(String(t.packages), 'packages'));
-          if (t.unitCases != null) cards.push(proofCard(t.unitCases + '+', 'unit test cases'));
-          cards.push(proofCard('React · Vue · Angular · Web Components', 'framework wrappers'));
-          cards.push(proofCard('Route-lazy JS + CSS', 'loaded only when used'));
+          const cards = [
+            proofCard(t.packages != null ? String(t.packages) : '22', 'packages', 'single suite'),
+            proofCard(t.unitCases != null ? t.unitCases + '+' : '4k+', 'unit test cases', 'generated matrix'),
+            proofCard('4', 'framework wrappers', 'React · Vue · Angular · Web Components'),
+            proofCard('Lazy', 'runtime loading', 'route-level JS + CSS'),
+          ];
           proofRow.replaceChildren(...cards);
           proofRow.removeAttribute('hidden');
         })
         .catch(() => { /* hide gracefully — proofRow stays hidden, no broken UI */ });
 
-      /* ── Compact module grid ──────────────────────────────────────────── */
-      grid.appendChild(el('div', { class: 'g-home-sectionhd', text: 'Modules' }));
+      grid.appendChild(el('div', { class: 'g-home-sectionhead' }, [
+        el('span', { text: 'Flagship solutions' }),
+        el('p', { text: 'Application-grade demos that show the suite working as one product.' }),
+      ]));
+      grid.appendChild(el('div', { class: 'g-home-solutions' }, SOLUTIONS.map(solutionCard)));
+
+      grid.appendChild(el('div', { class: 'g-home-eval' }, [
+        el('div', { class: 'g-home-eval-copy' }, [
+          el('span', { class: 'g-home-section-kicker', text: 'Evaluation path' }),
+          el('h3', { text: 'From proof to production surface.' }),
+          el('p', { text: 'The site is structured for buyer confidence: verify scale, mount one module, then compose workflows under the same theme and API conventions.' }),
+        ]),
+        el('div', { class: 'g-home-eval-steps' }, EVAL_STEPS.map(([n, title, body]) => el('div', { class: 'g-home-eval-step' }, [
+          el('span', { text: n }),
+          el('strong', { text: title }),
+          el('p', { text: body }),
+        ]))),
+      ]));
+
+      grid.appendChild(el('div', { class: 'g-home-sectionhead' }, [
+        el('span', { text: 'Module surface' }),
+        el('p', { text: 'Core planning, data, workflow, and visualization modules with maturity read from the generated matrix.' }),
+      ]));
+
       const modGrid = el('div', { class: 'g-home-modules' });
       const maturityByPkg = {};
-      for (const [id, label, pkg] of MODULES) {
-        const a = el('a', { class: 'g-home-module', href: '#' + id }, [
-          el('div', { class: 'g-home-module-name', text: label }),
-          el('div', { class: 'g-home-module-maturity', 'data-pkg': pkg, text: '' }),
-        ]);
-        modGrid.appendChild(a);
-      }
+      for (const mod of MODULES) modGrid.appendChild(moduleCard(mod));
       grid.appendChild(modGrid);
 
-      // Fill module maturity from the same matrix.json (best-effort; blank if unavailable).
-      fetch('./matrix.json')
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('matrix ' + r.status))))
+      matrixPromise
         .then((m) => {
           for (const p of (m && m.packages) || []) maturityByPkg[p.name] = p.maturity;
           for (const node of modGrid.querySelectorAll('.g-home-module-maturity')) {
             const mat = maturityByPkg[node.getAttribute('data-pkg')];
-            if (mat) node.textContent = mat;
+            if (!mat) continue;
+            node.textContent = mat;
+            node.setAttribute('data-maturity', mat.toLowerCase());
           }
         })
         .catch(() => { /* leave maturity blank on failure */ });
