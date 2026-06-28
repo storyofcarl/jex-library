@@ -26,7 +26,7 @@ import { start } from './shell/app.js';
    by ROUTE_META alone in the page builder. */
 const ROUTES = {
   // Start
-  home: () => import('./routes/home.js'),
+  home: () => import('./routes/home-polished.js'),
   // Foundation / theme
   foundations: () => import('./routes/foundations.js'),
   customizer: () => import('./routes/customizer.js'),
