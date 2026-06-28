@@ -1,10 +1,5 @@
 /**
  * Route: home — product-grade landing page (default route).
- *
- * The first viewport now sells the product, not the gallery: a clear value prop,
- * proof read from matrix.json, a polished suite preview, solution routes, and a
- * guided evaluation path. Pure DOM/CSS + house tokens — no @jects component
- * module, so it stays instant and route-lazy.
  */
 import { el } from '../shell/dom.js';
 import { section } from '../shell/registry.js';
@@ -125,8 +120,7 @@ export function register() {
     null,
     (grid) => {
       grid.classList.add('g-home-shell');
-
-      const hero = el('section', { class: 'g-home-hero' }, [
+      grid.appendChild(el('section', { class: 'g-home-hero' }, [
         el('div', { class: 'g-home-hero-copy' }, [
           el('div', { class: 'g-home-eyebrow' }, [
             el('span', { class: 'g-home-eyebrow-dot' }),
@@ -141,28 +135,21 @@ export function register() {
           ]),
         ]),
         previewPanel(),
-      ]);
-      grid.appendChild(hero);
+      ]));
 
       const proofRow = el('div', { class: 'g-home-proof', hidden: 'hidden' });
       grid.appendChild(proofRow);
-
-      const matrixPromise = fetch('./matrix.json')
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('matrix ' + r.status))));
-
-      matrixPromise
-        .then((m) => {
-          const t = (m && m.totals) || {};
-          const cards = [
-            proofCard(t.packages != null ? String(t.packages) : '22', 'packages', 'single suite'),
-            proofCard(t.unitCases != null ? t.unitCases + '+' : '4k+', 'unit test cases', 'generated matrix'),
-            proofCard('4', 'framework wrappers', 'React · Vue · Angular · Web Components'),
-            proofCard('Lazy', 'runtime loading', 'route-level JS + CSS'),
-          ];
-          proofRow.replaceChildren(...cards);
-          proofRow.removeAttribute('hidden');
-        })
-        .catch(() => { /* hide gracefully — proofRow stays hidden, no broken UI */ });
+      const matrixPromise = fetch('./matrix.json').then((r) => (r.ok ? r.json() : Promise.reject(new Error('matrix ' + r.status))));
+      matrixPromise.then((m) => {
+        const t = (m && m.totals) || {};
+        proofRow.replaceChildren(
+          proofCard(t.packages != null ? String(t.packages) : '22', 'packages', 'single suite'),
+          proofCard(t.unitCases != null ? t.unitCases + '+' : '4k+', 'unit test cases', 'generated matrix'),
+          proofCard('4', 'framework wrappers', 'React · Vue · Angular · Web Components'),
+          proofCard('Lazy', 'runtime loading', 'route-level JS + CSS'),
+        );
+        proofRow.removeAttribute('hidden');
+      }).catch(() => {});
 
       grid.appendChild(el('div', { class: 'g-home-sectionhead' }, [
         el('span', { text: 'Flagship solutions' }),
@@ -177,9 +164,7 @@ export function register() {
           el('p', { text: 'The site is structured for buyer confidence: verify scale, mount one module, then compose workflows under the same theme and API conventions.' }),
         ]),
         el('div', { class: 'g-home-eval-steps' }, EVAL_STEPS.map(([n, title, body]) => el('div', { class: 'g-home-eval-step' }, [
-          el('span', { text: n }),
-          el('strong', { text: title }),
-          el('p', { text: body }),
+          el('span', { text: n }), el('strong', { text: title }), el('p', { text: body }),
         ]))),
       ]));
 
@@ -187,23 +172,19 @@ export function register() {
         el('span', { text: 'Module surface' }),
         el('p', { text: 'Core planning, data, workflow, and visualization modules with maturity read from the generated matrix.' }),
       ]));
-
       const modGrid = el('div', { class: 'g-home-modules' });
       const maturityByPkg = {};
       for (const mod of MODULES) modGrid.appendChild(moduleCard(mod));
       grid.appendChild(modGrid);
-
-      matrixPromise
-        .then((m) => {
-          for (const p of (m && m.packages) || []) maturityByPkg[p.name] = p.maturity;
-          for (const node of modGrid.querySelectorAll('.g-home-module-maturity')) {
-            const mat = maturityByPkg[node.getAttribute('data-pkg')];
-            if (!mat) continue;
-            node.textContent = mat;
-            node.setAttribute('data-maturity', mat.toLowerCase());
-          }
-        })
-        .catch(() => { /* leave maturity blank on failure */ });
+      matrixPromise.then((m) => {
+        for (const p of (m && m.packages) || []) maturityByPkg[p.name] = p.maturity;
+        for (const node of modGrid.querySelectorAll('.g-home-module-maturity')) {
+          const mat = maturityByPkg[node.getAttribute('data-pkg')];
+          if (!mat) continue;
+          node.textContent = mat;
+          node.setAttribute('data-maturity', mat.toLowerCase());
+        }
+      }).catch(() => {});
     },
     { wide: true },
   );
